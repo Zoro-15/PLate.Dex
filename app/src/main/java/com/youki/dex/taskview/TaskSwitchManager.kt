@@ -1,18 +1,20 @@
 package com.youki.dex.taskview
 
+import android.accessibilityservice.AccessibilityService
 import android.app.ActivityManager
 import android.content.Context
 import android.content.pm.PackageManager
-import androidx.preference.PreferenceManager
 import com.youki.dex.models.AppTask
+import com.youki.dex.services.PerfectServer
 import com.youki.dex.utils.AppUtils
+import com.youki.dex.utils.DeviceUtils
 import com.youki.dex.utils.ShizukoManager
 
 /**
  * Manages the task stack for:
- * 1. Quick app switching (Ctrl+Left/Right)
- * 2. Alt-Tab compact floating dialog
- * 3. Desktop Task View (overview of running apps matching desktop reference)
+ * 1. Quick app switching (Alt+< / Alt+>)
+ * 2. Compact floating dialog (Ctrl+Tab / Alt+Tab)
+ * 3. Desktop Task View overview of genuinely open apps
  */
 class TaskSwitchManager(
     private val context: Context,
@@ -28,29 +30,80 @@ class TaskSwitchManager(
     private var lastSwitchTime = 0L
 
     /**
-     * Retrieve the list of active/recent tasks using the best available source:
-     * 1. Shizuku am stack list (true windowed tasks)
-     * 2. ActivityManager.getRunningTasks (system app)
-     * 3. UsageStatsManager (recent apps history)
+     * Retrieve ONLY genuinely running / active apps.
+     * Prevents dumping 24h history of closed apps.
      */
     fun getTasks(max: Int = 12): ArrayList<AppTask> {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val isSystemApp = AppUtils.isSystemApp(context, context.packageName)
-        val useShizuku = prefs.getBoolean("shizuku_active_app_detection", false)
+        val launcherPkg = AppUtils.getCurrentLauncher(packageManager)
+        val selfPkg = context.packageName
         val shizuku = ShizukoManager.getInstance(context)
+        val shell = com.youki.dex.server.ShellManager
 
-        return when {
-            isSystemApp -> {
-                AppUtils.getRunningTasks(activityManager, packageManager, max)
-            }
-            useShizuku && shizuku.hasPermission -> {
-                val viaShizuku = AppUtils.getTasksViaShizuku(context, packageManager, max)
-                viaShizuku ?: AppUtils.getRecentTasks(context, max)
-            }
-            else -> {
-                AppUtils.getRecentTasks(context, max)
+        // 1. Try Shizuku / Shell am stack list — returns real windowed tasks
+        if (shell.isAvailable || shizuku.hasPermission) {
+            val viaShizuku = AppUtils.getTasksViaShizuku(context, packageManager, max)
+            if (!viaShizuku.isNullOrEmpty()) {
+                return viaShizuku
             }
         }
+
+        // 2. Identify packages actually alive in memory
+        val runningPkgs: Set<String> = when {
+            shizuku.hasPermission -> shizuku.getRunningPackages().toSet()
+            else -> {
+                try {
+                    activityManager.runningAppProcesses
+                        ?.map { it.processName }
+                        ?.toSet() ?: emptySet()
+                } catch (e: Exception) {
+                    emptySet()
+                }
+            }
+        }
+
+        // 3. If system app, use getRunningTasks
+        val isSystemApp = AppUtils.isSystemApp(context, selfPkg)
+        if (isSystemApp) {
+            val running = AppUtils.getRunningTasks(activityManager, packageManager, max)
+            if (running.isNotEmpty()) return running
+        }
+
+        // 4. Fallback: Query UsageStatsManager but strictly for running/recently active apps
+        val usm = context.getSystemService(Context.USAGE_STATS_SERVICE) as? android.app.usage.UsageStatsManager
+        if (usm != null) {
+            val endTime = System.currentTimeMillis()
+            // Tight 20-minute window if running process list cannot be determined
+            val windowMs = if (runningPkgs.isNotEmpty()) 3 * 60 * 60 * 1000L else 20 * 60 * 1000L
+            val startTime = endTime - windowMs
+
+            val stats = usm.queryUsageStats(
+                android.app.usage.UsageStatsManager.INTERVAL_BEST, startTime, endTime
+            )
+                .sortedWith(compareByDescending { it.lastTimeUsed })
+                .filterNot { it.packageName == selfPkg || it.packageName == launcherPkg || it.packageName.contains("systemui") }
+                .filter { stat ->
+                    if (runningPkgs.isNotEmpty()) {
+                        runningPkgs.contains(stat.packageName)
+                    } else {
+                        (endTime - stat.lastTimeUsed) < 15 * 60 * 1000L
+                    }
+                }
+
+            val result = ArrayList<AppTask>()
+            for (stat in stats) {
+                if (result.size >= max) break
+                try {
+                    val intent = packageManager.getLaunchIntentForPackage(stat.packageName) ?: continue
+                    val label = AppUtils.getPackageLabel(context, stat.packageName)
+                    val icon = AppUtils.getAppIcon(context, stat.packageName)
+                    result.add(AppTask(-1, label, stat.packageName, icon))
+                } catch (e: Exception) {}
+            }
+
+            if (result.isNotEmpty()) return result
+        }
+
+        return ArrayList()
     }
 
     /**
@@ -85,7 +138,7 @@ class TaskSwitchManager(
     }
 
     /**
-     * Shows Alt-Tab overlay dialog.
+     * Shows compact floating dialog (triggered by Ctrl+Tab or Alt+Tab).
      */
     fun showAltTab(launchAppFn: (AppTask) -> Unit) {
         val tasks = getTasks()
@@ -108,12 +161,12 @@ class TaskSwitchManager(
     fun dismissAltTab() = altTabOverlay.dismiss()
 
     /**
-     * Desktop Task View (Overview of running apps matching user reference).
+     * Desktop Task View (Overview of genuinely running apps).
      */
     fun isTaskViewShowing(): Boolean = taskViewOverlay.isShowing()
 
     fun showTaskView(launchAppFn: (AppTask) -> Unit) {
-        val tasks = getTasks(max = 16)
+        val tasks = getTasks(max = 12)
         cachedTasks = tasks
 
         taskViewOverlay.show(
@@ -147,27 +200,55 @@ class TaskSwitchManager(
     }
 
     private fun closeTask(task: AppTask) {
+        val shell = com.youki.dex.server.ShellManager
+        val shizuku = ShizukoManager.getInstance(context)
+        val cmd = "am force-stop ${task.packageName}"
+
         try {
-            activityManager.killBackgroundProcesses(task.packageName)
-            val shizuku = ShizukoManager.getInstance(context)
-            if (shizuku.hasPermission) {
-                shizuku.runShellSync("am force-stop ${task.packageName}")
+            if (shell.isAvailable) {
+                shell.exec(context, cmd) {}
+            } else if (shizuku.hasPermission) {
+                shizuku.runShellSync(cmd)
+            } else {
+                DeviceUtils.runAsRoot(cmd)
             }
         } catch (e: Exception) {}
+
+        try {
+            activityManager.killBackgroundProcesses(task.packageName)
+        } catch (e: Exception) {}
+
+        // If the closed app was in the foreground, minimize to Home!
+        if (task.packageName == AppUtils.currentApp) {
+            PerfectServer.dock?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME)
+        }
     }
 
     private fun clearAllTasks() {
+        val shell = com.youki.dex.server.ShellManager
         val shizuku = ShizukoManager.getInstance(context)
         val launcherPkg = AppUtils.getCurrentLauncher(packageManager)
+
         for (task in cachedTasks) {
             if (task.packageName == context.packageName || task.packageName == launcherPkg) continue
+            val cmd = "am force-stop ${task.packageName}"
             try {
-                activityManager.killBackgroundProcesses(task.packageName)
-                if (shizuku.hasPermission) {
-                    shizuku.runShellSync("am force-stop ${task.packageName}")
+                if (shell.isAvailable) {
+                    shell.exec(context, cmd) {}
+                } else if (shizuku.hasPermission) {
+                    shizuku.runShellSync(cmd)
+                } else {
+                    DeviceUtils.runAsRoot(cmd)
                 }
             } catch (e: Exception) {}
+
+            try {
+                activityManager.killBackgroundProcesses(task.packageName)
+            } catch (e: Exception) {}
         }
+
+        // Return to home desktop so open apps vanish immediately!
+        PerfectServer.dock?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME)
     }
 
     /**

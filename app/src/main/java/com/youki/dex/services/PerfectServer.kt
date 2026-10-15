@@ -1485,7 +1485,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         val isCtrl = event.isCtrlPressed ||
                 (event.metaState and (KeyEvent.META_CTRL_ON or KeyEvent.META_CTRL_LEFT_ON or KeyEvent.META_CTRL_RIGHT_ON)) != 0
 
-        // ── Alt-Tab Overlay Interactions ──
+        // ── Compact Dialog Overlay Interactions ──
         if (::taskSwitchManager.isInitialized && taskSwitchManager.isAltTabShowing()) {
             if (event.action == KeyEvent.ACTION_DOWN) {
                 when (event.keyCode) {
@@ -1494,11 +1494,11 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
                         else taskSwitchManager.selectNextAltTab()
                         return true
                     }
-                    KeyEvent.KEYCODE_DPAD_LEFT -> {
+                    KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_COMMA -> {
                         taskSwitchManager.selectPreviousAltTab()
                         return true
                     }
-                    KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                    KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_PERIOD -> {
                         taskSwitchManager.selectNextAltTab()
                         return true
                     }
@@ -1512,8 +1512,10 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
                     }
                 }
             } else if (event.action == KeyEvent.ACTION_UP) {
-                // When ALT is released, commit the active Alt-Tab choice
-                if (event.keyCode == KeyEvent.KEYCODE_ALT_LEFT || event.keyCode == KeyEvent.KEYCODE_ALT_RIGHT) {
+                // When ALT or CTRL modifier is released, commit the active selection
+                if (event.keyCode == KeyEvent.KEYCODE_ALT_LEFT || event.keyCode == KeyEvent.KEYCODE_ALT_RIGHT ||
+                    event.keyCode == KeyEvent.KEYCODE_CTRL_LEFT || event.keyCode == KeyEvent.KEYCODE_CTRL_RIGHT
+                ) {
                     taskSwitchManager.commitAltTab()
                     return true
                 }
@@ -1530,12 +1532,12 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             }
         }
 
-        // ── Alt + Tab & Win + Tab Triggers (ACTION_DOWN) ──
+        // ── Shortcuts Trigger (ACTION_DOWN) ──
         if (event.action == KeyEvent.ACTION_DOWN) {
-            // Win + Tab triggers Desktop Task View
-            if (event.isMetaPressed && event.keyCode == KeyEvent.KEYCODE_TAB &&
-                sharedPreferences.getBoolean("enable_desktop_task_view", true)
-            ) {
+            // Task View trigger: Win+Tab or Alt+Up or Alt+\ (works cleanly in scrcpy without Windows stealing)
+            val isTaskViewShortcut = (event.isMetaPressed && event.keyCode == KeyEvent.KEYCODE_TAB) ||
+                    (event.isAltPressed && (event.keyCode == KeyEvent.KEYCODE_DPAD_UP || event.keyCode == KeyEvent.KEYCODE_BACKSLASH))
+            if (isTaskViewShortcut && sharedPreferences.getBoolean("enable_desktop_task_view", true)) {
                 if (::taskSwitchManager.isInitialized) {
                     taskSwitchManager.toggleTaskView { targetTask ->
                         launchApp(getDefaultLaunchMode(targetTask.packageName), targetTask.packageName)
@@ -1544,9 +1546,10 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
                 }
             }
 
-            if (event.isAltPressed && event.keyCode == KeyEvent.KEYCODE_TAB &&
-                sharedPreferences.getBoolean("enable_alt_tab", true)
-            ) {
+            // Compact switcher dialog: Ctrl+Tab (scrcpy safe) OR Alt+Tab
+            val isAltTabShortcut = (event.isAltPressed && event.keyCode == KeyEvent.KEYCODE_TAB) ||
+                    (isCtrl && event.keyCode == KeyEvent.KEYCODE_TAB)
+            if (isAltTabShortcut && sharedPreferences.getBoolean("enable_alt_tab", true)) {
                 if (::taskSwitchManager.isInitialized) {
                     if (taskSwitchManager.isAltTabShowing()) {
                         if (event.isShiftPressed) taskSwitchManager.selectPreviousAltTab()
@@ -1560,16 +1563,19 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
                 }
             }
 
-            // ── Ctrl + Left / Right Arrow Quick Switch (ACTION_DOWN) ──
-            if (isCtrl && sharedPreferences.getBoolean("enable_ctrl_arrow_switch", true)) {
-                if (event.keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+            // Quick App Switching via Alt + < (comma) and Alt + > (period) or Alt + [ / Alt + ]
+            // Avoids Ctrl which triggers Android accessibility selection
+            if (event.isAltPressed && sharedPreferences.getBoolean("enable_ctrl_arrow_switch", true)) {
+                val isPrev = event.keyCode == KeyEvent.KEYCODE_COMMA || event.keyCode == KeyEvent.KEYCODE_LEFT_BRACKET
+                val isNext = event.keyCode == KeyEvent.KEYCODE_PERIOD || event.keyCode == KeyEvent.KEYCODE_RIGHT_BRACKET
+                if (isPrev) {
                     if (::taskSwitchManager.isInitialized) {
                         taskSwitchManager.switchRecentApp(direction = -1) { targetTask ->
                             launchApp(getDefaultLaunchMode(targetTask.packageName), targetTask.packageName)
                         }
                         return true
                     }
-                } else if (event.keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                } else if (isNext) {
                     if (::taskSwitchManager.isInitialized) {
                         taskSwitchManager.switchRecentApp(direction = 1) { targetTask ->
                             launchApp(getDefaultLaunchMode(targetTask.packageName), targetTask.packageName)
@@ -1580,10 +1586,11 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             }
         }
 
-        // Consume ACTION_UP for Ctrl+Left / Ctrl+Right so foreground app doesn't receive stray DPAD events
-        if (event.action == KeyEvent.ACTION_UP && isCtrl &&
+        // Consume ACTION_UP for Alt + < / Alt + > so no commas or periods leak
+        if (event.action == KeyEvent.ACTION_UP && event.isAltPressed &&
             sharedPreferences.getBoolean("enable_ctrl_arrow_switch", true) &&
-            (event.keyCode == KeyEvent.KEYCODE_DPAD_LEFT || event.keyCode == KeyEvent.KEYCODE_DPAD_RIGHT)
+            (event.keyCode == KeyEvent.KEYCODE_COMMA || event.keyCode == KeyEvent.KEYCODE_PERIOD ||
+             event.keyCode == KeyEvent.KEYCODE_LEFT_BRACKET || event.keyCode == KeyEvent.KEYCODE_RIGHT_BRACKET)
         ) {
             return true
         }

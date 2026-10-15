@@ -223,8 +223,8 @@
     <string name="enable_f10_title">F10 to toggle split screen</string>
     <string name="enable_toggle_pin_title">Alt+W to pin/unpin the dock</string>
     <string name="enable_menu_recents_title">Menu key to show recents</string>
-    <string name="enable_ctrl_arrow_switch_title">Ctrl+Left/Right to switch recent apps</string>
-    <string name="enable_alt_tab_title">Alt+Tab to switch tasks</string>
+    <string name="enable_ctrl_arrow_switch_title">Alt+&lt; / Alt+&gt; to switch recent apps</string>
+    <string name="enable_alt_tab_title">Ctrl+Tab / Alt+Tab to switch tasks</string>
     <string name="enable_desktop_task_view_title">Desktop Task View</string>
     <string name="enable_desktop_task_view_summary">Show built-in desktop overview instead of Android system recents</string>
 

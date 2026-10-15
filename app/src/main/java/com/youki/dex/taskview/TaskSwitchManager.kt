@@ -98,11 +98,13 @@ class TaskSwitchManager(
 
         // 3c. Tracked session apps (apps opened during this launcher session)
         PerfectServer.dock?.let { dockService ->
-            synchronized(dockService.activeSessionApps) {
-                dockService.activeSessionApps.reversed().forEach { pkg ->
-                    if (isValidUserApp(pkg, launcherPkg)) {
-                        activePkgs.add(pkg)
-                    }
+            val sessionSnapshot = synchronized(dockService.activeSessionApps) {
+                ArrayList(dockService.activeSessionApps)
+            }
+            for (i in sessionSnapshot.size - 1 downTo 0) {
+                val pkg = sessionSnapshot[i]
+                if (isValidUserApp(pkg, launcherPkg)) {
+                    activePkgs.add(pkg)
                 }
             }
         }

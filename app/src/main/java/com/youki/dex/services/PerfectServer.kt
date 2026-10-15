@@ -3484,7 +3484,8 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
                     else apps.add(DockApp(task))
                 }
             } else {
-                fetchedTasks.reversed().forEach { task ->
+                for (j in fetchedTasks.size - 1 downTo 0) {
+                    val task = fetchedTasks[j]
                     if (AppUtils.containsTask(apps, task) == -1)
                         apps.add(DockApp(task))
                 }

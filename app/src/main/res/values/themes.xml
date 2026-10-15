@@ -103,17 +103,7 @@
         <item name="android:windowDisablePreview">true</item>
         <item name="android:windowIsTranslucent">true</item>
         <!-- NOTCH FIX: Draw content into the display cutout area (camera hole/notch).
-             Without this the system reserves the cutout as a letterbox and any overlay
-             window (like PerfectServer's dock) renders behind the cutout instead of
-             extending under it — causing the "notch appears as a layer on top" glitch.
-             "always" (not "shortEdges"): shortEdges only lets content extend into the
-             cutout on the SHORT edge — with lock_landscape on (the default) the cutout
-             usually sits on what is now a LONG edge, so shortEdges still left it
-             reserved there. "always" draws under the cutout in every orientation.
-             This is the theme-level default applied immediately at startup, before
-             LauncherActivity.hideSystemBars() re-applies the same "always" value in
-             code (kept there too since some OEM skins only honor the attributes set
-        <!-- Android 10 compatibility fix: "always" is value 3 (API 30+), which crashes on Android 10 (API 29)
+             Android 10 compatibility fix: "always" is value 3 (API 30+), which crashes on Android 10 (API 29)
              with UnsupportedOperationException: Unknown windowLayoutInDisplayCutoutMode: 3.
              "shortEdges" is supported across Android 9, 10, 11+. Runtime code in LauncherActivity
              upgrades to ALWAYS on API 30+ devices safely. -->

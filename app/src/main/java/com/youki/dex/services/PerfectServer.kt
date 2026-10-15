@@ -325,7 +325,21 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
     private var maxApps = 0
     private var maxAppsLandscape = 0
     private lateinit var context: Context
-    private lateinit var tasks: ArrayList<AppTask>
+    internal var tasks: ArrayList<AppTask> = ArrayList()
+
+    internal fun getActiveTasks(): ArrayList<AppTask> {
+        return synchronized(this) {
+            if (tasks.isNotEmpty()) ArrayList(tasks) else ArrayList()
+        }
+    }
+
+    internal fun clearRunningTasks() {
+        synchronized(this) {
+            tasks.clear()
+        }
+        updateRunningTasks(true)
+    }
+
     @Volatile private var lastUpdate: Long = 0 // FIX #12: @Volatile prevents race condition between Main and IO threads
     private var dockHeight: Int = 0
     private var dockMargin: Int = 0
@@ -3325,7 +3339,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         }
     }
 
-    private fun updateRunningTasks(recreateAdapter: Boolean = false) {
+    internal fun updateRunningTasks(recreateAdapter: Boolean = false) {
         val now = System.currentTimeMillis()
         if (now - lastUpdate < 500 && !recreateAdapter)
             return

@@ -8,7 +8,12 @@ import com.youki.dex.models.AppTask
 import com.youki.dex.services.PerfectServer
 import com.youki.dex.utils.AppUtils
 import com.youki.dex.utils.DeviceUtils
+import com.youki.dex.utils.RootManager
 import com.youki.dex.utils.ShizukoManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Manages the task stack for:
@@ -30,16 +35,16 @@ class TaskSwitchManager(
     private var lastSwitchTime = 0L
 
     /**
-     * Retrieve ONLY genuinely running / active apps.
-     * Prevents dumping 24h history of closed apps.
+     * Retrieve ONLY genuinely active / running apps.
+     * Prioritizes foreground window, DockService active tasks, and recent sessions.
      */
-    fun getTasks(max: Int = 12): ArrayList<AppTask> {
+    fun getTasks(max: Int = 8): ArrayList<AppTask> {
         val launcherPkg = AppUtils.getCurrentLauncher(packageManager)
         val selfPkg = context.packageName
         val shizuku = ShizukoManager.getInstance(context)
         val shell = com.youki.dex.server.ShellManager
 
-        // 1. Try Shizuku / Shell am stack list — returns real windowed tasks
+        // 1. Try Shizuku / Shell am stack list — returns real windowed tasks if available
         if (shell.isAvailable || shizuku.hasPermission) {
             val viaShizuku = AppUtils.getTasksViaShizuku(context, packageManager, max)
             if (!viaShizuku.isNullOrEmpty()) {
@@ -47,63 +52,55 @@ class TaskSwitchManager(
             }
         }
 
-        // 2. Identify packages actually alive in memory
-        val runningPkgs: Set<String> = when {
-            shizuku.hasPermission -> shizuku.getRunningPackages().toSet()
-            else -> {
-                try {
-                    activityManager.runningAppProcesses
-                        ?.map { it.processName }
-                        ?.toSet() ?: emptySet()
-                } catch (e: Exception) {
-                    emptySet()
-                }
-            }
-        }
-
-        // 3. If system app, use getRunningTasks
+        // 2. If system app, use getRunningTasks
         val isSystemApp = AppUtils.isSystemApp(context, selfPkg)
         if (isSystemApp) {
             val running = AppUtils.getRunningTasks(activityManager, packageManager, max)
             if (running.isNotEmpty()) return running
         }
 
-        // 4. Fallback: Query UsageStatsManager but strictly for running/recently active apps
-        val usm = context.getSystemService(Context.USAGE_STATS_SERVICE) as? android.app.usage.UsageStatsManager
-        if (usm != null) {
-            val endTime = System.currentTimeMillis()
-            // Tight 20-minute window if running process list cannot be determined
-            val windowMs = if (runningPkgs.isNotEmpty()) 3 * 60 * 60 * 1000L else 20 * 60 * 1000L
-            val startTime = endTime - windowMs
-
-            val stats = usm.queryUsageStats(
-                android.app.usage.UsageStatsManager.INTERVAL_BEST, startTime, endTime
-            )
-                .sortedWith(compareByDescending { it.lastTimeUsed })
-                .filterNot { it.packageName == selfPkg || it.packageName == launcherPkg || it.packageName.contains("systemui") }
-                .filter { stat ->
-                    if (runningPkgs.isNotEmpty()) {
-                        runningPkgs.contains(stat.packageName)
-                    } else {
-                        (endTime - stat.lastTimeUsed) < 15 * 60 * 1000L
-                    }
-                }
-
-            val result = ArrayList<AppTask>()
-            for (stat in stats) {
-                if (result.size >= max) break
-                try {
-                    val intent = packageManager.getLaunchIntentForPackage(stat.packageName) ?: continue
-                    val label = AppUtils.getPackageLabel(context, stat.packageName)
-                    val icon = AppUtils.getAppIcon(context, stat.packageName)
-                    result.add(AppTask(-1, label, stat.packageName, icon))
-                } catch (e: Exception) {}
-            }
-
-            if (result.isNotEmpty()) return result
+        // 3. Authoritative active tasks already held and tracked by DockService
+        val dockTasks = PerfectServer.dock?.getActiveTasks()
+        val result = if (!dockTasks.isNullOrEmpty()) {
+            ArrayList(dockTasks.take(max))
+        } else {
+            // 4. Query recent tasks using UsageStatsManager (matches dock's logic)
+            AppUtils.getRecentTasks(context, max)
         }
 
-        return ArrayList()
+        // 5. Ensure the current foreground app is always present and at index 0
+        val fgPkg = try {
+            activityManager.getRunningTasks(1).firstOrNull()?.topActivity?.packageName
+        } catch (e: Exception) {
+            null
+        } ?: AppUtils.currentApp
+
+        if (!fgPkg.isNullOrEmpty() && fgPkg != selfPkg && fgPkg != launcherPkg && !fgPkg.contains("com.android.systemui")) {
+            val existingIdx = result.indexOfFirst { it.packageName == fgPkg }
+            if (existingIdx > 0) {
+                val fgTask = result.removeAt(existingIdx)
+                result.add(0, fgTask)
+            } else if (existingIdx == -1) {
+                try {
+                    val label = AppUtils.getPackageLabel(context, fgPkg)
+                    val icon = AppUtils.getAppIcon(context, fgPkg)
+                    result.add(0, AppTask(-1, label, fgPkg, icon))
+                } catch (e: Exception) {}
+            }
+        }
+
+        // 6. If Shizuku is running, filter by live packages
+        if (shizuku.hasPermission) {
+            val livePkgs = shizuku.getRunningPackages().toSet()
+            if (livePkgs.isNotEmpty()) {
+                val filtered = result.filter { livePkgs.contains(it.packageName) || it.packageName == fgPkg }
+                if (filtered.isNotEmpty()) {
+                    return ArrayList(filtered.take(max))
+                }
+            }
+        }
+
+        return if (result.size > max) ArrayList(result.take(max)) else result
     }
 
     /**
@@ -166,7 +163,7 @@ class TaskSwitchManager(
     fun isTaskViewShowing(): Boolean = taskViewOverlay.isShowing()
 
     fun showTaskView(launchAppFn: (AppTask) -> Unit) {
-        val tasks = getTasks(max = 12)
+        val tasks = getTasks(max = 8)
         cachedTasks = tasks
 
         taskViewOverlay.show(
@@ -200,55 +197,95 @@ class TaskSwitchManager(
     }
 
     private fun closeTask(task: AppTask) {
-        val shell = com.youki.dex.server.ShellManager
-        val shizuku = ShizukoManager.getInstance(context)
-        val cmd = "am force-stop ${task.packageName}"
+        val launcherPkg = AppUtils.getCurrentLauncher(packageManager)
+        if (task.packageName == context.packageName || task.packageName == launcherPkg) return
 
-        try {
-            if (shell.isAvailable) {
-                shell.exec(context, cmd) {}
-            } else if (shizuku.hasPermission) {
-                shizuku.runShellSync(cmd)
-            } else {
-                DeviceUtils.runAsRoot(cmd)
-            }
-        } catch (e: Exception) {}
+        // 1. If this task is the current foreground app, minimize it to home immediately!
+        val currentFg = try {
+            activityManager.getRunningTasks(1).firstOrNull()?.topActivity?.packageName
+        } catch (e: Exception) {
+            null
+        } ?: AppUtils.currentApp
 
-        try {
-            activityManager.killBackgroundProcesses(task.packageName)
-        } catch (e: Exception) {}
-
-        // If the closed app was in the foreground, minimize to Home!
-        if (task.packageName == AppUtils.currentApp) {
+        if (task.packageName == currentFg) {
             PerfectServer.dock?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME)
         }
-    }
 
-    private fun clearAllTasks() {
-        val shell = com.youki.dex.server.ShellManager
-        val shizuku = ShizukoManager.getInstance(context)
-        val launcherPkg = AppUtils.getCurrentLauncher(packageManager)
+        // 2. Perform process / task termination off the UI thread
+        CoroutineScope(Dispatchers.IO).launch {
+            val shell = com.youki.dex.server.ShellManager
+            val shizuku = ShizukoManager.getInstance(context)
+            val root = RootManager.getInstance(context)
 
-        for (task in cachedTasks) {
-            if (task.packageName == context.packageName || task.packageName == launcherPkg) continue
-            val cmd = "am force-stop ${task.packageName}"
+            val cmdStop = "am force-stop ${task.packageName}"
+            val cmdRemove = if (task.id > 0) "am task remove ${task.id}" else null
+
             try {
                 if (shell.isAvailable) {
-                    shell.exec(context, cmd) {}
+                    if (cmdRemove != null) shell.exec(context, cmdRemove) {}
+                    shell.exec(context, cmdStop) {}
                 } else if (shizuku.hasPermission) {
-                    shizuku.runShellSync(cmd)
-                } else {
-                    DeviceUtils.runAsRoot(cmd)
+                    if (cmdRemove != null) shizuku.runShellSync(cmdRemove)
+                    shizuku.runShellSync(cmdStop)
+                } else if (root.isAvailable) {
+                    if (cmdRemove != null) root.runShell(cmdRemove) {}
+                    root.runShell(cmdStop) {}
                 }
             } catch (e: Exception) {}
 
             try {
                 activityManager.killBackgroundProcesses(task.packageName)
             } catch (e: Exception) {}
-        }
 
-        // Return to home desktop so open apps vanish immediately!
+            withContext(Dispatchers.Main) {
+                cachedTasks.removeAll { it.packageName == task.packageName }
+                PerfectServer.dock?.updateRunningTasks(true)
+            }
+        }
+    }
+
+    private fun clearAllTasks() {
+        val tasksToClose = ArrayList(cachedTasks)
+        cachedTasks.clear()
+
+        // 1. Immediately dismiss Task View overlay and return to home desktop
+        dismissTaskView()
         PerfectServer.dock?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME)
+
+        // 2. Terminate all tasks asynchronously
+        CoroutineScope(Dispatchers.IO).launch {
+            val shell = com.youki.dex.server.ShellManager
+            val shizuku = ShizukoManager.getInstance(context)
+            val root = RootManager.getInstance(context)
+            val launcherPkg = AppUtils.getCurrentLauncher(packageManager)
+
+            for (task in tasksToClose) {
+                if (task.packageName == context.packageName || task.packageName == launcherPkg) continue
+                val cmdStop = "am force-stop ${task.packageName}"
+                val cmdRemove = if (task.id > 0) "am task remove ${task.id}" else null
+
+                try {
+                    if (shell.isAvailable) {
+                        if (cmdRemove != null) shell.exec(context, cmdRemove) {}
+                        shell.exec(context, cmdStop) {}
+                    } else if (shizuku.hasPermission) {
+                        if (cmdRemove != null) shizuku.runShellSync(cmdRemove)
+                        shizuku.runShellSync(cmdStop)
+                    } else if (root.isAvailable) {
+                        if (cmdRemove != null) root.runShell(cmdRemove) {}
+                        root.runShell(cmdStop) {}
+                    }
+                } catch (e: Exception) {}
+
+                try {
+                    activityManager.killBackgroundProcesses(task.packageName)
+                } catch (e: Exception) {}
+            }
+
+            withContext(Dispatchers.Main) {
+                PerfectServer.dock?.clearRunningTasks()
+            }
+        }
     }
 
     /**

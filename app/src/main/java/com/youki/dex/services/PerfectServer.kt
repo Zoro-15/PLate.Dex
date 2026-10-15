@@ -326,6 +326,26 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
     private var maxAppsLandscape = 0
     private lateinit var context: Context
     internal var tasks: ArrayList<AppTask> = ArrayList()
+    val activeSessionApps = LinkedHashSet<String>()
+
+    fun trackSessionApp(pkg: String) {
+        synchronized(activeSessionApps) {
+            activeSessionApps.remove(pkg)
+            activeSessionApps.add(pkg)
+        }
+    }
+
+    fun removeSessionApp(pkg: String) {
+        synchronized(activeSessionApps) {
+            activeSessionApps.remove(pkg)
+        }
+    }
+
+    fun clearSessionApps() {
+        synchronized(activeSessionApps) {
+            activeSessionApps.clear()
+        }
+    }
 
     internal fun getActiveTasks(): ArrayList<AppTask> {
         return synchronized(this) {
@@ -1414,8 +1434,11 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             if (pkg.isNotEmpty()
                 && pkg != packageName
                 && pkg != AppUtils.getCurrentLauncher(packageManager)
-                && !pkg.contains("com.android.systemui")
+                && !pkg.contains("launcher", ignoreCase = true)
+                && !pkg.contains("quickstep", ignoreCase = true)
+                && !pkg.contains("systemui", ignoreCase = true)
             ) {
+                trackSessionApp(pkg)
                 if (AppUtils.currentApp != pkg) {
                     AppUtils.currentApp = pkg
                     // أعد رسم الـ dock ليظهر الخط العريض تحت التطبيق النشط الجديد

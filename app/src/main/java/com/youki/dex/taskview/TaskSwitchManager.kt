@@ -37,10 +37,26 @@ class TaskSwitchManager(
     /**
      * Retrieve ONLY genuinely active / running apps.
      * Prioritizes foreground window, DockService active tasks, and recent sessions.
+    private fun isValidUserApp(pkg: String?, launcherPkg: String): Boolean {
+        if (pkg.isNullOrBlank()) return false
+        if (pkg == context.packageName || pkg == launcherPkg) return false
+        if (pkg.contains("launcher", ignoreCase = true)) return false
+        if (pkg.contains("quickstep", ignoreCase = true)) return false
+        if (pkg.contains("systemui", ignoreCase = true)) return false
+        if (pkg.contains("com.android.system", ignoreCase = true)) return false
+        return try {
+            packageManager.getLaunchIntentForPackage(pkg) != null
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    /**
+     * Retrieve ONLY genuinely active / running apps in this session.
+     * Prevents dumping 24h history of closed apps and eliminates empty tiles.
      */
     fun getTasks(max: Int = 8): ArrayList<AppTask> {
         val launcherPkg = AppUtils.getCurrentLauncher(packageManager)
-        val selfPkg = context.packageName
         val shizuku = ShizukoManager.getInstance(context)
         val shell = com.youki.dex.server.ShellManager
 
@@ -53,54 +69,64 @@ class TaskSwitchManager(
         }
 
         // 2. If system app, use getRunningTasks
-        val isSystemApp = AppUtils.isSystemApp(context, selfPkg)
+        val isSystemApp = AppUtils.isSystemApp(context, context.packageName)
         if (isSystemApp) {
             val running = AppUtils.getRunningTasks(activityManager, packageManager, max)
-            if (running.isNotEmpty()) return running
+                .filter { isValidUserApp(it.packageName, launcherPkg) }
+            if (running.isNotEmpty()) return ArrayList(running)
         }
 
-        // 3. Authoritative active tasks already held and tracked by DockService
-        val dockTasks = PerfectServer.dock?.getActiveTasks()
-        val result = if (!dockTasks.isNullOrEmpty()) {
-            ArrayList(dockTasks.take(max))
-        } else {
-            // 4. Query recent tasks using UsageStatsManager (matches dock's logic)
-            AppUtils.getRecentTasks(context, max)
-        }
+        // 3. Collect active packages from interactive windows and current session tracking
+        val activePkgs = LinkedHashSet<String>()
 
-        // 5. Ensure the current foreground app is always present and at index 0
+        // 3a. Foreground app
         val fgPkg = try {
             activityManager.getRunningTasks(1).firstOrNull()?.topActivity?.packageName
         } catch (e: Exception) {
             null
         } ?: AppUtils.currentApp
 
-        if (!fgPkg.isNullOrEmpty() && fgPkg != selfPkg && fgPkg != launcherPkg && !fgPkg.contains("com.android.systemui")) {
-            val existingIdx = result.indexOfFirst { it.packageName == fgPkg }
-            if (existingIdx > 0) {
-                val fgTask = result.removeAt(existingIdx)
-                result.add(0, fgTask)
-            } else if (existingIdx == -1) {
-                try {
-                    val label = AppUtils.getPackageLabel(context, fgPkg)
-                    val icon = AppUtils.getAppIcon(context, fgPkg)
-                    result.add(0, AppTask(-1, label, fgPkg, icon))
-                } catch (e: Exception) {}
-            }
+        if (isValidUserApp(fgPkg, launcherPkg)) {
+            activePkgs.add(fgPkg!!)
         }
 
-        // 6. If Shizuku is running, filter by live packages
-        if (shizuku.hasPermission) {
-            val livePkgs = shizuku.getRunningPackages().toSet()
-            if (livePkgs.isNotEmpty()) {
-                val filtered = result.filter { livePkgs.contains(it.packageName) || it.packageName == fgPkg }
-                if (filtered.isNotEmpty()) {
-                    return ArrayList(filtered.take(max))
+        // 3b. Interactive windows (freeform / split-screen)
+        try {
+            PerfectServer.dock?.windows?.forEach { win ->
+                val p = win.root?.packageName?.toString()
+                if (isValidUserApp(p, launcherPkg)) {
+                    activePkgs.add(p!!)
+                }
+            }
+        } catch (e: Exception) {}
+
+        // 3c. Tracked session apps (apps opened during this launcher session)
+        PerfectServer.dock?.let { dockService ->
+            synchronized(dockService.activeSessionApps) {
+                dockService.activeSessionApps.reversed().forEach { pkg ->
+                    if (isValidUserApp(pkg, launcherPkg)) {
+                        activePkgs.add(pkg)
+                    }
                 }
             }
         }
 
-        return if (result.size > max) ArrayList(result.take(max)) else result
+        // If no apps have been opened in this session, return empty so "No open tasks" shows
+        if (activePkgs.isEmpty()) {
+            return ArrayList()
+        }
+
+        val result = ArrayList<AppTask>()
+        for (pkg in activePkgs) {
+            if (result.size >= max) break
+            try {
+                val label = AppUtils.getPackageLabel(context, pkg)
+                val icon = AppUtils.getAppIcon(context, pkg) ?: continue
+                result.add(AppTask(-1, label, pkg, icon))
+            } catch (e: Exception) {}
+        }
+
+        return result
     }
 
     /**
@@ -239,6 +265,7 @@ class TaskSwitchManager(
 
             withContext(Dispatchers.Main) {
                 cachedTasks.removeAll { it.packageName == task.packageName }
+                PerfectServer.dock?.removeSessionApp(task.packageName)
                 PerfectServer.dock?.updateRunningTasks(true)
             }
         }
@@ -283,6 +310,7 @@ class TaskSwitchManager(
             }
 
             withContext(Dispatchers.Main) {
+                PerfectServer.dock?.clearSessionApps()
                 PerfectServer.dock?.clearRunningTasks()
             }
         }

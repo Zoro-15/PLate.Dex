@@ -147,7 +147,6 @@ class AdvancedPreferences : PreferenceFragmentCompat() {
                     return@setOnPreferenceChangeListener DeviceUtils.runAsRoot("settings put system ${DeviceUtils.ENABLE_TASKBAR} ${if (isChecked as Boolean) "0" else "1"}") != "error"
                 }
             }
-        }
 
         findPreference<Preference>("backup_preferences")!!.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {

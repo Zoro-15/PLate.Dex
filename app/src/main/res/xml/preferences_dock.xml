@@ -26,6 +26,11 @@
             android:title="@string/enable_nav_recents_title"
             android:defaultValue="true" />
         <SwitchPreferenceCompat
+            android:key="enable_desktop_task_view"
+            android:title="@string/enable_desktop_task_view_title"
+            android:summary="@string/enable_desktop_task_view_summary"
+            android:defaultValue="true" />
+        <SwitchPreferenceCompat
             android:key="enable_nav_assist"
             android:title="@string/enable_nav_assist_title"
             android:defaultValue="false" />

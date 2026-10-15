@@ -269,6 +269,10 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
     private lateinit var searchEntry: LinearLayout
     private lateinit var dockLayout: RelativeLayout
     private lateinit var windowManager: WindowManager
+    private lateinit var riceSwitchHud: com.youki.dex.taskview.RiceSwitchHud
+    private lateinit var altTabOverlay: com.youki.dex.taskview.AltTabOverlay
+    private lateinit var taskViewOverlay: com.youki.dex.taskview.TaskViewOverlay
+    private lateinit var taskSwitchManager: com.youki.dex.taskview.TaskSwitchManager
     private lateinit var appsSeparator: View
     private var appMenuVisible = false
 
@@ -354,6 +358,12 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         secondary = sharedPreferences.getBoolean("prefer_last_display", false)
         context = DeviceUtils.getDisplayContext(this, secondary)
         windowManager = context.getSystemService(WINDOW_SERVICE) as WindowManager
+        riceSwitchHud = com.youki.dex.taskview.RiceSwitchHud(context, windowManager)
+        altTabOverlay = com.youki.dex.taskview.AltTabOverlay(context, windowManager)
+        taskViewOverlay = com.youki.dex.taskview.TaskViewOverlay(context, windowManager)
+        taskSwitchManager = com.youki.dex.taskview.TaskSwitchManager(
+            context, activityManager, packageManager, riceSwitchHud, altTabOverlay, taskViewOverlay
+        )
         wifiManager = applicationContext.getSystemService(WIFI_SERVICE) as WifiManager
         bluetoothManager = getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
         launcherApps = getSystemService(LAUNCHER_APPS_SERVICE) as LauncherApps
@@ -508,17 +518,41 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         }
         assistBtn.setOnClickListener { animateBtn(it) { launchAssistant() } }
 
-        backBtn.setOnClickListener { animateBtn(it) { performGlobalAction(GLOBAL_ACTION_BACK) } }
+        backBtn.setOnClickListener {
+            animateBtn(it) {
+                if (::taskSwitchManager.isInitialized && taskSwitchManager.dismissTaskView()) {
+                    return@animateBtn
+                }
+                performGlobalAction(GLOBAL_ACTION_BACK)
+            }
+        }
         backBtn.setOnLongClickListener {
             performNavAction("enable_nav_back")
             true
         }
-        homeBtn.setOnClickListener { animateBtn(it) { performGlobalAction(GLOBAL_ACTION_HOME) } }
+        homeBtn.setOnClickListener {
+            animateBtn(it) {
+                if (::taskSwitchManager.isInitialized) taskSwitchManager.dismissTaskView()
+                performGlobalAction(GLOBAL_ACTION_HOME)
+            }
+        }
         homeBtn.setOnLongClickListener {
             performNavAction("enable_nav_home")
             true
         }
-        recentBtn.setOnClickListener { animateBtn(it) { performGlobalAction(GLOBAL_ACTION_RECENTS) } }
+        recentBtn.setOnClickListener {
+            animateBtn(it) {
+                if (sharedPreferences.getBoolean("enable_desktop_task_view", true)) {
+                    if (::taskSwitchManager.isInitialized) {
+                        taskSwitchManager.toggleTaskView { targetTask ->
+                            launchApp(getDefaultLaunchMode(targetTask.packageName), targetTask.packageName)
+                        }
+                    }
+                } else {
+                    performGlobalAction(GLOBAL_ACTION_RECENTS)
+                }
+            }
+        }
         recentBtn.setOnLongClickListener {
             performNavAction("enable_nav_recents")
             true
@@ -1448,6 +1482,112 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
 
     //Handle keyboard shortcuts
     override fun onKeyEvent(event: KeyEvent): Boolean {
+        val isCtrl = event.isCtrlPressed ||
+                (event.metaState and (KeyEvent.META_CTRL_ON or KeyEvent.META_CTRL_LEFT_ON or KeyEvent.META_CTRL_RIGHT_ON)) != 0
+
+        // ── Alt-Tab Overlay Interactions ──
+        if (::taskSwitchManager.isInitialized && taskSwitchManager.isAltTabShowing()) {
+            if (event.action == KeyEvent.ACTION_DOWN) {
+                when (event.keyCode) {
+                    KeyEvent.KEYCODE_TAB -> {
+                        if (event.isShiftPressed) taskSwitchManager.selectPreviousAltTab()
+                        else taskSwitchManager.selectNextAltTab()
+                        return true
+                    }
+                    KeyEvent.KEYCODE_DPAD_LEFT -> {
+                        taskSwitchManager.selectPreviousAltTab()
+                        return true
+                    }
+                    KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                        taskSwitchManager.selectNextAltTab()
+                        return true
+                    }
+                    KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> {
+                        taskSwitchManager.commitAltTab()
+                        return true
+                    }
+                    KeyEvent.KEYCODE_ESCAPE -> {
+                        taskSwitchManager.dismissAltTab()
+                        return true
+                    }
+                }
+            } else if (event.action == KeyEvent.ACTION_UP) {
+                // When ALT is released, commit the active Alt-Tab choice
+                if (event.keyCode == KeyEvent.KEYCODE_ALT_LEFT || event.keyCode == KeyEvent.KEYCODE_ALT_RIGHT) {
+                    taskSwitchManager.commitAltTab()
+                    return true
+                }
+            }
+        }
+
+        // ── Task View Overlay Interactions ──
+        if (::taskSwitchManager.isInitialized && taskSwitchManager.isTaskViewShowing()) {
+            if (event.action == KeyEvent.ACTION_DOWN) {
+                if (event.keyCode == KeyEvent.KEYCODE_ESCAPE || event.keyCode == KeyEvent.KEYCODE_BACK) {
+                    taskSwitchManager.dismissTaskView()
+                    return true
+                }
+            }
+        }
+
+        // ── Alt + Tab & Win + Tab Triggers (ACTION_DOWN) ──
+        if (event.action == KeyEvent.ACTION_DOWN) {
+            // Win + Tab triggers Desktop Task View
+            if (event.isMetaPressed && event.keyCode == KeyEvent.KEYCODE_TAB &&
+                sharedPreferences.getBoolean("enable_desktop_task_view", true)
+            ) {
+                if (::taskSwitchManager.isInitialized) {
+                    taskSwitchManager.toggleTaskView { targetTask ->
+                        launchApp(getDefaultLaunchMode(targetTask.packageName), targetTask.packageName)
+                    }
+                    return true
+                }
+            }
+
+            if (event.isAltPressed && event.keyCode == KeyEvent.KEYCODE_TAB &&
+                sharedPreferences.getBoolean("enable_alt_tab", true)
+            ) {
+                if (::taskSwitchManager.isInitialized) {
+                    if (taskSwitchManager.isAltTabShowing()) {
+                        if (event.isShiftPressed) taskSwitchManager.selectPreviousAltTab()
+                        else taskSwitchManager.selectNextAltTab()
+                    } else {
+                        taskSwitchManager.showAltTab { targetTask ->
+                            launchApp(getDefaultLaunchMode(targetTask.packageName), targetTask.packageName)
+                        }
+                    }
+                    return true
+                }
+            }
+
+            // ── Ctrl + Left / Right Arrow Quick Switch (ACTION_DOWN) ──
+            if (isCtrl && sharedPreferences.getBoolean("enable_ctrl_arrow_switch", true)) {
+                if (event.keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                    if (::taskSwitchManager.isInitialized) {
+                        taskSwitchManager.switchRecentApp(direction = -1) { targetTask ->
+                            launchApp(getDefaultLaunchMode(targetTask.packageName), targetTask.packageName)
+                        }
+                        return true
+                    }
+                } else if (event.keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                    if (::taskSwitchManager.isInitialized) {
+                        taskSwitchManager.switchRecentApp(direction = 1) { targetTask ->
+                            launchApp(getDefaultLaunchMode(targetTask.packageName), targetTask.packageName)
+                        }
+                        return true
+                    }
+                }
+            }
+        }
+
+        // Consume ACTION_UP for Ctrl+Left / Ctrl+Right so foreground app doesn't receive stray DPAD events
+        if (event.action == KeyEvent.ACTION_UP && isCtrl &&
+            sharedPreferences.getBoolean("enable_ctrl_arrow_switch", true) &&
+            (event.keyCode == KeyEvent.KEYCODE_DPAD_LEFT || event.keyCode == KeyEvent.KEYCODE_DPAD_RIGHT)
+        ) {
+            return true
+        }
+
         if (event.action == KeyEvent.ACTION_UP) {
             if (event.isAltPressed) {
                 if (event.keyCode == KeyEvent.KEYCODE_L && sharedPreferences.getBoolean(
@@ -1618,7 +1758,15 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
                         false
                     )
                 ) {
-                    performGlobalAction(GLOBAL_ACTION_RECENTS)
+                    if (sharedPreferences.getBoolean("enable_desktop_task_view", true)) {
+                        if (::taskSwitchManager.isInitialized) {
+                            taskSwitchManager.toggleTaskView { targetTask ->
+                                launchApp(getDefaultLaunchMode(targetTask.packageName), targetTask.packageName)
+                            }
+                        }
+                    } else {
+                        performGlobalAction(GLOBAL_ACTION_RECENTS)
+                    }
                     return true
                 } else if (event.keyCode == KeyEvent.KEYCODE_F10 && sharedPreferences.getBoolean(
                         "enable_f10",
@@ -4294,6 +4442,9 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         if (::soundEventsReceiver.isInitialized)
             try { unregisterReceiver(soundEventsReceiver) } catch (e: Exception) {}
         stopResourceMonitor()
+        if (::taskSwitchManager.isInitialized) {
+            taskSwitchManager.destroy()
+        }
         // Fix for Lifecycle: Remove all tracked popup windows first so nothing
         // outlives the service. Then remove core windows in order.
         cleanupAllPopups()

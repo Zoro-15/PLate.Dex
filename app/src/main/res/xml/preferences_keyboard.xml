@@ -63,6 +63,14 @@
 		android:key="enable_ctrl_back"
 		android:title="@string/enable_ctrl_back_title"
 		android:defaultValue="true" />
+        <SwitchPreferenceCompat
+            android:key="enable_ctrl_arrow_switch"
+            android:title="@string/enable_ctrl_arrow_switch_title"
+            android:defaultValue="true" />
+        <SwitchPreferenceCompat
+            android:key="enable_alt_tab"
+            android:title="@string/enable_alt_tab_title"
+            android:defaultValue="true" />
     </PreferenceCategory>
 	
 </PreferenceScreen>

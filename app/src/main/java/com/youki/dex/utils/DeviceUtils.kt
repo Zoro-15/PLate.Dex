@@ -615,17 +615,41 @@ object DeviceUtils {
                 if (targetDisplay != null) context.createDisplayContext(targetDisplay) else context
             }
 
-            val wm = displayContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-            val bounds = wm.currentWindowMetrics.bounds
-            metrics.widthPixels = bounds.width()
-            metrics.heightPixels = bounds.height()
-            metrics.density = displayContext.resources.displayMetrics.density
-            metrics.densityDpi = displayContext.resources.displayMetrics.densityDpi
-        } catch (e: Exception) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val wm = displayContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+                val bounds = wm.currentWindowMetrics.bounds
+                metrics.widthPixels = bounds.width()
+                metrics.heightPixels = bounds.height()
+                metrics.density = displayContext.resources.displayMetrics.density
+                metrics.densityDpi = displayContext.resources.displayMetrics.densityDpi
+            } else {
+                val displayManager = context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+                val targetDisplay = displayManager.getDisplay(displayId)
+                if (targetDisplay != null) {
+                    @Suppress("DEPRECATION")
+                    targetDisplay.getRealMetrics(metrics)
+                } else {
+                    val wm = displayContext.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
+                    @Suppress("DEPRECATION")
+                    wm?.defaultDisplay?.getRealMetrics(metrics)
+                }
+            }
+        } catch (e: Throwable) {
             // Fallback only if the modern API is somehow unavailable —
             // still no manual width/height "correction" logic here.
-            val dm = context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
-            dm.getDisplay(displayId)?.getMetrics(metrics)
+            try {
+                val dm = context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+                @Suppress("DEPRECATION")
+                dm.getDisplay(displayId)?.getRealMetrics(metrics)
+            } catch (t: Throwable) {
+                val dm = context.resources.displayMetrics
+                metrics.setTo(dm)
+            }
+        }
+
+        if (metrics.widthPixels == 0 || metrics.heightPixels == 0) {
+            val dm = context.resources.displayMetrics
+            metrics.setTo(dm)
         }
 
         return metrics

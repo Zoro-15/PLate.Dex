@@ -170,7 +170,11 @@ object DeviceUtils {
         } catch (e: Exception) {}
     }
 
+    @Volatile
+    private var hasSetOrientationPermission: Boolean? = null
+
     fun freezeRotation(landscape: Boolean) {
+        if (hasSetOrientationPermission == false) return
         try {
             val rotation = if (landscape) android.view.Surface.ROTATION_90 else android.view.Surface.ROTATION_0
             val serviceManager = Class.forName("android.os.ServiceManager")
@@ -186,7 +190,15 @@ object DeviceUtils {
                 val thaw = wm.javaClass.getMethod("thawRotation")
                 thaw.invoke(wm)
             }
-        } catch (e: Exception) {}
+            hasSetOrientationPermission = true
+        } catch (e: Throwable) {
+            val cause = e.cause ?: e
+            if (cause is SecurityException || e is SecurityException ||
+                cause.message?.contains("SET_ORIENTATION", ignoreCase = true) == true
+            ) {
+                hasSetOrientationPermission = false
+            }
+        }
     }
 
     //Device control

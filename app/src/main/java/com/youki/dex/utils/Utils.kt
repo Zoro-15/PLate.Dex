@@ -12,6 +12,8 @@ import android.graphics.PorterDuffXfermode
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.provider.MediaStore
 import android.view.Display
 import android.view.WindowManager
@@ -208,7 +210,7 @@ object Utils {
             context.contentResolver.openOutputStream(backupUri)?.use { os ->
                 OutputStreamWriter(os, Charsets.UTF_8).use { it.write(sb.toString().trim()) }
             }
-            Toast.makeText(context, R.string.preferences_saved, Toast.LENGTH_SHORT).show()
+            showToast(context, R.string.preferences_saved)
         } catch (e: IOException) { e.printStackTrace() }
     }
 
@@ -237,7 +239,7 @@ object Utils {
                         }
                     }
                 }
-                Toast.makeText(context, R.string.preferences_restored, Toast.LENGTH_SHORT).show()
+                showToast(context, R.string.preferences_restored)
             }
         } catch (e: IOException) { e.printStackTrace() }
     }
@@ -248,4 +250,20 @@ object Utils {
 
     fun dpToPxSystem(dp: Int): Int =
         (dp * android.content.res.Resources.getSystem().displayMetrics.density + 0.5f).toInt()
+
+    fun showToast(context: Context, resId: Int, duration: Int = Toast.LENGTH_SHORT) {
+        Handler(Looper.getMainLooper()).post {
+            try {
+                Toast.makeText(context.applicationContext ?: context, resId, duration).show()
+            } catch (e: Exception) {}
+        }
+    }
+
+    fun showToast(context: Context, message: String, duration: Int = Toast.LENGTH_SHORT) {
+        Handler(Looper.getMainLooper()).post {
+            try {
+                Toast.makeText(context.applicationContext ?: context, message, duration).show()
+            } catch (e: Exception) {}
+        }
+    }
 }

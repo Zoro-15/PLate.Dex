@@ -534,12 +534,13 @@ class AdvancedPreferences : PreferenceFragmentCompat() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         if (resultCode == Activity.RESULT_OK) {
             val data = intent?.data ?: return
+            val appContext = context?.applicationContext ?: return
             // Gap 35: I/O on the IO thread — not the UI thread
             kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
                 if (requestCode == SAVE_REQUEST_CODE)
-                    Utils.backupPreferences(requireContext(), data)
+                    Utils.backupPreferences(appContext, data)
                 else if (requestCode == OPEN_REQUEST_CODE)
-                    Utils.restorePreferences(requireContext(), data)
+                    Utils.restorePreferences(appContext, data)
             }
         }
     }

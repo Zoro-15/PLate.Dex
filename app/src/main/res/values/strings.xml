@@ -298,7 +298,7 @@
     <string name="hide_status_bar_title">Hide status bar</string>
     <string name="hide_status_bar_summary">Hide the top Android status bar for a cleaner desktop look</string>
     <string name="hide_nav_buttons_title">Hide navigation buttons</string>
-    <string name="hide_nav_buttons_summary">Hides Android software navigation buttons. Needs reboot</string>
+    <string name="hide_nav_buttons_summary">Hides Android navigation buttons or gesture pill across all apps</string>
     <string name="disable_taskbar_title">Disable taskbar</string>
     <string name="disable_taskbar_summary">Disables Android\'s taskbar on large screen devices</string>
     <string name="enable_tiling_shortcut">Alt+arrow keys to tile windows</string>

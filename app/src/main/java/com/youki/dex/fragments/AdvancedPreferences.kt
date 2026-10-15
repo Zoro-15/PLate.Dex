@@ -81,8 +81,9 @@ class AdvancedPreferences : PreferenceFragmentCompat() {
         }
 
         val hideNav = findPreference<SwitchPreferenceCompat>("hide_nav_buttons")
+        val prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext())
+        hideNav?.isChecked = prefs.getBoolean("hide_nav_buttons", false)
         val result = DeviceUtils.runAsRoot("cat /system/build.prop")
-        hideNav!!.isChecked = result.contains("qemu.hw.mainkeys=1")
         rootAvailable = result != "error"
 
         findPreference<Preference>("root_category")!!.isEnabled = rootAvailable
@@ -91,7 +92,10 @@ class AdvancedPreferences : PreferenceFragmentCompat() {
             hasWriteSettingsPermission = DeviceUtils.hasWriteSettingsPermission(requireContext())
         }
 
-        if (hasWriteSettingsPermission) {
+        val shizuku = com.youki.dex.utils.ShizukoManager.getInstance(requireContext())
+        val hasPrivilege = hasWriteSettingsPermission || rootAvailable || shizuku.hasPermission
+        findPreference<Preference>("secure_category")?.isEnabled = hasPrivilege
+        if (hasPrivilege) {
             findPreference<Preference>("secure_category")!!.isEnabled = true
 
             findPreference<Preference>("status_icon_blacklist")!!.setOnPreferenceClickListener {
@@ -113,21 +117,25 @@ class AdvancedPreferences : PreferenceFragmentCompat() {
             }
         }
 
-        if (rootAvailable) {
-            hideNav.setOnPreferenceChangeListener { _, newValue ->
-                if (newValue as Boolean) {
-                    val status =
-                        DeviceUtils.runAsRoot("echo qemu.hw.mainkeys=1 >> /system/build.prop")
-                    if (status != "error")
-                        showRebootDialog(requireContext(), false)
-                } else {
-                    val status =
-                        DeviceUtils.runAsRoot("sed -i /qemu.hw.mainkeys=1/d /system/build.prop")
-                    if (status != "error")
-                        showRebootDialog(requireContext(), false)
-                }
-                false
-            }
+        val hideStatusBar = findPreference<SwitchPreferenceCompat>("hide_status_bar")
+
+        hideNav?.setOnPreferenceChangeListener { _, newValue ->
+            androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .edit()
+                .putBoolean("hide_nav_buttons", newValue as Boolean)
+                .apply()
+            DeviceUtils.updateImmersivePolicy(requireContext())
+            true
+        }
+
+        hideStatusBar?.setOnPreferenceChangeListener { _, newValue ->
+            androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .edit()
+                .putBoolean("hide_status_bar", newValue as Boolean)
+                .apply()
+            DeviceUtils.updateImmersivePolicy(requireContext())
+            true
+        }
 
             //ROM specific settings
             if (DeviceUtils.isBliss() && Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {

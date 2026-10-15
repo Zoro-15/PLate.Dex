@@ -112,6 +112,18 @@
             android:summary="@string/disable_heads_up_summary"
             android:title="@string/disable_heads_up" />
 
+        <SwitchPreferenceCompat
+            android:key="hide_status_bar"
+            android:summary="@string/hide_status_bar_summary"
+            android:title="@string/hide_status_bar_title"
+            android:defaultValue="false" />
+
+        <SwitchPreferenceCompat
+            android:key="hide_nav_buttons"
+            android:summary="@string/hide_nav_buttons_summary"
+            android:title="@string/hide_nav_buttons_title"
+            android:defaultValue="false" />
+
     </PreferenceCategory>
 
 
@@ -145,15 +157,7 @@
             android:title="@string/disable_taskbar_title"
             app:isPreferenceVisible="false" />
 
-        <SwitchPreferenceCompat
-            android:key="hide_status_bar"
-            android:summary="@string/hide_status_bar_summary"
-            android:title="@string/hide_status_bar_title"
-            android:defaultValue="false" />
-        <SwitchPreferenceCompat
-            android:key="hide_nav_buttons"
-            android:summary="@string/hide_nav_buttons_summary"
-            android:title="@string/hide_nav_buttons_title" />
+
 
 
         <SwitchPreferenceCompat

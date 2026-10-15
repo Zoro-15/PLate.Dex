@@ -161,12 +161,53 @@ object DeviceUtils {
     }
 
     fun hideStatusBar(context: android.content.Context, hide: Boolean) {
+        updateImmersivePolicy(context)
+    }
+
+    fun updateImmersivePolicy(context: Context) {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val hideStatus = prefs.getBoolean("hide_status_bar", false)
+        val hideNav = prefs.getBoolean("hide_nav_buttons", false)
+
+        val policyValue = when {
+            hideStatus && hideNav -> "immersive.full=*"
+            hideStatus -> "immersive.status=*"
+            hideNav -> "immersive.navigation=*"
+            else -> "null"
+        }
+
+        applyPolicyControl(context, policyValue)
+    }
+
+    fun applyPolicyControl(context: Context, policyValue: String) {
         try {
             android.provider.Settings.Global.putString(
                 context.contentResolver,
                 "policy_control",
-                if (hide) "immersive.full=*" else "null"
+                policyValue
             )
+            return
+        } catch (e: Exception) {}
+
+        val cmd = "settings put global policy_control $policyValue"
+        try {
+            val shell = com.youki.dex.server.ShellManager
+            if (shell.isAvailable) {
+                shell.execSync(cmd)
+                return
+            }
+        } catch (e: Exception) {}
+
+        try {
+            val shizuku = ShizukoManager.getInstance(context)
+            if (shizuku.hasPermission) {
+                shizuku.runShellSync(cmd)
+                return
+            }
+        } catch (e: Exception) {}
+
+        try {
+            runAsRoot(cmd)
         } catch (e: Exception) {}
     }
 

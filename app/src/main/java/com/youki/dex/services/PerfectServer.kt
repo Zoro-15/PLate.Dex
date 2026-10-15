@@ -2032,22 +2032,10 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
                 taskId != -1 -> AppUtils.resizeTask(context, launchMode, taskId, dockHeight)
                 attempt == 1 -> checkTaskCreatedOrRetry(packageName, launchMode, attempt = 2)
                 else -> {
-                    // Both checks failed — this is the "app completely
-                    // fails to open" half of the user report, distinct from
-                    // launchApp's own startActivity try/catch (that one
-                    // catches startActivity() itself throwing; this catches
-                    // it returning normally but the system never actually
-                    // finishing Task creation, e.g. the new process getting
-                    // OOM-killed a moment later on a 3GB-RAM device).
-                    // Nothing to resize, and silently doing nothing here is
-                    // exactly the "app just didn't open, with no
-                    // explanation" behavior being reported — so tell the
-                    // user plainly instead.
-                    Toast.makeText(
-                        this@DockService,
-                        getString(R.string.something_wrong),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    // Task resize lookup timed out or running tasks query is restricted by the OS.
+                    // Do not show a false-positive "Something went wrong" toast because startActivity
+                    // already completed successfully.
+                    android.util.Log.d("DockService", "Could not locate Task to resize for $packageName")
                 }
             }
         }, delayMs)
@@ -2788,8 +2776,8 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             updateRunningTasks(true)
         } else if (preference == "lock_landscape")
             setOrientation()
-        else if (preference == "hide_status_bar")
-            DeviceUtils.hideStatusBar(context, sharedPreferences.getBoolean("hide_status_bar", false))
+        else if (preference == "hide_status_bar" || preference == "hide_nav_buttons")
+            DeviceUtils.updateImmersivePolicy(context)
         else if (preference == "center_running_apps") {
             placeRunningApps()
             updateRunningTasks()

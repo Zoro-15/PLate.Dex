@@ -22,6 +22,8 @@ class TaskViewAdapter(
     private val onTaskClose: (AppTask, Int) -> Unit
 ) : RecyclerView.Adapter<TaskViewAdapter.TaskViewHolder>() {
 
+    private var selectedPosition = -1
+
     class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val root: View = itemView.findViewById(R.id.task_tile_root)
         val cardWindow: View = itemView.findViewById(R.id.task_card_window)
@@ -40,6 +42,7 @@ class TaskViewAdapter(
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val task = tasks[position]
+        val isSelected = position == selectedPosition
 
         // App icons
         holder.previewIcon.setImageDrawable(task.icon)
@@ -56,8 +59,20 @@ class TaskViewAdapter(
             holder.previewIcon.visibility = View.VISIBLE
         }
 
+        // Selection styling
+        if (isSelected) {
+            holder.cardWindow.setBackgroundResource(R.drawable.bg_task_preview_card_selected)
+            holder.root.scaleX = 1.04f
+            holder.root.scaleY = 1.04f
+        } else {
+            holder.cardWindow.setBackgroundResource(R.drawable.bg_task_preview_card)
+            holder.root.scaleX = 1.0f
+            holder.root.scaleY = 1.0f
+        }
+
         // Tapping either preview window or icon badge opens the task
         val clickListener = View.OnClickListener {
+            setSelectedPosition(holder.bindingAdapterPosition)
             onTaskClick(task, holder.root)
         }
         holder.cardWindow.setOnClickListener(clickListener)
@@ -74,16 +89,31 @@ class TaskViewAdapter(
 
     override fun getItemCount(): Int = tasks.size
 
+    fun getSelectedPosition(): Int = selectedPosition
+
+    fun setSelectedPosition(pos: Int) {
+        val prev = selectedPosition
+        selectedPosition = pos.coerceIn(-1, tasks.size - 1)
+        if (prev != -1) notifyItemChanged(prev)
+        if (selectedPosition != -1) notifyItemChanged(selectedPosition)
+    }
+
+    fun getTaskAt(pos: Int): AppTask? = tasks.getOrNull(pos)
+
     fun removeTaskAt(position: Int) {
         if (position in 0 until tasks.size) {
             tasks.removeAt(position)
             notifyItemRemoved(position)
+            if (selectedPosition >= tasks.size) {
+                selectedPosition = tasks.size - 1
+            }
         }
     }
 
     fun clearAll() {
         val count = tasks.size
         tasks.clear()
+        selectedPosition = -1
         notifyItemRangeRemoved(0, count)
     }
 }

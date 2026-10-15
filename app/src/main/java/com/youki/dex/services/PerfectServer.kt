@@ -1565,8 +1565,36 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         // ── Task View Overlay Interactions ──
         if (::taskSwitchManager.isInitialized && taskSwitchManager.isTaskViewShowing()) {
             if (event.action == KeyEvent.ACTION_DOWN) {
-                if (event.keyCode == KeyEvent.KEYCODE_ESCAPE || event.keyCode == KeyEvent.KEYCODE_BACK) {
-                    taskSwitchManager.dismissTaskView()
+                when (event.keyCode) {
+                    KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_DPAD_UP -> {
+                        taskSwitchManager.selectPreviousTaskView()
+                        return true
+                    }
+                    KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_TAB -> {
+                        taskSwitchManager.selectNextTaskView()
+                        return true
+                    }
+                    KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER, KeyEvent.KEYCODE_SPACE -> {
+                        taskSwitchManager.commitTaskViewSelection()
+                        return true
+                    }
+                    KeyEvent.KEYCODE_DEL, KeyEvent.KEYCODE_FORWARD_DEL -> {
+                        taskSwitchManager.closeCurrentTaskView()
+                        return true
+                    }
+                    KeyEvent.KEYCODE_ESCAPE, KeyEvent.KEYCODE_BACK -> {
+                        taskSwitchManager.dismissTaskView()
+                        return true
+                    }
+                }
+            } else if (event.action == KeyEvent.ACTION_UP) {
+                if (event.keyCode == KeyEvent.KEYCODE_DPAD_LEFT || event.keyCode == KeyEvent.KEYCODE_DPAD_UP ||
+                    event.keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || event.keyCode == KeyEvent.KEYCODE_DPAD_DOWN ||
+                    event.keyCode == KeyEvent.KEYCODE_TAB || event.keyCode == KeyEvent.KEYCODE_ENTER ||
+                    event.keyCode == KeyEvent.KEYCODE_NUMPAD_ENTER || event.keyCode == KeyEvent.KEYCODE_SPACE ||
+                    event.keyCode == KeyEvent.KEYCODE_DEL || event.keyCode == KeyEvent.KEYCODE_FORWARD_DEL ||
+                    event.keyCode == KeyEvent.KEYCODE_ESCAPE || event.keyCode == KeyEvent.KEYCODE_BACK
+                ) {
                     return true
                 }
             }

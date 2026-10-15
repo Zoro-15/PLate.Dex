@@ -33,6 +33,9 @@ class TaskViewOverlay(
     private val interpolator = DecelerateInterpolator(1.8f)
     @Volatile private var isDismissing = false
 
+    private var onSelectTaskCallback: ((AppTask) -> Unit)? = null
+    private var onCloseTaskCallback: ((AppTask) -> Unit)? = null
+
     fun isShowing(): Boolean = currentView != null && currentView?.windowToken != null && !isDismissing
 
     fun show(
@@ -42,6 +45,9 @@ class TaskViewOverlay(
         onClearAll: () -> Unit
     ) {
         if (isShowing()) return
+
+        onSelectTaskCallback = onSelectTask
+        onCloseTaskCallback = onCloseTask
 
         if (isDismissing) {
             currentView?.animate()?.cancel()
@@ -117,6 +123,9 @@ class TaskViewOverlay(
                 updateEmptyState(view)
             }
         )
+        if (currentTasks.isNotEmpty()) {
+            adapter?.setSelectedPosition(0)
+        }
         gridRv.adapter = adapter
 
         clearAllBtn.setOnClickListener {
@@ -152,6 +161,43 @@ class TaskViewOverlay(
             .setDuration(240)
             .setInterpolator(interpolator)
             .start()
+    }
+
+    fun selectNext() {
+        val ad = adapter ?: return
+        if (currentTasks.isEmpty()) return
+        val current = ad.getSelectedPosition()
+        val next = (current + 1) % currentTasks.size
+        ad.setSelectedPosition(next)
+        currentView?.findViewById<RecyclerView>(R.id.task_view_grid_rv)?.smoothScrollToPosition(next)
+    }
+
+    fun selectPrevious() {
+        val ad = adapter ?: return
+        if (currentTasks.isEmpty()) return
+        val current = ad.getSelectedPosition()
+        val prev = if (current <= 0) currentTasks.size - 1 else current - 1
+        ad.setSelectedPosition(prev)
+        currentView?.findViewById<RecyclerView>(R.id.task_view_grid_rv)?.smoothScrollToPosition(prev)
+    }
+
+    fun commitSelection() {
+        val ad = adapter ?: return
+        val pos = ad.getSelectedPosition()
+        val task = ad.getTaskAt(pos) ?: currentTasks.firstOrNull() ?: return
+        dismiss()
+        onSelectTaskCallback?.invoke(task)
+    }
+
+    fun closeCurrent() {
+        val ad = adapter ?: return
+        val pos = ad.getSelectedPosition()
+        if (pos in 0 until currentTasks.size) {
+            val task = currentTasks[pos]
+            onCloseTaskCallback?.invoke(task)
+            ad.removeTaskAt(pos)
+            currentView?.let { updateEmptyState(it) }
+        }
     }
 
     private fun updateEmptyState(rootView: View) {

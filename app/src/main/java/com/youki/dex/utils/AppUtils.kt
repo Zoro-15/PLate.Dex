@@ -881,19 +881,28 @@ object AppUtils {
         val result = ArrayList<AppTask>()
 
         try {
-            // am stack list via ShellManager socket (no AIDL)
+            // Try am stack list, or fallback to modern Android 12-15 `cmd activity tasks`
             val shell = com.youki.dex.server.ShellManager
-            val output = if (shell.isAvailable) {
+            var output = if (shell.isAvailable) {
                 shell.execSync("am stack list") ?: ""
             } else {
                 shizuku.runShellSync("am stack list") ?: ""
             }
 
-            // Parse lines like:
-            // Modern: taskId=368: com.cxinventor.file.explorer/com.alphainventor...
-            // Legacy: taskId=42 bounds=[...] baseIntent=com.pkg/.Activity
-            val taskIdRegex = Regex("""taskId=(\d+)""")
-            val pkgRegex = Regex("""(?:taskId=\d+:\s*|baseIntent=|ComponentInfo\{)([a-zA-Z0-9_.]+)""")
+            if (output.isBlank() || output.contains("Unknown command", ignoreCase = true) || output.contains("Error", ignoreCase = true)) {
+                output = if (shell.isAvailable) {
+                    shell.execSync("cmd activity tasks") ?: ""
+                } else {
+                    shizuku.runShellSync("cmd activity tasks") ?: ""
+                }
+            }
+
+            // Parse lines across Android 9 to 15:
+            // Android 12-15: Task id #368 ... cmp=com.pkg/.Activity
+            // Android 9-11:  taskId=368: com.pkg/com.activity
+            // Legacy:        taskId=42 bounds=[...] baseIntent=com.pkg/.Activity
+            val taskIdRegex = Regex("""(?:taskId=|Task id #|Task\{[a-f0-9]+ #)(\d+)""")
+            val pkgRegex = Regex("""(?:taskId=\d+:\s*|baseIntent=|ComponentInfo\{|cmp=|A=)([a-zA-Z0-9_.]+)""")
 
             val seenPkgs = mutableSetOf<String>()
             for (line in output.lines()) {

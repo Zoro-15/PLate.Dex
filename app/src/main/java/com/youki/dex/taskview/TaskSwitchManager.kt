@@ -107,6 +107,16 @@ class TaskSwitchManager(
             }
         }
 
+        // 3d. If Shizuku is available, ensure background session apps are genuinely alive
+        if (shizuku.hasPermission) {
+            val livePkgs = shizuku.getRunningPackages().toSet()
+            if (livePkgs.isNotEmpty()) {
+                activePkgs.retainAll { pkg ->
+                    pkg == fgPkg || livePkgs.contains(pkg) || PerfectServer.dock?.windows?.any { it.root?.packageName == pkg } == true
+                }
+            }
+        }
+
         // If no apps have been opened in this session, return empty so "No open tasks" shows
         if (activePkgs.isEmpty()) {
             return ArrayList()
@@ -208,6 +218,11 @@ class TaskSwitchManager(
             showTaskView(launchAppFn)
         }
     }
+
+    fun selectNextTaskView() = taskViewOverlay.selectNext()
+    fun selectPreviousTaskView() = taskViewOverlay.selectPrevious()
+    fun commitTaskViewSelection() = taskViewOverlay.commitSelection()
+    fun closeCurrentTaskView() = taskViewOverlay.closeCurrent()
 
     fun dismissTaskView(): Boolean {
         if (taskViewOverlay.isShowing()) {

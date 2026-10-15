@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import com.youki.dex.models.AppTask
 import com.youki.dex.services.PerfectServer
 import com.youki.dex.utils.AppUtils
-import com.youki.dex.utils.DeviceUtils
 import com.youki.dex.utils.RootManager
 import com.youki.dex.utils.ShizukoManager
 import kotlinx.coroutines.CoroutineScope
@@ -34,9 +33,6 @@ class TaskSwitchManager(
     private var currentIndex = 0
     private var lastSwitchTime = 0L
 
-    /**
-     * Retrieve ONLY genuinely active / running apps.
-     * Prioritizes foreground window, DockService active tasks, and recent sessions.
     private fun isValidUserApp(pkg: String?, launcherPkg: String): Boolean {
         if (pkg.isNullOrBlank()) return false
         if (pkg == context.packageName || pkg == launcherPkg) return false
@@ -173,7 +169,6 @@ class TaskSwitchManager(
 
         altTabOverlay.show(tasks, startIndex = startIdx) { selectedTask ->
             switchToTask(selectedTask, launchAppFn)
-            riceSwitchHud.show(selectedTask, tasks.indexOf(selectedTask).coerceAtLeast(0), tasks.size, 1)
         }
     }
 

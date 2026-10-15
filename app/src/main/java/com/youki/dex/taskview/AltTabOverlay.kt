@@ -29,8 +29,9 @@ class AltTabOverlay(private val context: Context, private val windowManager: Win
     private var selectedIndex = 0
     private var onCommitCallback: ((AppTask) -> Unit)? = null
     private val interpolator = DecelerateInterpolator(1.8f)
+    @Volatile private var isDismissing = false
 
-    fun isShowing(): Boolean = currentView != null && currentView?.windowToken != null
+    fun isShowing(): Boolean = currentView != null && currentView?.windowToken != null && !isDismissing
 
     fun show(tasks: List<AppTask>, startIndex: Int = 1, onCommit: (AppTask) -> Unit) {
         if (tasks.isEmpty()) return
@@ -38,6 +39,17 @@ class AltTabOverlay(private val context: Context, private val windowManager: Win
         tasksList = tasks
         onCommitCallback = onCommit
         selectedIndex = startIndex.coerceIn(0, tasks.size - 1)
+
+        if (isDismissing) {
+            currentView?.animate()?.cancel()
+            try {
+                if (currentView?.windowToken != null) {
+                    windowManager.removeView(currentView)
+                }
+            } catch (e: Exception) {}
+            currentView = null
+            isDismissing = false
+        }
 
         var view = currentView
         if (view == null || view.windowToken == null) {
@@ -160,8 +172,11 @@ class AltTabOverlay(private val context: Context, private val windowManager: Win
         val view = currentView ?: return
         if (view.windowToken == null) {
             currentView = null
+            isDismissing = false
             return
         }
+        if (isDismissing) return
+        isDismissing = true
 
         view.animate()
             .alpha(0f)
@@ -175,14 +190,19 @@ class AltTabOverlay(private val context: Context, private val windowManager: Win
                             windowManager.removeView(view)
                         }
                     } catch (e: Exception) {}
-                    if (currentView == view) currentView = null
+                    if (currentView == view) {
+                        currentView = null
+                        isDismissing = false
+                    }
                 }
             })
             .start()
     }
 
     fun destroy() {
+        isDismissing = false
         currentView?.let {
+            it.animate()?.cancel()
             try {
                 if (it.windowToken != null) windowManager.removeView(it)
             } catch (e: Exception) {}

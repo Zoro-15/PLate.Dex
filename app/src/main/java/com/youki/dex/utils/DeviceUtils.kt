@@ -161,7 +161,11 @@ object DeviceUtils {
     }
 
     fun hideStatusBar(context: android.content.Context, hide: Boolean) {
-        updateImmersivePolicy(context)
+        if (!hide) {
+            applyPolicyControl(context, "null")
+        } else {
+            updateImmersivePolicy(context)
+        }
     }
 
     fun updateImmersivePolicy(context: Context) {

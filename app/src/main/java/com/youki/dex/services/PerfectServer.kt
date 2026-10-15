@@ -347,12 +347,6 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         }
     }
 
-    internal fun getActiveTasks(): ArrayList<AppTask> {
-        return synchronized(this) {
-            if (tasks.isNotEmpty()) ArrayList(tasks) else ArrayList()
-        }
-    }
-
     internal fun clearRunningTasks() {
         synchronized(this) {
             tasks.clear()
@@ -1556,6 +1550,15 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
                     taskSwitchManager.commitAltTab()
                     return true
                 }
+                // Consume ACTION_UP for navigation keys while Alt-Tab is showing so they don't leak underneath
+                if (event.keyCode == KeyEvent.KEYCODE_TAB ||
+                    event.keyCode == KeyEvent.KEYCODE_DPAD_LEFT || event.keyCode == KeyEvent.KEYCODE_COMMA ||
+                    event.keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || event.keyCode == KeyEvent.KEYCODE_PERIOD ||
+                    event.keyCode == KeyEvent.KEYCODE_ENTER || event.keyCode == KeyEvent.KEYCODE_NUMPAD_ENTER ||
+                    event.keyCode == KeyEvent.KEYCODE_ESCAPE
+                ) {
+                    return true
+                }
             }
         }
 
@@ -1588,13 +1591,8 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
                     (isCtrl && event.keyCode == KeyEvent.KEYCODE_TAB)
             if (isAltTabShortcut && sharedPreferences.getBoolean("enable_alt_tab", true)) {
                 if (::taskSwitchManager.isInitialized) {
-                    if (taskSwitchManager.isAltTabShowing()) {
-                        if (event.isShiftPressed) taskSwitchManager.selectPreviousAltTab()
-                        else taskSwitchManager.selectNextAltTab()
-                    } else {
-                        taskSwitchManager.showAltTab { targetTask ->
-                            launchApp(getDefaultLaunchMode(targetTask.packageName), targetTask.packageName)
-                        }
+                    taskSwitchManager.showAltTab { targetTask ->
+                        launchApp(getDefaultLaunchMode(targetTask.packageName), targetTask.packageName)
                     }
                     return true
                 }

@@ -684,9 +684,13 @@ open class LauncherActivity : BaseFontScaleActivity(), SharedPreferences.OnShare
         //      touches layoutInDisplayCutoutMode at all, so the cutout area
         //      stayed reserved by the system regardless of the fullscreen
         //      flags. Lowering the gate to P closes that gap.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.attributes = window.attributes.also {
                 it.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
+            }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            window.attributes = window.attributes.also {
+                it.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
             }
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {

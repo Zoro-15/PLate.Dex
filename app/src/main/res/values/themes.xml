@@ -113,8 +113,11 @@
              This is the theme-level default applied immediately at startup, before
              LauncherActivity.hideSystemBars() re-applies the same "always" value in
              code (kept there too since some OEM skins only honor the attributes set
-             programmatically at runtime). -->
-        <item name="android:windowLayoutInDisplayCutoutMode">always</item>
+        <!-- Android 10 compatibility fix: "always" is value 3 (API 30+), which crashes on Android 10 (API 29)
+             with UnsupportedOperationException: Unknown windowLayoutInDisplayCutoutMode: 3.
+             "shortEdges" is supported across Android 9, 10, 11+. Runtime code in LauncherActivity
+             upgrades to ALWAYS on API 30+ devices safely. -->
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
         <!-- No window animation for the launcher itself — it sits behind everything -->
         <item name="android:windowAnimationStyle">@null</item>
     </style>

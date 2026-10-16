@@ -16,6 +16,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.youki.dex.R
 import com.youki.dex.livewallpaper.data.WallpaperConfig
+import com.youki.dex.livewallpaper.data.WallpaperConfigRepository
 import com.youki.dex.livewallpaper.engine.VideoEngine
 import com.youki.dex.livewallpaper.service.YoukiGLWallpaperService
 import com.youki.dex.livewallpaper.ui.gallery.GalleryAdapter

@@ -45,11 +45,27 @@ class WallpaperGLRenderer(
         private const val TAG = "WallpaperGLRenderer"
         private const val MAX_TEXTURE_DIMENSION = 3840
 
+        private fun openStream(context: Context, uri: Uri): java.io.InputStream? {
+            return try {
+                if (uri.scheme == "file" || uri.scheme.isNullOrEmpty()) {
+                    val path = uri.path ?: uri.toString()
+                    java.io.File(path).inputStream()
+                } else {
+                    context.contentResolver.openInputStream(uri)
+                }
+            } catch (_: Exception) {
+                try {
+                    context.contentResolver.openInputStream(uri)
+                } catch (_: Exception) {
+                    null
+                }
+            }
+        }
+
         fun decodeSampledBitmap(context: Context, uri: Uri): Bitmap? {
             return try {
-                val cr = context.contentResolver
                 val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-                cr.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, options) } ?: return null
+                openStream(context, uri)?.use { BitmapFactory.decodeStream(it, null, options) } ?: return null
 
                 var sampleSize = 1
                 while (options.outWidth / sampleSize > MAX_TEXTURE_DIMENSION ||
@@ -61,7 +77,7 @@ class WallpaperGLRenderer(
                     inSampleSize = sampleSize
                     inPreferredConfig = Bitmap.Config.ARGB_8888
                 }
-                var bitmap = cr.openInputStream(uri)?.use {
+                var bitmap = openStream(context, uri)?.use {
                     BitmapFactory.decodeStream(it, null, decodeOptions)
                 } ?: return null
 
@@ -83,7 +99,7 @@ class WallpaperGLRenderer(
 
         private fun getExifRotation(context: Context, uri: Uri): Int {
             return try {
-                context.contentResolver.openInputStream(uri)?.use { stream ->
+                openStream(context, uri)?.use { stream ->
                     val exif = android.media.ExifInterface(stream)
                     when (exif.getAttributeInt(android.media.ExifInterface.TAG_ORIENTATION, android.media.ExifInterface.ORIENTATION_NORMAL)) {
                         android.media.ExifInterface.ORIENTATION_ROTATE_90 -> 90

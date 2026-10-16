@@ -168,6 +168,7 @@ class EditorActivity : com.youki.dex.activities.BaseFontScaleActivity(), ColorPi
             // why it isn't declared via android:name on the XML container.
             observeConfig()
             viewModel.load(videoUri)
+            applyCurrentMedia()
         })
     }
 
@@ -347,7 +348,7 @@ class EditorActivity : com.youki.dex.activities.BaseFontScaleActivity(), ColorPi
         }
     }
 
-    private fun applyCurrentMedia(surface: Surface? = activePreviewSurface ?: videoEngine.currentSurface) {
+    private fun applyCurrentMedia(surface: Surface? = activePreviewSurface ?: previewView.currentSurface ?: videoEngine.currentSurface) {
         val isImage = com.youki.dex.livewallpaper.data.VideoFileStore.isImage(this, videoUri)
         if (isImage) {
             videoEngine.release()
@@ -357,7 +358,7 @@ class EditorActivity : com.youki.dex.activities.BaseFontScaleActivity(), ColorPi
             }
         } else {
             previewView.renderer.clearImage()
-            val targetSurface = surface ?: activePreviewSurface ?: videoEngine.currentSurface
+            val targetSurface = surface ?: activePreviewSurface ?: previewView.currentSurface ?: videoEngine.currentSurface
             if (targetSurface != null) {
                 val audio = viewModel.config.value.audioPlaybackFor(currentOrientation)
                 videoEngine.prepare(

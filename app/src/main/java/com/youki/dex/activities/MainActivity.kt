@@ -220,8 +220,8 @@ class MainActivity : BaseFontScaleActivity(),
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
         val shortcutInfo = ShortcutInfo.Builder(this, "youki_desktop_shortcut")
-            .setShortLabel("Youki DEX")
-            .setLongLabel("Youki Desktop Mode")
+            .setShortLabel("PLate DEX")
+            .setLongLabel("PLate Desktop Mode")
             // ic_youki removed: it's now a wide 16:9 image used only for the
             // onboarding welcome screen (fragment_onboarding_welcome.xml).
             // A pinned home-screen shortcut icon is masked into a square/
@@ -639,7 +639,7 @@ class MainActivity : BaseFontScaleActivity(),
         }
         db.setNeutralButton(R.string.help) { _, _ ->
             AppUtils.openUrl(this,
-                "https://github.com/mrYouki/YoukiDex-Android-Desktop#grant-restricted-permissions")
+                "https://github.com/Zoro-15/PLate.Dex#grant-restricted-permissions")
         }
         db.show()
     }
@@ -667,7 +667,7 @@ class MainActivity : BaseFontScaleActivity(),
         }
         db.setNeutralButton(R.string.help) { _, _ ->
             AppUtils.openUrl(this,
-                "https://github.com/mrYouki/YoukiDex-Android-Desktop#grant-restricted-permissions")
+                "https://github.com/Zoro-15/PLate.Dex#grant-restricted-permissions")
         }
         db.show()
     }

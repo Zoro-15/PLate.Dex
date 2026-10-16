@@ -43,7 +43,7 @@ class HelpAboutPreferences : Fragment(R.layout.fragment_help_about) {
         devUnlocked = prefs.getBoolean("developer_mode_enabled", false)
 
         view.findViewById<View>(R.id.row_github).setOnClickListener {
-            AppUtils.openUrl(requireContext(), "https://github.com/mrYouki/YoukiDex-Android-Desktop")
+            AppUtils.openUrl(requireContext(), "https://github.com/Zoro-15/PLate.Dex")
         }
         view.findViewById<View>(R.id.row_discord).setOnClickListener {
             AppUtils.openUrl(requireContext(), "https://discord.gg/mKkaMxd5M2")
@@ -99,7 +99,8 @@ class HelpAboutPreferences : Fragment(R.layout.fragment_help_about) {
         data class Contributor(val name: String, val role: String, val iconRes: Int)
 
         val developers = mutableListOf(
-            Contributor("Mr Youki", getString(R.string.role_app_developer), R.drawable.contributor_mr_youki),
+            Contributor("Zoro-15", "Lead Developer (PLate.Dex)", R.drawable.ic_user),
+            Contributor("Mr Youki", "Original Creator (YoukiDex)", R.drawable.contributor_mr_youki),
             Contributor("MystiKitsu", getString(R.string.role_developer_assistant), R.drawable.contributor_mystikitsu),
         )
         val yukiUnlocked = PreferenceManager.getDefaultSharedPreferences(requireContext())

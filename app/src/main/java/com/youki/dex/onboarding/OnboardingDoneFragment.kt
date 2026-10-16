@@ -18,13 +18,13 @@ class OnboardingDoneFragment : Fragment(R.layout.fragment_onboarding_done) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.findViewById<View>(R.id.row_onboarding_github).setOnClickListener {
-            AppUtils.openUrl(requireContext(), "https://github.com/mrYouki/YoukiDex-Android-Desktop")
+            AppUtils.openUrl(requireContext(), "https://github.com/Zoro-15/PLate.Dex")
         }
         view.findViewById<View>(R.id.row_onboarding_discord).setOnClickListener {
             AppUtils.openUrl(requireContext(), "https://discord.gg/mKkaMxd5M2")
         }
         view.findViewById<View>(R.id.row_onboarding_report_issue).setOnClickListener {
-            AppUtils.openUrl(requireContext(), "https://github.com/mrYouki/YoukiDex-Android-Desktop/issues")
+            AppUtils.openUrl(requireContext(), "https://github.com/Zoro-15/PLate.Dex/issues")
         }
     }
 }

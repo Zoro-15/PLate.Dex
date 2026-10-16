@@ -35,7 +35,7 @@ class DebugActivity : com.youki.dex.activities.BaseFontScaleActivity() {
         // of the user right where they need to paste it.
         dialog.setNeutralButton(R.string.open_github_issue) { _, _ ->
             copyReportToClipboard(report)
-            AppUtils.openUrl(this, "https://github.com/mrYouki/YoukiDex-Android-Desktop/issues")
+            AppUtils.openUrl(this, "https://github.com/Zoro-15/PLate.Dex/issues")
             finish()
         }
         dialog.setNegativeButton(R.string.open_again) { _, _ ->
@@ -48,7 +48,7 @@ class DebugActivity : com.youki.dex.activities.BaseFontScaleActivity() {
 
     private fun copyReportToClipboard(report: String) {
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        clipboard.setPrimaryClip(ClipData.newPlainText("YoukiDex crash log", report))
+        clipboard.setPrimaryClip(ClipData.newPlainText("PLate.Dex crash log", report))
         // No need to show a toast on Android 13+ (API 33+) — the system
         // already shows its own "Copied to clipboard" confirmation there,
         // and showing both would be redundant.

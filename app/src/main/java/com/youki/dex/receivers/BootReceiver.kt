@@ -39,10 +39,10 @@ class BootReceiver : BroadcastReceiver() {
 
         val channel = NotificationChannel(
             channelId,
-            "Youki DEX Boot",
+            "PLate DEX Boot",
             NotificationManager.IMPORTANCE_DEFAULT
         ).apply {
-            description = "Notifies when Youki DEX needs to be re-enabled after reboot"
+            description = "Notifies when PLate DEX needs to be re-enabled after reboot"
         }
         nm.createNotificationChannel(channel)
 
@@ -56,7 +56,7 @@ class BootReceiver : BroadcastReceiver() {
 
         val notification = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_dock)
-            .setContentTitle("Youki DEX")
+            .setContentTitle("PLate DEX")
             .setContentText("Tap to re-enable the dock after reboot")
             .setContentIntent(openAppIntent)
             .setAutoCancel(true)

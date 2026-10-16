@@ -15,5 +15,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "YoukiDex"
+rootProject.name = "PLate.Dex"
 include ':app'

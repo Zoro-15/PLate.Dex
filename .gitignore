@@ -2,6 +2,7 @@ local.properties
 secrets.xml
 *.jks
 *.keystore
+!keystore/debug.keystore
 
 build/
 app/build/

@@ -64,6 +64,11 @@ class HelpAboutPreferences : Fragment(R.layout.fragment_help_about) {
         }
 
         // ── Tapping the version row: runs both counters together ──────────
+        try {
+            val pInfo = requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)
+            view.findViewById<TextView>(R.id.app_version_value)?.text = "v${pInfo.versionName}"
+        } catch (e: Exception) {}
+
         view.findViewById<View>(R.id.app_version_title).setOnClickListener {
             handleVersionTap(prefs)
         }

@@ -4,16 +4,82 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.serialization'
 }
 
+def versionPropsFile = rootProject.file('version.properties')
+def versionProps = new Properties()
+if (versionPropsFile.exists()) {
+    versionPropsFile.withInputStream { versionProps.load(it) }
+}
+
+def vMajor = (versionProps['version_major'] ?: "0").toInteger()
+def vMinor = (versionProps['version_minor'] ?: "11").toInteger()
+def vCode = (versionProps['version_code'] ?: (3500 + vMinor)).toInteger()
+
+def ciRunNumber = System.getenv("GITHUB_RUN_NUMBER")
+if (ciRunNumber != null && ciRunNumber.isInteger()) {
+    def runNum = ciRunNumber.toInteger()
+    vMinor = Math.max(vMinor, 10 + runNum)
+    vCode = 3500 + vMinor
+} else {
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'rev-list', '--count', 'HEAD'
+            standardOutput = stdout
+            ignoreExitValue = true
+        }
+        def countStr = stdout.toString().trim()
+        if (countStr.isInteger()) {
+            int gitCount = countStr.toInteger()
+            int offset = Math.max(0, gitCount - 18)
+            vMinor = Math.max(vMinor, 11 + offset)
+            vCode = 3500 + vMinor
+        }
+    } catch (Exception ignored) {}
+}
+
+tasks.register('bumpVersion') {
+    description = "Increments minor version in version.properties"
+    doLast {
+        def propsFile = rootProject.file('version.properties')
+        def props = new Properties()
+        if (propsFile.exists()) {
+            propsFile.withInputStream { props.load(it) }
+        }
+        int curMinor = (props['version_minor'] ?: "11").toInteger()
+        int nextMinor = curMinor + 1
+        props['version_major'] = (props['version_major'] ?: "0").toString()
+        props['version_minor'] = nextMinor.toString()
+        props['version_code'] = (3500 + nextMinor).toString()
+        propsFile.withOutputStream { props.store(it, "PLate.Dex Build Version Configuration") }
+        println "Bumped version to v0.${nextMinor} (versionCode: ${3500 + nextMinor})"
+    }
+}
+
+def calculatedVersionName = "${vMajor}.${vMinor}"
+def calculatedVersionCode = vCode
+
 android {
     namespace "com.youki.dex"
     compileSdk 35
+
+    signingConfigs {
+        plateSign {
+            def keystoreFile = rootProject.file('keystore/debug.keystore')
+            if (keystoreFile.exists()) {
+                storeFile keystoreFile
+                storePassword 'android'
+                keyAlias 'androiddebugkey'
+                keyPassword 'android'
+            }
+        }
+    }
 
     defaultConfig {
         applicationId "com.youki.dex"
         minSdk 26
         targetSdk 35
-        versionCode 3500
-        versionName "3.5"
+        versionCode calculatedVersionCode
+        versionName calculatedVersionName
         multiDexEnabled true
         ndk {
             abiFilters "arm64-v8a", "armeabi-v7a", "x86_64"
@@ -25,9 +91,19 @@ android {
     }
 
     buildTypes {
+        debug {
+            signingConfig signingConfigs.plateSign
+        }
         release {
+            signingConfig signingConfigs.plateSign
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "PLateDex-v${variant.versionName}-${variant.buildType.name}.apk"
         }
     }
 

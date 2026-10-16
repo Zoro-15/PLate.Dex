@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/pill_time_container"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/pill_status_bg"
+    android:gravity="center"
     android:paddingStart="12dp"
     android:paddingEnd="12dp"
-    android:paddingTop="5dp"
-    android:paddingBottom="5dp">
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
 
     <TextClock
         android:id="@+id/pill_time_tv"
@@ -18,4 +19,4 @@
         android:textStyle="bold"
         android:textSize="12sp"
         android:gravity="center" />
-</FrameLayout>
+</LinearLayout>

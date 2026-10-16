@@ -1087,10 +1087,11 @@ To uninstall, remove Device Administrator permission first.</string>
     <string name="status_pills_category">Top Status Pills</string>
     <string name="enable_pill_time_title">Time Pill (Top-Left)</string>
     <string name="enable_pill_time_summary">Show floating time pill in the top-left corner</string>
-    <string name="enable_pill_battery_title">Day &amp; Battery Pill (Top-Right)</string>
-    <string name="enable_pill_battery_summary">Show floating day and battery pill in the top-right corner</string>
+    <string name="enable_pill_battery_title">Status &amp; Battery Pill (Top-Right)</string>
+    <string name="enable_pill_battery_summary">Show floating wifi, signal, and battery pill in the top-right corner</string>
     <string name="pill_transparency_title">Pill Opacity</string>
     <string name="pill_height_title">Pill Height</string>
-    <string name="pill_length_title">Pill Width / Length</string>
+    <string name="pill_time_length_title">Time Pill Width</string>
+    <string name="pill_battery_length_title">Status Pill Width</string>
 
 </resources>

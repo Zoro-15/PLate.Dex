@@ -1,0 +1,27 @@
+<!-- res/drawable/stat_sys_signal_4.xml (4 Clean Stadium Bars) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="15dp"
+    android:viewportWidth="20"
+    android:viewportHeight="15">
+
+    <!-- Bar 1 (4.2dp) -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M 0.5,10.4 H 3.7 A 1.6,1.6 0 0,1 5.3,12.0 V 13.0 A 1.6,1.6 0 0,1 3.7,14.6 H 0.5 A 1.6,1.6 0 0,1 -1.1,13.0 V 12.0 A 1.6,1.6 0 0,1 0.5,10.4 Z" />
+
+    <!-- Bar 2 (7.4dp) -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M 5.1,7.2 H 8.3 A 1.6,1.6 0 0,1 9.9,8.8 V 13.0 A 1.6,1.6 0 0,1 8.3,14.6 H 5.1 A 1.6,1.6 0 0,1 3.5,13.0 V 8.8 A 1.6,1.6 0 0,1 5.1,7.2 Z" />
+
+    <!-- Bar 3 (10.8dp) -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M 9.7,3.8 H 12.9 A 1.6,1.6 0 0,1 14.5,5.4 V 13.0 A 1.6,1.6 0 0,1 12.9,14.6 H 9.7 A 1.6,1.6 0 0,1 8.1,13.0 V 5.4 A 1.6,1.6 0 0,1 9.7,3.8 Z" />
+
+    <!-- Bar 4 (14.2dp) -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M 14.3,0.4 H 17.5 A 1.6,1.6 0 0,1 19.1,2.0 V 13.0 A 1.6,1.6 0 0,1 17.5,14.6 H 14.3 A 1.6,1.6 0 0,1 12.7,13.0 V 2.0 A 1.6,1.6 0 0,1 14.3,0.4 Z" />
+</vector>

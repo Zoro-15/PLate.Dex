@@ -1,0 +1,22 @@
+<!-- res/drawable/stat_sys_battery.xml (Clean, Unbloated Vector Capsule Battery) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="35dp"
+    android:height="15dp"
+    android:viewportWidth="35"
+    android:viewportHeight="15">
+
+    <!-- Capsule Track (Frosted Background) -->
+    <path
+        android:fillColor="#66FFFFFF"
+        android:pathData="M 4,1 H 21.5 A 3.8,3.8 0 0,1 25.3,4.8 V 10.2 A 3.8,3.8 0 0,1 21.5,14 H 4 A 3.8,3.8 0 0,1 0.2,10.2 V 4.8 A 3.8,3.8 0 0,1 4,1 Z" />
+
+    <!-- Delicate Terminal Nipple -->
+    <path
+        android:fillColor="#66FFFFFF"
+        android:pathData="M 26.2,5.5 H 27.4 A 0.6,0.6 0 0,1 28.0,6.1 V 8.9 A 0.6,0.6 0 0,1 27.4,9.5 H 26.2 Z" />
+
+    <!-- Solid Progress Level Fill (40%) -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M 4,1 H 13 V 14 H 4 A 3.8,3.8 0 0,1 0.2,10.2 V 4.8 A 3.8,3.8 0 0,1 4,1 Z" />
+</vector>

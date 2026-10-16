@@ -268,6 +268,9 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
     private var timePillTv: TextClock? = null
     private var batteryPillView: View? = null
     private var batteryPillTv: TextView? = null
+    private var pillWifiIv: ImageView? = null
+    private var pillSignalIv: ImageView? = null
+    private var pillBatteryIv: ImageView? = null
     private var timePillParams: WindowManager.LayoutParams? = null
     private var batteryPillParams: WindowManager.LayoutParams? = null
     private var timeTickReceiver: BroadcastReceiver? = null
@@ -1026,7 +1029,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             sharedPreferences.getBoolean("show_battery_level", false)
         )
         batteryReceiver.onBatteryChanged = { _, _ ->
-            updateDayBatteryPillText()
+            updateBatteryPillContent()
         }
         // FIX #3: ACTION_BATTERY_CHANGED is a sticky broadcast — must use RECEIVER_EXPORTED
         ContextCompat.registerReceiver(
@@ -3606,12 +3609,43 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         }
     }
 
-    private fun updateDayBatteryPillText() {
-        val tv = batteryPillTv ?: return
-        val day = SimpleDateFormat("EEE", Locale.getDefault()).format(Date())
-        val charging = if (::batteryReceiver.isInitialized && batteryReceiver.isCharging) "⚡ " else ""
+    private fun updateBatteryPillContent() {
         val level = if (::batteryReceiver.isInitialized) batteryReceiver.level else 100
-        tv.text = "$day | $charging$level%"
+        val isCharging = ::batteryReceiver.isInitialized && batteryReceiver.isCharging
+
+        // 1. Battery percentage text
+        batteryPillTv?.text = "$level%"
+
+        // 2. Battery icon: charging mode with lightning bolt vs discharging capsule
+        pillBatteryIv?.setImageResource(
+            if (isCharging) R.drawable.stat_sys_battery_charge else R.drawable.stat_sys_battery
+        )
+
+        // 3. Wi-Fi state: highlight when connected, unhighlight (alpha 0.35f) when not connected
+        try {
+            val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as? android.net.ConnectivityManager
+            val isWifiConnected = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val net = cm?.activeNetwork
+                val caps = cm?.getNetworkCapabilities(net)
+                caps?.hasTransport(android.net.NetworkCapabilities.TRANSPORT_WIFI) == true
+            } else {
+                @Suppress("DEPRECATION")
+                cm?.getNetworkInfo(android.net.ConnectivityManager.TYPE_WIFI)?.isConnected == true
+            }
+            pillWifiIv?.alpha = if (isWifiConnected) 1.0f else 0.35f
+        } catch (e: Exception) {
+            pillWifiIv?.alpha = 1.0f
+        }
+
+        // 4. Cellular signal state:
+        try {
+            val tm = getSystemService(Context.TELEPHONY_SERVICE) as? android.telephony.TelephonyManager
+            val isAirplaneMode = Settings.Global.getInt(contentResolver, Settings.Global.AIRPLANE_MODE_ON, 0) != 0
+            val hasSim = tm?.simState == android.telephony.TelephonyManager.SIM_STATE_READY
+            pillSignalIv?.alpha = if (hasSim && !isAirplaneMode) 1.0f else 0.35f
+        } catch (e: Exception) {
+            pillSignalIv?.alpha = 1.0f
+        }
     }
 
     private fun updateStatusPills() {
@@ -3622,12 +3656,17 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             .coerceIn(0.1f, 1f)
         val heightDp = (sharedPreferences.getString("pill_height", "30")?.toIntOrNull() ?: 30)
             .coerceIn(20, 50)
-        val lengthDp = (sharedPreferences.getString("pill_length", "85")?.toIntOrNull() ?: 85)
+        val timeLengthDp = (sharedPreferences.getString("pill_time_length", "75")?.toIntOrNull() ?: 75)
             .coerceIn(40, 200)
+        val batteryLengthDp = (sharedPreferences.getString("pill_battery_length", "115")?.toIntOrNull() ?: 115)
+            .coerceIn(60, 240)
 
         val heightPx = Utils.dpToPx(context, heightDp)
-        val minWidthPx = Utils.dpToPx(context, lengthDp)
+        val timeMinWidthPx = Utils.dpToPx(context, timeLengthDp)
+        val batteryMinWidthPx = Utils.dpToPx(context, batteryLengthDp)
         val cornerRadius = heightPx / 2f
+        val topInsetPx = Utils.dpToPx(context, 4)
+        val sideInsetPx = Utils.dpToPx(context, 10)
 
         // Time Pill (Top-Left)
         if (showTime) {
@@ -3638,7 +3677,8 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             }
             timePillView?.alpha = opacity
             val timeContainer = timePillView?.findViewById<View>(R.id.pill_time_container)
-            timeContainer?.minimumWidth = minWidthPx
+            timeContainer?.minimumWidth = timeMinWidthPx
+            timeContainer?.minimumHeight = heightPx
             val bgTime = GradientDrawable().apply {
                 shape = GradientDrawable.RECTANGLE
                 this.cornerRadius = cornerRadius
@@ -3653,12 +3693,22 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
                     context, secondary
                 ).apply {
                     gravity = Gravity.TOP or Gravity.START
-                    x = Utils.dpToPx(context, 12)
-                    y = Utils.dpToPx(context, 10)
                 }
             }
-            timePillParams?.height = WindowManager.LayoutParams.WRAP_CONTENT
-            timePillParams?.width = WindowManager.LayoutParams.WRAP_CONTENT
+            timePillParams?.apply {
+                flags = flags or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
+                        WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    fitInsetsTypes = 0
+                }
+                x = sideInsetPx
+                y = topInsetPx
+                height = WindowManager.LayoutParams.WRAP_CONTENT
+                width = WindowManager.LayoutParams.WRAP_CONTENT
+            }
 
             if (timePillView?.windowToken == null) {
                 safeAddView(timePillView!!, timePillParams!!)
@@ -3673,16 +3723,20 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             }
         }
 
-        // Battery Pill (Top-Right)
+        // Battery / Status Pill (Top-Right)
         if (showBattery) {
             if (batteryPillView == null) {
                 batteryPillView = LayoutInflater.from(ContextThemeWrapper(context, R.style.AppTheme_Dock))
                     .inflate(R.layout.pill_battery, null)
                 batteryPillTv = batteryPillView!!.findViewById(R.id.pill_battery_tv)
+                pillWifiIv = batteryPillView!!.findViewById(R.id.pill_wifi_iv)
+                pillSignalIv = batteryPillView!!.findViewById(R.id.pill_signal_iv)
+                pillBatteryIv = batteryPillView!!.findViewById(R.id.pill_battery_iv)
             }
             batteryPillView?.alpha = opacity
             val batteryContainer = batteryPillView?.findViewById<View>(R.id.pill_battery_container)
-            batteryContainer?.minimumWidth = minWidthPx
+            batteryContainer?.minimumWidth = batteryMinWidthPx
+            batteryContainer?.minimumHeight = heightPx
             val bgBattery = GradientDrawable().apply {
                 shape = GradientDrawable.RECTANGLE
                 this.cornerRadius = cornerRadius
@@ -3690,7 +3744,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             }
             batteryContainer?.background = bgBattery
 
-            updateDayBatteryPillText()
+            updateBatteryPillContent()
 
             if (batteryPillParams == null) {
                 batteryPillParams = Utils.makeWindowParams(
@@ -3699,12 +3753,22 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
                     context, secondary
                 ).apply {
                     gravity = Gravity.TOP or Gravity.END
-                    x = Utils.dpToPx(context, 12)
-                    y = Utils.dpToPx(context, 10)
                 }
             }
-            batteryPillParams?.height = WindowManager.LayoutParams.WRAP_CONTENT
-            batteryPillParams?.width = WindowManager.LayoutParams.WRAP_CONTENT
+            batteryPillParams?.apply {
+                flags = flags or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
+                        WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    fitInsetsTypes = 0
+                }
+                x = sideInsetPx
+                y = topInsetPx
+                height = WindowManager.LayoutParams.WRAP_CONTENT
+                width = WindowManager.LayoutParams.WRAP_CONTENT
+            }
 
             if (batteryPillView?.windowToken == null) {
                 safeAddView(batteryPillView!!, batteryPillParams!!)
@@ -3719,11 +3783,11 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             }
         }
 
-        // Register time-tick receiver if either pill is active
+        // Register time & connectivity receiver if either pill is active
         if ((showTime || showBattery) && timeTickReceiver == null) {
             timeTickReceiver = object : BroadcastReceiver() {
                 override fun onReceive(context: Context?, intent: Intent?) {
-                    updateDayBatteryPillText()
+                    updateBatteryPillContent()
                 }
             }
             val filter = IntentFilter().apply {
@@ -3731,6 +3795,10 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
                 addAction(Intent.ACTION_DATE_CHANGED)
                 addAction(Intent.ACTION_TIME_CHANGED)
                 addAction(Intent.ACTION_TIMEZONE_CHANGED)
+                @Suppress("DEPRECATION")
+                addAction(android.net.ConnectivityManager.CONNECTIVITY_ACTION)
+                addAction(android.net.wifi.WifiManager.WIFI_STATE_CHANGED_ACTION)
+                addAction(android.net.wifi.WifiManager.NETWORK_STATE_CHANGED_ACTION)
             }
             ContextCompat.registerReceiver(this, timeTickReceiver!!, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
         } else if (!showTime && !showBattery && timeTickReceiver != null) {
@@ -4210,7 +4278,9 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         dateTv.background?.alpha = alpha
 
         // FIX: Color the merged pill groups (btn_bubble_rect) instead of individual buttons
-        for (group in listOf(actionBtnsGroup, navBtnsGroup, statusArea)) {
+        val pillGroups = mutableListOf<View>(actionBtnsGroup, navBtnsGroup, statusArea)
+        if (::pinPill.isInitialized) pillGroups.add(pinPill)
+        for (group in pillGroups) {
             group.background?.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_ATOP)
             group.background?.alpha = alpha
         }

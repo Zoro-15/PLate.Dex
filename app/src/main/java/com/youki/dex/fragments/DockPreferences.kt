@@ -127,21 +127,40 @@ class DockPreferences : PreferenceFragmentCompat() {
             }
         })
 
-        // Pill length slider
-        val pillLength = findPreference<SliderPreference>("pill_length")
-        pillLength?.setOnDialogShownListener(object : SliderPreference.OnDialogShownListener {
+        // Pill time length slider
+        val pillTimeLength = findPreference<SliderPreference>("pill_time_length")
+        pillTimeLength?.setOnDialogShownListener(object : SliderPreference.OnDialogShownListener {
             override fun onDialogShown() {
-                val slider = pillLength.slider ?: return
+                val slider = pillTimeLength.slider ?: return
                 slider.isTickVisible = false
                 slider.labelBehavior = LabelFormatter.LABEL_GONE
                 slider.stepSize = 5f
-                slider.valueFrom = 50f
+                slider.valueFrom = 45f
                 slider.valueTo = 160f
                 slider.value =
-                    (pillLength.sharedPreferences?.getString("pill_length", "85")?.toFloatOrNull() ?: 85f)
+                    (pillTimeLength.sharedPreferences?.getString("pill_time_length", "75")?.toFloatOrNull() ?: 75f)
                         .coerceIn(slider.valueFrom, slider.valueTo)
                 slider.addOnChangeListener { _, value, _ ->
-                    pillLength.sharedPreferences?.edit { putString("pill_length", value.toInt().toString()) }
+                    pillTimeLength.sharedPreferences?.edit { putString("pill_time_length", value.toInt().toString()) }
+                }
+            }
+        })
+
+        // Pill battery/status length slider
+        val pillBatteryLength = findPreference<SliderPreference>("pill_battery_length")
+        pillBatteryLength?.setOnDialogShownListener(object : SliderPreference.OnDialogShownListener {
+            override fun onDialogShown() {
+                val slider = pillBatteryLength.slider ?: return
+                slider.isTickVisible = false
+                slider.labelBehavior = LabelFormatter.LABEL_GONE
+                slider.stepSize = 5f
+                slider.valueFrom = 70f
+                slider.valueTo = 220f
+                slider.value =
+                    (pillBatteryLength.sharedPreferences?.getString("pill_battery_length", "115")?.toFloatOrNull() ?: 115f)
+                        .coerceIn(slider.valueFrom, slider.valueTo)
+                slider.addOnChangeListener { _, value, _ ->
+                    pillBatteryLength.sharedPreferences?.edit { putString("pill_battery_length", value.toInt().toString()) }
                 }
             }
         })

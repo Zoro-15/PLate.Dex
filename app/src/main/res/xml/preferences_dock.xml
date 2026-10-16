@@ -225,9 +225,14 @@
             android:defaultValue="30" />
 
         <com.youki.dex.preferences.SliderPreference
-            android:key="pill_length"
-            android:title="@string/pill_length_title"
-            android:defaultValue="85" />
+            android:key="pill_time_length"
+            android:title="@string/pill_time_length_title"
+            android:defaultValue="75" />
+
+        <com.youki.dex.preferences.SliderPreference
+            android:key="pill_battery_length"
+            android:title="@string/pill_battery_length_title"
+            android:defaultValue="115" />
     </PreferenceCategory>
 
 </PreferenceScreen>

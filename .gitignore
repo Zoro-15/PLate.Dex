@@ -11,6 +11,7 @@ app/build/
 app/rust/youki-engine/target/
 *.log
 *.temp
+build_error_summary.txt
 .git/
 # Security & Keystore Secrets
 password.md

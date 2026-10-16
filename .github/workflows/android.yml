@@ -25,6 +25,26 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
+    - name: Ensure Persistent Keystore
+      run: |
+        if [ ! -f keystore/debug.keystore ] || ! keytool -list -keystore keystore/debug.keystore -storepass android -alias androiddebugkey > /dev/null 2>&1; then
+          echo "Generating valid debug.keystore with keytool..."
+          mkdir -p keystore
+          rm -f keystore/debug.keystore
+          keytool -genkeypair -v \
+            -keystore keystore/debug.keystore \
+            -alias androiddebugkey \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -storepass android \
+            -keypass android \
+            -dname "CN=Android Debug,O=Android,C=US" \
+            -deststoretype pkcs12
+        fi
+        echo "=== Keystore Details ==="
+        keytool -list -v -keystore keystore/debug.keystore -storepass android -alias androiddebugkey
+
     - name: Build APK
       run: |
         set -o pipefail

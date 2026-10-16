@@ -233,6 +233,16 @@
             android:key="pill_battery_length"
             android:title="@string/pill_battery_length_title"
             android:defaultValue="115" />
+
+        <com.youki.dex.preferences.SliderPreference
+            android:key="pill_text_size"
+            android:title="@string/pill_text_size_title"
+            android:defaultValue="12" />
+
+        <com.youki.dex.preferences.SliderPreference
+            android:key="pill_text_weight"
+            android:title="@string/pill_text_weight_title"
+            android:defaultValue="4" />
     </PreferenceCategory>
 
 </PreferenceScreen>

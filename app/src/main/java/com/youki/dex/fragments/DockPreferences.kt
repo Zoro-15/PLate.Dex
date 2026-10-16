@@ -165,6 +165,44 @@ class DockPreferences : PreferenceFragmentCompat() {
             }
         })
 
+        // Pill text size slider
+        val pillTextSize = findPreference<SliderPreference>("pill_text_size")
+        pillTextSize?.setOnDialogShownListener(object : SliderPreference.OnDialogShownListener {
+            override fun onDialogShown() {
+                val slider = pillTextSize.slider ?: return
+                slider.isTickVisible = false
+                slider.labelBehavior = LabelFormatter.LABEL_GONE
+                slider.stepSize = 1f
+                slider.valueFrom = 8f
+                slider.valueTo = 20f
+                slider.value =
+                    (pillTextSize.sharedPreferences?.getString("pill_text_size", "12")?.toFloatOrNull() ?: 12f)
+                        .coerceIn(slider.valueFrom, slider.valueTo)
+                slider.addOnChangeListener { _, value, _ ->
+                    pillTextSize.sharedPreferences?.edit { putString("pill_text_size", value.toInt().toString()) }
+                }
+            }
+        })
+
+        // Pill text boldness slider
+        val pillTextWeight = findPreference<SliderPreference>("pill_text_weight")
+        pillTextWeight?.setOnDialogShownListener(object : SliderPreference.OnDialogShownListener {
+            override fun onDialogShown() {
+                val slider = pillTextWeight.slider ?: return
+                slider.isTickVisible = true
+                slider.labelBehavior = LabelFormatter.LABEL_GONE
+                slider.stepSize = 1f
+                slider.valueFrom = 1f
+                slider.valueTo = 5f
+                slider.value =
+                    (pillTextWeight.sharedPreferences?.getString("pill_text_weight", "4")?.toFloatOrNull() ?: 4f)
+                        .coerceIn(slider.valueFrom, slider.valueTo)
+                slider.addOnChangeListener { _, value, _ ->
+                    pillTextWeight.sharedPreferences?.edit { putString("pill_text_weight", value.toInt().toString()) }
+                }
+            }
+        })
+
         findPreference<Preference>("auto_pin")!!.setOnPreferenceClickListener {
             showAutopinDialog(requireContext())
             false

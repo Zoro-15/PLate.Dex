@@ -267,6 +267,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
     // Floating corner status pills
     private var timePillView: View? = null
     private var timePillTv: TextClock? = null
+    private var datePillTv: TextClock? = null
     private var batteryPillView: View? = null
     private var batteryPillTv: TextView? = null
     private var pillWifiIv: ImageView? = null
@@ -3674,13 +3675,46 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         val topInsetPx = Utils.dpToPx(context, 4)
         val sideInsetPx = Utils.dpToPx(context, 10)
 
+        val textSizeSp = (sharedPreferences.getString("pill_text_size", "12")?.toFloatOrNull() ?: 12f)
+            .coerceIn(8f, 22f)
+        val textWeightLevel = (sharedPreferences.getString("pill_text_weight", "4")?.toIntOrNull() ?: 4)
+            .coerceIn(1, 5)
+
+        fun applyPillTextStyling(tv: TextView?) {
+            tv ?: return
+            tv.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, textSizeSp)
+            val typeface = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                val weight = when (textWeightLevel) {
+                    1 -> 400
+                    2 -> 500
+                    3 -> 700
+                    4, 5 -> 900
+                    else -> 700
+                }
+                android.graphics.Typeface.create(android.graphics.Typeface.SANS_SERIF, weight, false)
+            } else {
+                when (textWeightLevel) {
+                    1 -> android.graphics.Typeface.create("sans-serif", android.graphics.Typeface.NORMAL)
+                    2 -> android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL)
+                    3 -> android.graphics.Typeface.create("sans-serif", android.graphics.Typeface.BOLD)
+                    4, 5 -> android.graphics.Typeface.create("sans-serif-black", android.graphics.Typeface.BOLD)
+                    else -> android.graphics.Typeface.create("sans-serif", android.graphics.Typeface.BOLD)
+                }
+            }
+            tv.typeface = typeface
+            tv.paint.isFakeBoldText = (textWeightLevel == 5)
+        }
+
         // Time Pill (Top-Left)
         if (showTime) {
             if (timePillView == null) {
                 timePillView = LayoutInflater.from(ContextThemeWrapper(context, R.style.AppTheme_Dock))
                     .inflate(R.layout.pill_time, null)
                 timePillTv = timePillView!!.findViewById(R.id.pill_time_tv)
+                datePillTv = timePillView!!.findViewById(R.id.pill_date_tv)
             }
+            applyPillTextStyling(timePillTv)
+            applyPillTextStyling(datePillTv)
             timePillView?.alpha = opacity
             val timeContainer = timePillView?.findViewById<View>(R.id.pill_time_container)
             timeContainer?.minimumWidth = timeMinWidthPx
@@ -3733,6 +3767,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
                 pillSignalIv = batteryPillView!!.findViewById(R.id.pill_signal_iv)
                 pillBatteryIv = batteryPillView!!.findViewById(R.id.pill_battery_iv)
             }
+            applyPillTextStyling(batteryPillTv)
             batteryPillView?.alpha = opacity
             val batteryContainer = batteryPillView?.findViewById<View>(R.id.pill_battery_container)
             batteryContainer?.minimumWidth = batteryMinWidthPx

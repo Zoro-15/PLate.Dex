@@ -39,7 +39,7 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
     fun refresh() {
         viewModelScope.launch(Dispatchers.IO) {
             isLoading.value = true
-            _videos.value = VideoFileStore.listVideos()
+            _videos.value = VideoFileStore.listVideos(getApplication())
             isLoading.value = false
         }
     }

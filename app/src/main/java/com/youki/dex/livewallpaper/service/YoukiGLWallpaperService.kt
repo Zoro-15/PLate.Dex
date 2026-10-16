@@ -1,9 +1,11 @@
 package com.youki.dex.livewallpaper.service
 
+import android.net.Uri
 import android.service.wallpaper.WallpaperService
 import android.util.Log
 import android.view.SurfaceHolder
 import android.view.Surface
+import com.youki.dex.livewallpaper.data.VideoFileStore
 import com.youki.dex.livewallpaper.data.WallpaperConfig
 import com.youki.dex.livewallpaper.data.WallpaperConfigRepository
 import com.youki.dex.livewallpaper.engine.VideoEngine
@@ -88,11 +90,28 @@ class YoukiGLWallpaperService : WallpaperService() {
          */
         private fun onGLSurfaceReady(surface: Surface) {
             pendingSurface = surface
-            pendingVideoUri?.let { uri -> startVideo(uri, surface) }
+            val uri = pendingVideoUri ?: return
+            applyMedia(uri, surface)
         }
 
         private var pendingSurface: Surface? = null
         private var pendingVideoUri: String? = null
+
+        private fun applyMedia(uri: String, surface: Surface?) {
+            if (uri.isBlank()) return
+            if (VideoFileStore.isImage(this@YoukiGLWallpaperService, uri)) {
+                videoEngine.release()
+                renderer.clearCurrentFrame()
+                renderer.setImageUri(this@YoukiGLWallpaperService, Uri.parse(uri)) { _, _ ->
+                    glEngine.requestRender()
+                }
+            } else {
+                renderer.clearImage()
+                if (surface != null) {
+                    startVideo(uri, surface)
+                }
+            }
+        }
 
         /**
          * Phase 5: watches the database — any settings change is reflected immediately without restarting the service.
@@ -120,22 +139,19 @@ class YoukiGLWallpaperService : WallpaperService() {
                     // immediately, same as brightness/contrast/etc. do.
                     glEngine.maxFps = config.maxFps
 
-                    // Fully decoupled from landscape: we read the audio/speed
-                    // settings for the screen's actual current orientation only
-                    // (orientationFor computes it from the real
-                    // screenWidth/screenHeight that the last onSurfaceChanged
-                    // updated) — exactly as already done with Free Transform. No
-                    // reading of the other orientation's settings at all.
-                    val orientation = WallpaperConfig.orientationFor(renderer.screenWidth, renderer.screenHeight)
-                    val audio = config.audioPlaybackFor(orientation)
-                    videoEngine.setMuted(audio.muted)
-                    videoEngine.setSpeed(audio.speed)
-                    videoEngine.setPitch(audio.pitch)
+                    val isImage = VideoFileStore.isImage(this@YoukiGLWallpaperService, config.videoUri)
+                    if (!isImage) {
+                        val orientation = WallpaperConfig.orientationFor(renderer.screenWidth, renderer.screenHeight)
+                        val audio = config.audioPlaybackFor(orientation)
+                        videoEngine.setMuted(audio.muted)
+                        videoEngine.setSpeed(audio.speed)
+                        videoEngine.setPitch(audio.pitch)
+                    }
 
                     if (config.videoUri != currentVideoUri) {
                         currentVideoUri = config.videoUri
                         pendingVideoUri = config.videoUri // always saved, regardless of whether the Surface is ready
-                        pendingSurface?.let { startVideo(config.videoUri, it) }
+                        applyMedia(config.videoUri, pendingSurface)
                     }
                     glEngine.requestRender()
                 }

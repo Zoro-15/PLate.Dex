@@ -49,11 +49,14 @@ class GalleryAdapter(
         val video = getItem(position)
         holder.name.text = video.displayName
 
+        val isImg = video.isImage
         holder.thumb.load(Uri.parse(video.uri), imageLoader) {
             crossfade(true)
-            videoFrameMillis(500) // a frame from half a second in — usually not a black frame
-            placeholder(R.drawable.ic_movie)
-            error(R.drawable.ic_movie)
+            if (!isImg) {
+                videoFrameMillis(500) // a frame from half a second in — usually not a black frame
+            }
+            placeholder(if (isImg) R.drawable.ic_image else R.drawable.ic_movie)
+            error(if (isImg) R.drawable.ic_image else R.drawable.ic_movie)
         }
 
         holder.activeBadge.visibility =

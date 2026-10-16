@@ -27,10 +27,14 @@ class EditorViewModel(app: Application) : AndroidViewModel(app) {
     private val _config = MutableStateFlow(WallpaperConfig.default(""))
     val config: StateFlow<WallpaperConfig> = _config.asStateFlow()
 
+    private val _isImage = MutableStateFlow(false)
+    val isImage: StateFlow<Boolean> = _isImage.asStateFlow()
+
     private var videoUri: String = ""
 
     fun load(uri: String) {
         videoUri = uri
+        _isImage.value = com.youki.dex.livewallpaper.data.VideoFileStore.isImage(getApplication(), uri)
         viewModelScope.launch {
             _config.value = repo.get(uri)
         }

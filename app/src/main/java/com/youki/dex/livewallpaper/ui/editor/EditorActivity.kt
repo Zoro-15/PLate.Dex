@@ -328,7 +328,7 @@ class EditorActivity : com.youki.dex.activities.BaseFontScaleActivity(), ColorPi
 
     /**
      * Wires the currently active previewView (whichever group just bound it)
-     * to VideoEngine — same mechanism as before, just extracted into a
+     * to VideoEngine or loads the static image — same mechanism as before, just extracted into a
      * shared helper since both groups need it identically.
      *
      * FIX (Freeze — GLSurfaceView EGL Context Recreation): this callback
@@ -340,18 +340,34 @@ class EditorActivity : com.youki.dex.activities.BaseFontScaleActivity(), ColorPi
      */
     private fun bindPreviewSurface() {
         previewView.setOnSurfaceReady { surface ->
-            val audio = viewModel.config.value.audioPlaybackFor(currentOrientation)
-            videoEngine.prepare(
-                videoUri = videoUri,
-                outputSurface = surface,
-                muted = true,
-                playbackSpeed = audio.speed,
-                audioPitch = audio.pitch,
-                onSizeChanged = { w, h ->
-                    previewView.renderer.updateVideoSize(w, h)
-                    previewView.requestRender()
-                }
-            )
+            applyCurrentMedia(surface)
+        }
+    }
+
+    private fun applyCurrentMedia(surface: Surface? = videoEngine.currentSurface) {
+        val isImage = com.youki.dex.livewallpaper.data.VideoFileStore.isImage(this, videoUri)
+        if (isImage) {
+            videoEngine.release()
+            previewView.renderer.clearCurrentFrame()
+            previewView.renderer.setImageUri(this, android.net.Uri.parse(videoUri)) { w, h ->
+                previewView.requestRender()
+            }
+        } else {
+            previewView.renderer.clearImage()
+            if (surface != null) {
+                val audio = viewModel.config.value.audioPlaybackFor(currentOrientation)
+                videoEngine.prepare(
+                    videoUri = videoUri,
+                    outputSurface = surface,
+                    muted = true,
+                    playbackSpeed = audio.speed,
+                    audioPitch = audio.pitch,
+                    onSizeChanged = { w, h ->
+                        previewView.renderer.updateVideoSize(w, h)
+                        previewView.requestRender()
+                    }
+                )
+            }
         }
     }
 
@@ -421,20 +437,7 @@ class EditorActivity : com.youki.dex.activities.BaseFontScaleActivity(), ColorPi
         videoUri = newUri
         supportActionBar?.title = newName.ifBlank { getString(R.string.lw_editor_title) }
         viewModel.load(newUri)
-
-        val surface = videoEngine.currentSurface ?: return
-        val audio = viewModel.config.value.audioPlaybackFor(currentOrientation)
-        videoEngine.prepare(
-            videoUri = newUri,
-            outputSurface = surface,
-            muted = true,
-            playbackSpeed = audio.speed,
-            audioPitch = audio.pitch,
-            onSizeChanged = { w, h ->
-                previewView.renderer.updateVideoSize(w, h)
-                previewView.requestRender()
-            }
-        )
+        applyCurrentMedia()
     }
 
     /**

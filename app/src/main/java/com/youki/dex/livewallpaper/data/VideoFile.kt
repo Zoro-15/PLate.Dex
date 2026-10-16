@@ -16,6 +16,9 @@ data class VideoFile(
     val displayName: String,
     val sizeBytes: Long
 ) {
+    val isImage: Boolean
+        get() = VideoFileStore.isImage(uri)
+
     companion object {
         // Resolved issue: dead black screen, no crash, when opening the Editor. this
         // used to be `file.toURI().toString()` — plain java.io.File.toURI(),

@@ -197,124 +197,124 @@
             android:layout_marginBottom="2dp"
             android:text="@string/lw_performance_section" />
 
-        <View android:layout_width="match_parent" android:layout_height="1dp"
-            android:background="?attr/colorOutlineVariant"
-            android:layout_marginTop="12dp" android:layout_marginBottom="4dp"/>
-
-        <!-- ── Max FPS ── -->
-        <!-- Rebuilt correctly this time: this throttles the draw call itself
-             (see WallpaperGLEngine.maxFps's own doc comment) rather than
-             dropping incoming video frames like the old, removed FpsLimiter
-             did — that one is gone for good; this is a new implementation,
-             not its return. 0 = uncapped. -->
+        <!-- ═══ Playback & Audio (visible for videos only) ═══ -->
         <LinearLayout
+            android:id="@+id/u_section_playback_audio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginTop="12dp">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/lw_max_fps"
-                android:textAppearance="?attr/textAppearanceTitleSmall" />
-            <TextView
-                android:id="@+id/u_max_fps_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/lw_max_fps_uncapped"
-                android:textAppearance="?attr/textAppearanceLabelLarge"
-                android:textColor="?attr/colorPrimary" />
-        </LinearLayout>
-        <com.google.android.material.slider.Slider
-            android:id="@+id/u_slider_max_fps"
-            style="@style/StdSlider"
-            android:valueFrom="0" android:valueTo="120" android:value="0"
-            android:stepSize="1" />
+            android:orientation="vertical">
 
-        <!-- ── Playback Speed ── -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginTop="12dp">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/lw_playback_speed"
-                android:textAppearance="?attr/textAppearanceTitleSmall" />
-            <TextView
-                android:id="@+id/u_speed_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="1.0x"
-                android:textAppearance="?attr/textAppearanceLabelLarge"
-                android:textColor="?attr/colorPrimary" />
-        </LinearLayout>
-        <!-- FIX: the same fix, stepSize="0.05" was removed — it used to only
-             allow stopping on exact multiples of 0.05 (1.00, 1.05, 1.10...).
-             Now it's fully free. -->
-        <com.google.android.material.slider.Slider
-            android:id="@+id/u_slider_speed"
-            style="@style/StdSlider"
-            android:valueFrom="0.25" android:valueTo="3.0" android:value="1.0" />
+            <View android:layout_width="match_parent" android:layout_height="1dp"
+                android:background="?attr/colorOutlineVariant"
+                android:layout_marginTop="12dp" android:layout_marginBottom="4dp"/>
 
-        <View android:layout_width="match_parent" android:layout_height="1dp"
-            android:background="?attr/colorOutlineVariant"
-            android:layout_marginTop="12dp" android:layout_marginBottom="4dp"/>
+            <!-- ── Max FPS ── -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="12dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/lw_max_fps"
+                    android:textAppearance="?attr/textAppearanceTitleSmall" />
+                <TextView
+                    android:id="@+id/u_max_fps_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lw_max_fps_uncapped"
+                    android:textAppearance="?attr/textAppearanceLabelLarge"
+                    android:textColor="?attr/colorPrimary" />
+            </LinearLayout>
+            <com.google.android.material.slider.Slider
+                android:id="@+id/u_slider_max_fps"
+                style="@style/StdSlider"
+                android:valueFrom="0" android:valueTo="120" android:value="0"
+                android:stepSize="1" />
 
-        <!-- ── Audio pitch ── fully independent from speed, adjusted
-             manually by the user (1.0x = normal, lower = deeper, higher = sharper) -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginTop="12dp">
-            <TextView
-                android:layout_width="0dp"
+            <!-- ── Playback Speed ── -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/lw_audio_pitch"
-                android:textAppearance="?attr/textAppearanceTitleSmall" />
-            <TextView
-                android:id="@+id/u_pitch_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="1.0x"
-                android:textAppearance="?attr/textAppearanceLabelLarge"
-                android:textColor="?attr/colorPrimary" />
-        </LinearLayout>
-        <com.google.android.material.slider.Slider
-            android:id="@+id/u_slider_pitch"
-            style="@style/StdSlider"
-            android:valueFrom="0.5" android:valueTo="2.0" android:value="1.0" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="12dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/lw_playback_speed"
+                    android:textAppearance="?attr/textAppearanceTitleSmall" />
+                <TextView
+                    android:id="@+id/u_speed_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1.0x"
+                    android:textAppearance="?attr/textAppearanceLabelLarge"
+                    android:textColor="?attr/colorPrimary" />
+            </LinearLayout>
+            <com.google.android.material.slider.Slider
+                android:id="@+id/u_slider_speed"
+                style="@style/StdSlider"
+                android:valueFrom="0.25" android:valueTo="3.0" android:value="1.0" />
 
-        <View android:layout_width="match_parent" android:layout_height="1dp"
-            android:background="?attr/colorOutlineVariant"
-            android:layout_marginTop="12dp" android:layout_marginBottom="4dp"/>
+            <View android:layout_width="match_parent" android:layout_height="1dp"
+                android:background="?attr/colorOutlineVariant"
+                android:layout_marginTop="12dp" android:layout_marginBottom="4dp"/>
 
-        <!-- ── Mute ── -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingTop="12dp">
-            <TextView
-                android:layout_width="0dp"
+            <!-- ── Audio pitch ── -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/lw_muted"
-                android:textAppearance="?attr/textAppearanceTitleSmall" />
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/u_switch_mute"
-                android:layout_width="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="12dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/lw_audio_pitch"
+                    android:textAppearance="?attr/textAppearanceTitleSmall" />
+                <TextView
+                    android:id="@+id/u_pitch_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1.0x"
+                    android:textAppearance="?attr/textAppearanceLabelLarge"
+                    android:textColor="?attr/colorPrimary" />
+            </LinearLayout>
+            <com.google.android.material.slider.Slider
+                android:id="@+id/u_slider_pitch"
+                style="@style/StdSlider"
+                android:valueFrom="0.5" android:valueTo="2.0" android:value="1.0" />
+
+            <View android:layout_width="match_parent" android:layout_height="1dp"
+                android:background="?attr/colorOutlineVariant"
+                android:layout_marginTop="12dp" android:layout_marginBottom="4dp"/>
+
+            <!-- ── Mute ── -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:checked="true" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingTop="12dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/lw_muted"
+                    android:textAppearance="?attr/textAppearanceTitleSmall" />
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/u_switch_mute"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true" />
+            </LinearLayout>
+
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton

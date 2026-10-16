@@ -1,9 +1,15 @@
 package com.youki.dex.livewallpaper.gl
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.graphics.SurfaceTexture
+import android.net.Uri
 import android.opengl.GLES11Ext
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
+import android.opengl.GLUtils
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -35,7 +41,62 @@ class WallpaperGLRenderer(
     private val onFrameAvailable: (() -> Unit)? = null
 ) : GLSurfaceView.Renderer {
 
-    companion object { private const val TAG = "WallpaperGLRenderer" }
+    companion object {
+        private const val TAG = "WallpaperGLRenderer"
+        private const val MAX_TEXTURE_DIMENSION = 3840
+
+        fun decodeSampledBitmap(context: Context, uri: Uri): Bitmap? {
+            return try {
+                val cr = context.contentResolver
+                val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                cr.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, options) } ?: return null
+
+                var sampleSize = 1
+                while (options.outWidth / sampleSize > MAX_TEXTURE_DIMENSION ||
+                    options.outHeight / sampleSize > MAX_TEXTURE_DIMENSION) {
+                    sampleSize *= 2
+                }
+
+                val decodeOptions = BitmapFactory.Options().apply {
+                    inSampleSize = sampleSize
+                    inPreferredConfig = Bitmap.Config.ARGB_8888
+                }
+                var bitmap = cr.openInputStream(uri)?.use {
+                    BitmapFactory.decodeStream(it, null, decodeOptions)
+                } ?: return null
+
+                val rotation = getExifRotation(context, uri)
+                if (rotation != 0) {
+                    val matrix = Matrix().apply { postRotate(rotation.toFloat()) }
+                    val rotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+                    if (rotated != bitmap) {
+                        bitmap.recycle()
+                        bitmap = rotated
+                    }
+                }
+                bitmap
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to decode bitmap from $uri", e)
+                null
+            }
+        }
+
+        private fun getExifRotation(context: Context, uri: Uri): Int {
+            return try {
+                context.contentResolver.openInputStream(uri)?.use { stream ->
+                    val exif = android.media.ExifInterface(stream)
+                    when (exif.getAttributeInt(android.media.ExifInterface.TAG_ORIENTATION, android.media.ExifInterface.ORIENTATION_NORMAL)) {
+                        android.media.ExifInterface.ORIENTATION_ROTATE_90 -> 90
+                        android.media.ExifInterface.ORIENTATION_ROTATE_180 -> 180
+                        android.media.ExifInterface.ORIENTATION_ROTATE_270 -> 270
+                        else -> 0
+                    }
+                } ?: 0
+            } catch (_: Exception) {
+                0
+            }
+        }
+    }
 
     // FIX: onSurfaceCreated() is required to run on the GLThread (a requirement
     // from GLSurfaceView itself), but the code consuming onSurfaceReady (like
@@ -47,6 +108,7 @@ class WallpaperGLRenderer(
     // ── GL handles ────────────────────────────────────────────────────────────
     private var videoProgram = 0
     private var bgProgram    = 0
+    private var imageProgram = 0
 
     private var aPositionLoc = 0
     private var aTexCoordLoc = 0
@@ -58,11 +120,27 @@ class WallpaperGLRenderer(
     private var uContrastLoc   = 0
     private var uSaturationLoc = 0
 
+    private var imgAPositionLoc = 0
+    private var imgATexCoordLoc = 0
+    private var imgUMVPLoc      = 0
+    private var imgUTextureLoc  = 0
+    private var imgUCCEnabledLoc = 0
+    private var imgUBrightnessLoc = 0
+    private var imgUContrastLoc   = 0
+    private var imgUSaturationLoc = 0
+
     private var bgAPositionLoc = 0
     private var bgMVPLoc       = 0
     private var bgColorLoc     = 0
 
     private var oesTextureId = 0
+    private var imageTextureId = 0
+    @Volatile var isImageMode = false
+
+    private val pendingBitmapLock = Object()
+    private var pendingBitmap: Bitmap? = null
+    private var currentBitmap: Bitmap? = null
+
     private lateinit var surfaceTexture: SurfaceTexture
     private val stMatrix = FloatArray(16)
 
@@ -79,6 +157,52 @@ class WallpaperGLRenderer(
     fun updateConfig(newConfig: WallpaperConfig) { config = newConfig }
 
     fun updateVideoSize(w: Int, h: Int) { videoWidth = w; videoHeight = h }
+
+    fun setImageBitmap(bitmap: Bitmap) {
+        synchronized(pendingBitmapLock) {
+            pendingBitmap = bitmap
+            isImageMode = true
+        }
+        updateVideoSize(bitmap.width, bitmap.height)
+    }
+
+    fun setImageUri(context: Context, uri: Uri, onLoaded: ((Int, Int) -> Unit)? = null) {
+        Thread {
+            val bmp = decodeSampledBitmap(context, uri)
+            if (bmp != null) {
+                setImageBitmap(bmp)
+                mainHandler.post { onLoaded?.invoke(bmp.width, bmp.height) }
+            }
+        }.start()
+    }
+
+    fun clearImage() {
+        synchronized(pendingBitmapLock) {
+            pendingBitmap = null
+            currentBitmap = null
+            isImageMode = false
+        }
+    }
+
+    private fun uploadImageTexture(bitmap: Bitmap) {
+        if (imageTextureId != 0) {
+            GLES20.glDeleteTextures(1, intArrayOf(imageTextureId), 0)
+            imageTextureId = 0
+        }
+        val textures = IntArray(1)
+        GLES20.glGenTextures(1, textures, 0)
+        imageTextureId = textures[0]
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, imageTextureId)
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR)
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR)
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE)
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE)
+        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
+        currentBitmap = bitmap
+        isImageMode = true
+        videoWidth = bitmap.width
+        videoHeight = bitmap.height
+    }
 
     /**
      * FIX (black screen until app restart when switching wallpapers): when the
@@ -135,7 +259,9 @@ class WallpaperGLRenderer(
         }
         if (videoProgram != 0) { GLES20.glDeleteProgram(videoProgram); videoProgram = 0 }
         if (bgProgram != 0) { GLES20.glDeleteProgram(bgProgram); bgProgram = 0 }
+        if (imageProgram != 0) { GLES20.glDeleteProgram(imageProgram); imageProgram = 0 }
         if (oesTextureId != 0) { GLES20.glDeleteTextures(1, intArrayOf(oesTextureId), 0); oesTextureId = 0 }
+        if (imageTextureId != 0) { GLES20.glDeleteTextures(1, intArrayOf(imageTextureId), 0); imageTextureId = 0 }
 
         videoProgram = GLProgram.build(Shaders.VERTEX_SHADER, Shaders.FRAGMENT_SHADER)
         aPositionLoc  = GLES20.glGetAttribLocation(videoProgram, "aPosition")
@@ -147,6 +273,16 @@ class WallpaperGLRenderer(
         uBrightnessLoc = GLES20.glGetUniformLocation(videoProgram, "uBrightness")
         uContrastLoc   = GLES20.glGetUniformLocation(videoProgram, "uContrast")
         uSaturationLoc = GLES20.glGetUniformLocation(videoProgram, "uSaturation")
+
+        imageProgram = GLProgram.build(Shaders.IMAGE_VERTEX_SHADER, Shaders.IMAGE_FRAGMENT_SHADER)
+        imgAPositionLoc  = GLES20.glGetAttribLocation(imageProgram, "aPosition")
+        imgATexCoordLoc  = GLES20.glGetAttribLocation(imageProgram, "aTextureCoord")
+        imgUMVPLoc       = GLES20.glGetUniformLocation(imageProgram, "uMVPMatrix")
+        imgUTextureLoc   = GLES20.glGetUniformLocation(imageProgram, "sTexture")
+        imgUCCEnabledLoc = GLES20.glGetUniformLocation(imageProgram, "uColorCorrectionEnabled")
+        imgUBrightnessLoc = GLES20.glGetUniformLocation(imageProgram, "uBrightness")
+        imgUContrastLoc   = GLES20.glGetUniformLocation(imageProgram, "uContrast")
+        imgUSaturationLoc = GLES20.glGetUniformLocation(imageProgram, "uSaturation")
 
         bgProgram = GLProgram.build(Shaders.SOLID_COLOR_VERTEX_SHADER, Shaders.SOLID_COLOR_FRAGMENT_SHADER)
         bgAPositionLoc = GLES20.glGetAttribLocation(bgProgram, "aPosition")
@@ -167,6 +303,10 @@ class WallpaperGLRenderer(
             onFrameAvailable?.invoke()
         }
 
+        if (isImageMode && currentBitmap != null && !currentBitmap!!.isRecycled) {
+            uploadImageTexture(currentBitmap!!)
+        }
+
         val surface = Surface(surfaceTexture)
         mainHandler.post { onSurfaceReady(surface) }
     }
@@ -183,11 +323,22 @@ class WallpaperGLRenderer(
         // surfaceTexture.updateTexImage() on a released object =
         // IllegalStateException/crash. We check released first.
         if (released) return
-        synchronized(frameLock) {
-            if (frameAvailable) {
-                surfaceTexture.updateTexImage()
-                surfaceTexture.getTransformMatrix(stMatrix)
-                frameAvailable = false
+
+        synchronized(pendingBitmapLock) {
+            val bmp = pendingBitmap
+            if (bmp != null && !bmp.isRecycled) {
+                uploadImageTexture(bmp)
+                pendingBitmap = null
+            }
+        }
+
+        if (!isImageMode) {
+            synchronized(frameLock) {
+                if (frameAvailable) {
+                    surfaceTexture.updateTexImage()
+                    surfaceTexture.getTransformMatrix(stMatrix)
+                    frameAvailable = false
+                }
             }
         }
 
@@ -199,8 +350,10 @@ class WallpaperGLRenderer(
         // Redraw a solid quad with the same color (guarantees coverage even if the video is partially transparent)
         drawBackgroundQuad(bg)
 
-        // ── Step 2: draw the video frame on top with the computed MVP matrix ─────────────
-        if (videoWidth > 0 && videoHeight > 0) {
+        // ── Step 2: draw the frame on top with the computed MVP matrix ─────────────
+        if (isImageMode && imageTextureId != 0) {
+            drawImageFrame()
+        } else if (videoWidth > 0 && videoHeight > 0) {
             drawVideoFrame()
         }
     }
@@ -218,6 +371,39 @@ class WallpaperGLRenderer(
         GLES20.glUniform4fv(bgColorLoc, 1, color, 0)
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, Quad.VERTEX_COUNT)
         GLES20.glDisableVertexAttribArray(bgAPositionLoc)
+    }
+
+    private fun drawImageFrame() {
+        GLES20.glUseProgram(imageProgram)
+
+        GLES20.glEnableVertexAttribArray(imgAPositionLoc)
+        Quad.vertexBuffer.position(0)
+        GLES20.glVertexAttribPointer(
+            imgAPositionLoc, Quad.COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, 0, Quad.vertexBuffer
+        )
+
+        GLES20.glEnableVertexAttribArray(imgATexCoordLoc)
+        Quad.imageTexCoordBuffer.position(0)
+        GLES20.glVertexAttribPointer(
+            imgATexCoordLoc, Quad.TEX_COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, 0, Quad.imageTexCoordBuffer
+        )
+
+        val mvp = TransformMatrix.build(config, videoWidth, videoHeight, screenWidth, screenHeight)
+        GLES20.glUniformMatrix4fv(imgUMVPLoc, 1, false, mvp, 0)
+
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, imageTextureId)
+        GLES20.glUniform1i(imgUTextureLoc, 0)
+
+        GLES20.glUniform1i(imgUCCEnabledLoc, if (config.colorCorrectionEnabled) 1 else 0)
+        GLES20.glUniform1f(imgUBrightnessLoc, config.brightness)
+        GLES20.glUniform1f(imgUContrastLoc,   config.contrast)
+        GLES20.glUniform1f(imgUSaturationLoc,  config.saturation)
+
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, Quad.VERTEX_COUNT)
+
+        GLES20.glDisableVertexAttribArray(imgAPositionLoc)
+        GLES20.glDisableVertexAttribArray(imgATexCoordLoc)
     }
 
     private fun drawVideoFrame() {
@@ -311,9 +497,16 @@ class WallpaperGLRenderer(
         // Delete the GL resources if the program is still valid
         if (videoProgram != 0) { GLES20.glDeleteProgram(videoProgram); videoProgram = 0 }
         if (bgProgram != 0) { GLES20.glDeleteProgram(bgProgram); bgProgram = 0 }
+        if (imageProgram != 0) { GLES20.glDeleteProgram(imageProgram); imageProgram = 0 }
         if (oesTextureId != 0) {
             GLES20.glDeleteTextures(1, intArrayOf(oesTextureId), 0)
             oesTextureId = 0
         }
+        if (imageTextureId != 0) {
+            GLES20.glDeleteTextures(1, intArrayOf(imageTextureId), 0)
+            imageTextureId = 0
+        }
+        currentBitmap = null
+        pendingBitmap = null
     }
 }

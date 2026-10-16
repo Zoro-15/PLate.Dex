@@ -81,4 +81,43 @@ object Shaders {
             gl_FragColor = uColor;
         }
     """
+
+    // Shaders for static images (using standard sampler2D instead of samplerExternalOES)
+    const val IMAGE_VERTEX_SHADER = """
+        uniform mat4 uMVPMatrix;
+        attribute vec4 aPosition;
+        attribute vec2 aTextureCoord;
+        varying vec2 vTextureCoord;
+        void main() {
+            gl_Position = uMVPMatrix * aPosition;
+            vTextureCoord = aTextureCoord;
+        }
+    """
+
+    const val IMAGE_FRAGMENT_SHADER = """
+        precision mediump float;
+        varying vec2 vTextureCoord;
+        uniform sampler2D sTexture;
+
+        uniform bool  uColorCorrectionEnabled;
+        uniform float uBrightness;   // 0..2   (1 = neutral)
+        uniform float uContrast;     // 0..2
+        uniform float uSaturation;   // 0..2
+
+        vec3 applyColorCorrection(vec3 color) {
+            color = mix(vec3(0.5), color, uContrast);
+            color *= uBrightness;
+            float luminance = dot(color, vec3(0.299, 0.587, 0.114));
+            color = mix(vec3(luminance), color, uSaturation);
+            return clamp(color, 0.0, 1.0);
+        }
+
+        void main() {
+            vec4 texColor = texture2D(sTexture, vTextureCoord);
+            if (uColorCorrectionEnabled) {
+                texColor.rgb = applyColorCorrection(texColor.rgb);
+            }
+            gl_FragColor = texColor;
+        }
+    """
 }

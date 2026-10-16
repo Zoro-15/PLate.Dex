@@ -42,7 +42,14 @@ class GalleryActivity : com.youki.dex.activities.BaseFontScaleActivity() {
         return computed.coerceAtLeast(MIN_SPAN_COUNT)
     }
 
-    private val pickVideo = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+    private val pickMedia = registerForActivityResult(object : ActivityResultContracts.GetContent() {
+        override fun createIntent(context: android.content.Context, input: String): Intent {
+            return super.createIntent(context, input).apply {
+                type = "*/*"
+                putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("video/*", "image/*"))
+            }
+        }
+    }) { uri ->
         if (uri != null) {
             val name = queryDisplayName(uri)
             viewModel.importVideo(uri, name)
@@ -75,7 +82,7 @@ class GalleryActivity : com.youki.dex.activities.BaseFontScaleActivity() {
         findViewById<androidx.swiperefreshlayout.widget.SwipeRefreshLayout>(R.id.lw_swipe_refresh)
             .setOnRefreshListener { viewModel.refresh() }
 
-        findViewById<View>(R.id.lw_fab_add).setOnClickListener { pickVideo.launch("video/*") }
+        findViewById<View>(R.id.lw_fab_add).setOnClickListener { pickMedia.launch("*/*") }
 
         observeState()
     }
@@ -158,9 +165,18 @@ class GalleryActivity : com.youki.dex.activities.BaseFontScaleActivity() {
     }
 
     private fun queryDisplayName(uri: Uri): String? {
-        return contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+        val nameFromCursor = contentResolver.query(uri, null, null, null, null)?.use { cursor ->
             val idx = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-            if (idx >= 0 && cursor.moveToFirst()) cursor.getString(idx)?.substringBeforeLast(".") else null
+            if (idx >= 0 && cursor.moveToFirst()) cursor.getString(idx) else null
         }
+        val name = nameFromCursor ?: uri.lastPathSegment ?: "wallpaper_${System.currentTimeMillis()}"
+
+        val hasExt = name.substringAfterLast('.', "").isNotBlank() &&
+                     name.substringAfterLast('.', "").length in 2..5
+        if (hasExt) return name
+
+        val mime = contentResolver.getType(uri)
+        val ext = android.webkit.MimeTypeMap.getSingleton().getExtensionFromMimeType(mime)
+        return if (!ext.isNullOrBlank()) "$name.$ext" else if (mime?.startsWith("image/") == true) "$name.jpg" else "$name.mp4"
     }
 }

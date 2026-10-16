@@ -50,6 +50,20 @@ object Quad {
         .asFloatBuffer()
         .apply { put(TEX_COORDS); position(0) }
 
+    // Texture coordinates for static Bitmap uploaded via GLUtils.texImage2D
+    private val IMAGE_TEX_COORDS = floatArrayOf(
+        0f, 0f, // top-left
+        0f, 1f, // bottom-left
+        1f, 0f, // top-right
+        1f, 1f  // bottom-right
+    )
+
+    val imageTexCoordBuffer: FloatBuffer = ByteBuffer
+        .allocateDirect(IMAGE_TEX_COORDS.size * 4)
+        .order(ByteOrder.nativeOrder())
+        .asFloatBuffer()
+        .apply { put(IMAGE_TEX_COORDS); position(0) }
+
     const val VERTEX_COUNT = 4
     const val COORDS_PER_VERTEX = 3
     const val TEX_COORDS_PER_VERTEX = 2

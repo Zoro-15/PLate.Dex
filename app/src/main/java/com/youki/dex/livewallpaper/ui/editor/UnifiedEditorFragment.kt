@@ -101,6 +101,11 @@ class UnifiedEditorFragment : Fragment(R.layout.fragment_ed_unified) {
         val pitchValue    = view.findViewById<android.widget.TextView>(R.id.u_pitch_value)
 
         val btnReset = view.findViewById<MaterialButton>(R.id.u_btn_reset)
+        val sectionPlaybackAudio = view.findViewById<View>(R.id.u_section_playback_audio)
+
+        viewModel.isImage.onEach { isImg ->
+            sectionPlaybackAudio?.visibility = if (isImg) View.GONE else View.VISIBLE
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         // The orientation badge (Portrait/Landscape) was removed from the UI per
         // an explicit request — u_orientation_label no longer exists in the XML,

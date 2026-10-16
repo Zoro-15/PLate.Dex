@@ -171,15 +171,9 @@ class GalleryActivity : com.youki.dex.activities.BaseFontScaleActivity() {
         }
         val name = nameFromCursor ?: uri.lastPathSegment ?: "wallpaper_${System.currentTimeMillis()}"
 
-        val hasExt = name.contains('.') && name.substringAfterLast('.', "").length in 2..5
+        val hasExt = name.substringAfterLast('.', "").isNotBlank() &&
+                     name.substringAfterLast('.', "").length in 2..5
         if (hasExt) return name
-
-        val header = ByteArray(16)
-        val read = try {
-            contentResolver.openInputStream(uri)?.use { it.read(header) } ?: 0
-        } catch (_: Exception) { 0 }
-        val extFromHeader = if (read >= 4) com.youki.dex.livewallpaper.data.VideoFileStore.detectExtensionFromHeader(header) else null
-        if (!extFromHeader.isNullOrBlank()) return "$name.$extFromHeader"
 
         val mime = contentResolver.getType(uri)
         val ext = android.webkit.MimeTypeMap.getSingleton().getExtensionFromMimeType(mime)

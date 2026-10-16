@@ -16,7 +16,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.youki.dex.R
 import com.youki.dex.livewallpaper.data.WallpaperConfig
-import com.youki.dex.livewallpaper.data.WallpaperConfigRepository
 import com.youki.dex.livewallpaper.engine.VideoEngine
 import com.youki.dex.livewallpaper.service.YoukiGLWallpaperService
 import com.youki.dex.livewallpaper.ui.gallery.GalleryAdapter
@@ -169,7 +168,6 @@ class EditorActivity : com.youki.dex.activities.BaseFontScaleActivity(), ColorPi
             // why it isn't declared via android:name on the XML container.
             observeConfig()
             viewModel.load(videoUri)
-            applyCurrentMedia()
         })
     }
 
@@ -349,7 +347,7 @@ class EditorActivity : com.youki.dex.activities.BaseFontScaleActivity(), ColorPi
         }
     }
 
-    private fun applyCurrentMedia(surface: Surface? = activePreviewSurface ?: previewView.currentSurface ?: videoEngine.currentSurface) {
+    private fun applyCurrentMedia(surface: Surface? = activePreviewSurface ?: videoEngine.currentSurface) {
         val isImage = com.youki.dex.livewallpaper.data.VideoFileStore.isImage(this, videoUri)
         if (isImage) {
             videoEngine.release()
@@ -359,7 +357,7 @@ class EditorActivity : com.youki.dex.activities.BaseFontScaleActivity(), ColorPi
             }
         } else {
             previewView.renderer.clearImage()
-            val targetSurface = surface ?: activePreviewSurface ?: previewView.currentSurface ?: videoEngine.currentSurface
+            val targetSurface = surface ?: activePreviewSurface ?: videoEngine.currentSurface
             if (targetSurface != null) {
                 val audio = viewModel.config.value.audioPlaybackFor(currentOrientation)
                 videoEngine.prepare(
@@ -469,11 +467,6 @@ class EditorActivity : com.youki.dex.activities.BaseFontScaleActivity(), ColorPi
      * this, used only to anchor the Snackbar to a currently-visible view.
      */
     private fun requestSetLiveWallpaper(anchorViewId: Int) {
-        val updateIntent = Intent(WallpaperConfigRepository.ACTION_WALLPAPER_CHANGED).apply {
-            setPackage(packageName)
-        }
-        sendBroadcast(updateIntent)
-
         if (isYoukiWallpaperCurrentlyActive()) {
             // The service is already running and watching the database —
             // saving to Room (which already happened before this function was

@@ -28,91 +28,21 @@ object VideoFileStore {
 
     fun isImage(uriString: String): Boolean {
         val clean = Uri.parse(uriString).path ?: uriString
-        if (clean.contains('.')) {
-            val ext = clean.substringAfterLast('.', "").lowercase().substringBefore('?')
-            if (ext in VIDEO_EXTS) return false
-            if (ext in IMAGE_EXTS) return true
-        }
-        val header = readHeader(clean)
-        return header != null && isImageHeader(header)
+        val ext = clean.substringAfterLast('.', "").lowercase().substringBefore('?')
+        return ext in IMAGE_EXTS
     }
 
-    fun isImage(context: Context?, uriString: String): Boolean {
+    fun isImage(context: Context, uriString: String): Boolean {
         if (isImage(uriString)) return true
         val clean = Uri.parse(uriString).path ?: uriString
-        if (clean.contains('.')) {
-            val ext = clean.substringAfterLast('.', "").lowercase().substringBefore('?')
-            if (ext in VIDEO_EXTS) return false
-            if (ext in IMAGE_EXTS) return true
-        }
-        val header = readHeader(uriString, context)
-        if (header != null && isVideoHeader(header)) return false
-        if (header != null && isImageHeader(header)) return true
-        if (context != null) {
-            try {
-                val mime = context.contentResolver.getType(Uri.parse(uriString))
-                if (mime?.startsWith("video/") == true) return false
-                if (mime?.startsWith("image/") == true) return true
-            } catch (_: Exception) {}
-        }
-        return false
-    }
-
-    private fun readHeader(uriOrPath: String, context: Context? = null): ByteArray? {
+        val ext = clean.substringAfterLast('.', "").lowercase().substringBefore('?')
+        if (ext in VIDEO_EXTS) return false
         return try {
-            val uri = Uri.parse(uriOrPath)
-            val stream = if (uri.scheme == "file" || uri.scheme.isNullOrEmpty()) {
-                val rawPath = uri.path ?: uriOrPath
-                val decodedPath = try { Uri.decode(rawPath) } catch (_: Exception) { rawPath }
-                val file = File(decodedPath)
-                if (!file.exists() || !file.isFile) {
-                    if (context != null && uri.scheme != null) {
-                        context.contentResolver.openInputStream(uri)
-                    } else null
-                } else {
-                    file.inputStream()
-                }
-            } else if (context != null) {
-                context.contentResolver.openInputStream(uri) ?: return null
-            } else {
-                null
-            }
-            stream?.use { input ->
-                val buf = ByteArray(16)
-                val read = input.read(buf)
-                if (read > 0) buf else null
-            }
+            val mime = context.contentResolver.getType(Uri.parse(uriString))
+            mime?.startsWith("image/") == true
         } catch (_: Exception) {
-            null
+            false
         }
-    }
-
-    fun isImageHeader(header: ByteArray): Boolean {
-        if (header.size < 3) return false
-        // JPEG: FF D8 FF
-        if ((header[0].toInt() and 0xFF) == 0xFF && (header[1].toInt() and 0xFF) == 0xD8 && (header[2].toInt() and 0xFF) == 0xFF) return true
-        // PNG: 89 50 4E 47
-        if (header.size >= 4 && (header[0].toInt() and 0xFF) == 0x89 && header[1] == 'P'.code.toByte() && header[2] == 'N'.code.toByte() && header[3] == 'G'.code.toByte()) return true
-        // GIF: GIF
-        if (header[0] == 'G'.code.toByte() && header[1] == 'I'.code.toByte() && header[2] == 'F'.code.toByte()) return true
-        // BMP: BM
-        if (header[0] == 'B'.code.toByte() && header[1] == 'M'.code.toByte()) return true
-        // WEBP: RIFF....WEBP
-        if (header.size >= 12 && header[0] == 'R'.code.toByte() && header[1] == 'I'.code.toByte() && header[2] == 'F'.code.toByte() && header[3] == 'F'.code.toByte() &&
-            header[8] == 'W'.code.toByte() && header[9] == 'E'.code.toByte() && header[10] == 'B'.code.toByte() && header[11] == 'P'.code.toByte()) return true
-        return false
-    }
-
-    fun isVideoHeader(header: ByteArray): Boolean {
-        // MP4: 'ftyp' at offset 4
-        if (header.size >= 8 && header[4] == 'f'.code.toByte() && header[5] == 't'.code.toByte() &&
-            header[6] == 'y'.code.toByte() && header[7] == 'p'.code.toByte()) return true
-        // MKV / WebM: 1A 45 DF A3
-        if (header.size >= 4 && (header[0].toInt() and 0xFF) == 0x1A &&
-            (header[1].toInt() and 0xFF) == 0x45 &&
-            (header[2].toInt() and 0xFF) == 0xDF &&
-            (header[3].toInt() and 0xFF) == 0xA3) return true
-        return false
     }
 
     /** Strips characters unsafe for filesystem filenames and caps the length. */
@@ -186,21 +116,14 @@ object VideoFileStore {
 
         val validDirs = searchDirs.filter { it.exists() && it.isDirectory }.distinctBy { it.absolutePath }
 
-        // Automatically detect and fix any previously imported files missing an extension or misnamed as video
+        // Automatically detect and fix any previously imported files missing an extension
         for (dir in validDirs) {
             repairExtensionlessFiles(dir)
         }
 
         val allFiles = mutableListOf<File>()
         for (dir in validDirs) {
-            val files = dir.listFiles { f ->
-                if (!f.isFile) return@listFiles false
-                val ext = f.extension.lowercase()
-                if (ext in ALL_EXTS) return@listFiles true
-                val header = ByteArray(16)
-                val read = try { f.inputStream().use { it.read(header) } } catch (_: Exception) { 0 }
-                read >= 4 && detectExtensionFromHeader(header) != null
-            }
+            val files = dir.listFiles { f -> f.isFile && f.extension.lowercase() in ALL_EXTS }
             if (files != null) {
                 allFiles.addAll(files)
             }
@@ -213,58 +136,65 @@ object VideoFileStore {
     }
 
     /**
-     * Inspects extensionless files and restores their extension using file headers.
-     * Also recovers any video file that was misnamed as an image.
+     * Inspects files without an extension and restores their extension using file headers.
+     * Fixes files previously imported without an extension.
      */
     private fun repairExtensionlessFiles(dir: File) {
         try {
-            val allInDir = dir.listFiles { f -> f.isFile } ?: return
-            for (file in allInDir) {
-                val ext = file.extension.lowercase()
+            val extensionless = dir.listFiles { f -> f.isFile && f.extension.isBlank() } ?: return
+            for (file in extensionless) {
                 val header = ByteArray(16)
-                val read = try {
-                    file.inputStream().use { it.read(header) }
-                } catch (_: Exception) { 0 }
+                val read = file.inputStream().use { it.read(header) }
                 if (read >= 4) {
-                    // Self-healing: if a video was accidentally renamed to an image, restore it to mp4
-                    if (ext in IMAGE_EXTS && isVideoHeader(header)) {
-                        val newFile = File(dir, "${file.nameWithoutExtension}.mp4")
+                    val ext = detectExtensionFromHeader(header)
+                    if (ext != null) {
+                        val newFile = File(dir, "${file.name}.$ext")
                         if (!newFile.exists()) {
                             file.renameTo(newFile)
-                            Log.d(TAG, "Restored misnamed video ${file.name} -> ${newFile.name}")
-                        }
-                        continue
-                    }
-
-                    if (ext.isBlank()) {
-                        val realExt = detectExtensionFromHeader(header)
-                        if (realExt != null) {
-                            val newFile = File(dir, "${file.name}.$realExt")
-                            if (!newFile.exists()) {
-                                file.renameTo(newFile)
-                                Log.d(TAG, "Restored extension for file ${file.name} -> ${newFile.name}")
-                            }
+                            Log.d(TAG, "Restored extension for file ${file.name} -> ${newFile.name}")
                         }
                     }
                 }
             }
         } catch (e: Exception) {
-            Log.w(TAG, "Error inspecting files in $dir", e)
+            Log.w(TAG, "Error inspecting extensionless files in $dir", e)
         }
     }
 
-    fun detectExtensionFromHeader(header: ByteArray): String? {
-        if (isVideoHeader(header)) {
-            if (header.size >= 8 && header[4] == 'f'.code.toByte() && header[5] == 't'.code.toByte()) return "mp4"
+    private fun detectExtensionFromHeader(header: ByteArray): String? {
+        // MP4: 'ftyp' at offset 4
+        if (header.size >= 8 && header[4] == 'f'.code.toByte() && header[5] == 't'.code.toByte() &&
+            header[6] == 'y'.code.toByte() && header[7] == 'p'.code.toByte()) {
+            return "mp4"
+        }
+        // MKV / WebM
+        if (header.size >= 4 && (header[0].toInt() and 0xFF) == 0x1A &&
+            (header[1].toInt() and 0xFF) == 0x45 &&
+            (header[2].toInt() and 0xFF) == 0xDF &&
+            (header[3].toInt() and 0xFF) == 0xA3) {
             return "mkv"
         }
-        if (isImageHeader(header)) {
-            if ((header[0].toInt() and 0xFF) == 0xFF && (header[1].toInt() and 0xFF) == 0xD8) return "jpg"
-            if (header.size >= 4 && (header[0].toInt() and 0xFF) == 0x89) return "png"
-            if (header.size >= 3 && header[0] == 'G'.code.toByte() && header[1] == 'I'.code.toByte() && header[2] == 'F'.code.toByte()) return "gif"
-            if (header.size >= 2 && header[0] == 'B'.code.toByte() && header[1] == 'M'.code.toByte()) return "bmp"
-            if (header.size >= 12 && header[8] == 'W'.code.toByte() && header[9] == 'E'.code.toByte() && header[10] == 'B'.code.toByte() && header[11] == 'P'.code.toByte()) return "webp"
+        // JPEG: FF D8 FF
+        if (header.size >= 3 && (header[0].toInt() and 0xFF) == 0xFF &&
+            (header[1].toInt() and 0xFF) == 0xD8 &&
+            (header[2].toInt() and 0xFF) == 0xFF) {
             return "jpg"
+        }
+        // PNG: 89 50 4E 47
+        if (header.size >= 4 && (header[0].toInt() and 0xFF) == 0x89 &&
+            header[1] == 'P'.code.toByte() && header[2] == 'N'.code.toByte() && header[3] == 'G'.code.toByte()) {
+            return "png"
+        }
+        // GIF: GIF
+        if (header.size >= 3 && header[0] == 'G'.code.toByte() && header[1] == 'I'.code.toByte() && header[2] == 'F'.code.toByte()) {
+            return "gif"
+        }
+        // WEBP: RIFF....WEBP
+        if (header.size >= 12 && header[0] == 'R'.code.toByte() && header[1] == 'I'.code.toByte() &&
+            header[2] == 'F'.code.toByte() && header[3] == 'F'.code.toByte() &&
+            header[8] == 'W'.code.toByte() && header[9] == 'E'.code.toByte() &&
+            header[10] == 'B'.code.toByte() && header[11] == 'P'.code.toByte()) {
+            return "webp"
         }
         return null
     }
@@ -278,20 +208,14 @@ object VideoFileStore {
         val mimeType = resolver.getType(sourceUri)
         val extFromMime = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)
 
-        val header = ByteArray(16)
-        val read = try {
-            resolver.openInputStream(sourceUri)?.use { it.read(header) } ?: 0
-        } catch (_: Exception) { 0 }
-        val extFromHeader = if (read >= 4) detectExtensionFromHeader(header) else null
-
         var safeName = sanitizeFilename(suggestedName?.takeIf { it.isNotBlank() }
             ?: "wallpaper_${System.currentTimeMillis()}")
 
+        // Ensure the filename has an appropriate extension
         val currentExt = safeName.substringAfterLast('.', "")
-        if (currentExt.isBlank() || currentExt !in ALL_EXTS || (currentExt in VIDEO_EXTS && extFromHeader in IMAGE_EXTS)) {
-            val resolvedExt = extFromHeader ?: extFromMime ?: if (mimeType?.startsWith("image/") == true) "jpg" else "mp4"
-            val base = if (currentExt in ALL_EXTS) safeName.substringBeforeLast('.') else safeName
-            safeName = "$base.$resolvedExt"
+        if (currentExt.isBlank() || currentExt !in ALL_EXTS) {
+            val resolvedExt = extFromMime ?: if (mimeType?.startsWith("image/") == true) "jpg" else "mp4"
+            safeName = "$safeName.$resolvedExt"
         }
 
         val candidateDirs = mutableListOf<File>()

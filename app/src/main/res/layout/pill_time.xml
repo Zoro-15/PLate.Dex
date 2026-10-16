@@ -3,46 +3,20 @@
     android:id="@+id/pill_time_container"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_datetime_container"
-    android:elevation="4dp"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:padding="4dp">
+    android:background="@drawable/pill_status_bg"
+    android:gravity="center"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
 
-    <!-- The Date Text Styling -->
-    <TextClock
-        android:id="@+id/pill_date_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginStart="14dp"
-        android:layout_marginEnd="12dp"
-        android:textColor="#FFFFFF"
-        android:textSize="15sp"
-        android:fontFamily="sans-serif-medium"
-        android:letterSpacing="0.03"
-        android:includeFontPadding="false"
-        android:singleLine="true"
-        android:gravity="center"
-        android:format12Hour="EEE, dd/MM"
-        android:format24Hour="EEE, dd/MM" />
-
-    <!-- Translates from bg_time_pill.xml and the Time TextView -->
     <TextClock
         android:id="@+id/pill_time_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:background="@drawable/bg_time_pill"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp"
-        android:textColor="#222222"
-        android:textSize="15sp"
-        android:fontFamily="sans-serif-medium"
-        android:letterSpacing="0.03"
-        android:includeFontPadding="false"
-        android:singleLine="true"
+        android:layout_gravity="center"
+        android:textColor="#FFFFFFFF"
+        android:textStyle="bold"
+        android:textSize="12sp"
         android:gravity="center" />
 </LinearLayout>

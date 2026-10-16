@@ -136,7 +136,7 @@ class DockPreferences : PreferenceFragmentCompat() {
                 slider.labelBehavior = LabelFormatter.LABEL_GONE
                 slider.stepSize = 5f
                 slider.valueFrom = 45f
-                slider.valueTo = 260f
+                slider.valueTo = 160f
                 slider.value =
                     (pillTimeLength.sharedPreferences?.getString("pill_time_length", "75")?.toFloatOrNull() ?: 75f)
                         .coerceIn(slider.valueFrom, slider.valueTo)

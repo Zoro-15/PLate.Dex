@@ -21,14 +21,8 @@ class WallpaperPreviewView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : GLSurfaceView(context, attrs) {
 
-    var currentSurface: Surface? = null
-        private set
-
     val renderer: WallpaperGLRenderer = WallpaperGLRenderer(
-        onSurfaceReady = { surface ->
-            currentSurface = surface
-            onSurfaceReadyCallback?.invoke(surface)
-        }
+        onSurfaceReady = { surface -> onSurfaceReadyCallback?.invoke(surface) }
     )
 
     private var onSurfaceReadyCallback: ((Surface) -> Unit)? = null
@@ -42,6 +36,5 @@ class WallpaperPreviewView @JvmOverloads constructor(
     /** Called once after the GL context is ready — here we bind ExoPlayer to the surface */
     fun setOnSurfaceReady(callback: (Surface) -> Unit) {
         onSurfaceReadyCallback = callback
-        currentSurface?.let(callback)
     }
 }

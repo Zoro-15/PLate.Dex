@@ -45,33 +45,11 @@ class WallpaperGLRenderer(
         private const val TAG = "WallpaperGLRenderer"
         private const val MAX_TEXTURE_DIMENSION = 3840
 
-        private fun openStream(context: Context, uri: Uri): java.io.InputStream? {
-            return try {
-                if (uri.scheme == "file" || uri.scheme.isNullOrEmpty()) {
-                    val rawPath = uri.path ?: uri.toString()
-                    val decodedPath = try { Uri.decode(rawPath) } catch (_: Exception) { rawPath }
-                    val file = java.io.File(decodedPath)
-                    if (file.exists() && file.isFile) {
-                        file.inputStream()
-                    } else {
-                        context.contentResolver.openInputStream(uri)
-                    }
-                } else {
-                    context.contentResolver.openInputStream(uri)
-                }
-            } catch (_: Exception) {
-                try {
-                    context.contentResolver.openInputStream(uri)
-                } catch (_: Exception) {
-                    null
-                }
-            }
-        }
-
         fun decodeSampledBitmap(context: Context, uri: Uri): Bitmap? {
             return try {
+                val cr = context.contentResolver
                 val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-                openStream(context, uri)?.use { BitmapFactory.decodeStream(it, null, options) } ?: return null
+                cr.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, options) } ?: return null
 
                 var sampleSize = 1
                 while (options.outWidth / sampleSize > MAX_TEXTURE_DIMENSION ||
@@ -83,7 +61,7 @@ class WallpaperGLRenderer(
                     inSampleSize = sampleSize
                     inPreferredConfig = Bitmap.Config.ARGB_8888
                 }
-                var bitmap = openStream(context, uri)?.use {
+                var bitmap = cr.openInputStream(uri)?.use {
                     BitmapFactory.decodeStream(it, null, decodeOptions)
                 } ?: return null
 
@@ -105,7 +83,7 @@ class WallpaperGLRenderer(
 
         private fun getExifRotation(context: Context, uri: Uri): Int {
             return try {
-                openStream(context, uri)?.use { stream ->
+                context.contentResolver.openInputStream(uri)?.use { stream ->
                     val exif = android.media.ExifInterface(stream)
                     when (exif.getAttributeInt(android.media.ExifInterface.TAG_ORIENTATION, android.media.ExifInterface.ORIENTATION_NORMAL)) {
                         android.media.ExifInterface.ORIENTATION_ROTATE_90 -> 90
@@ -327,8 +305,6 @@ class WallpaperGLRenderer(
 
         if (isImageMode && currentBitmap != null && !currentBitmap!!.isRecycled) {
             uploadImageTexture(currentBitmap!!)
-        } else if (currentBitmap == null && pendingBitmap == null) {
-            isImageMode = false
         }
 
         val surface = Surface(surfaceTexture)

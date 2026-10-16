@@ -75,47 +75,18 @@ class YoukiGLWallpaperService : WallpaperService() {
             // dependency on a real View/Window.
             glEngine = WallpaperGLEngine(renderer)
 
-            val filter = android.content.IntentFilter(WallpaperConfigRepository.ACTION_WALLPAPER_CHANGED)
-            registerReceiver(wallpaperReceiver, filter)
-
             observeActiveConfig()
-        }
-
-        private val wallpaperReceiver = object : android.content.BroadcastReceiver() {
-            override fun onReceive(context: android.content.Context?, intent: android.content.Intent?) {
-                reloadActive()
-            }
-        }
-
-        private fun reloadActive() {
-            val repo = WallpaperConfigRepository.get(this@YoukiGLWallpaperService)
-            serviceScope.launch {
-                val config = repo.getActive() ?: repo.getActiveOrFallback() ?: return@launch
-                applyConfig(config)
-            }
-        }
-
-        private fun applyConfig(config: WallpaperConfig) {
-            renderer.updateConfig(config)
-            glEngine.maxFps = config.maxFps
-
-            val isImage = VideoFileStore.isImage(this@YoukiGLWallpaperService, config.videoUri)
-            if (!isImage) {
-                val orientation = WallpaperConfig.orientationFor(renderer.screenWidth, renderer.screenHeight)
-                val audio = config.audioPlaybackFor(orientation)
-                videoEngine.setMuted(audio.muted)
-                videoEngine.setSpeed(audio.speed)
-                videoEngine.setPitch(audio.pitch)
-            }
-
-            currentVideoUri = config.videoUri
-            pendingVideoUri = config.videoUri
-            applyMedia(config.videoUri, pendingSurface)
-            glEngine.requestRender()
         }
 
         /**
          * Called the moment the GL context becomes ready — here we pass the Surface to ExoPlayer.
+         *
+         * FIX (Surface vs Flow race): we used to store pendingSurface right after
+         * a one-line startVideo attempt, so if the Flow delivered the config
+         * **before** the Surface was ready, startVideo would silently stop
+         * (pendingSurface still null) with no later retry at all — this was one
+         * of the causes of the infinite loading. Now we store pendingSurface
+         * first, then run any pending videoUri that was waiting on the Surface.
          */
         private fun onGLSurfaceReady(surface: Surface) {
             pendingSurface = surface
@@ -142,13 +113,47 @@ class YoukiGLWallpaperService : WallpaperService() {
             }
         }
 
+        /**
+         * Phase 5: watches the database — any settings change is reflected immediately without restarting the service.
+         *
+         * FIX: before we start watching [observeActive], we make sure there's
+         * actually an isActive=1 setting. If the user opened the live wallpaper
+         * from the system directly (Settings > Wallpaper) without activating a
+         * video from inside the app first, observeActive() used to return null
+         * forever, leaving the system's "Set wallpaper" screen stuck on infinite
+         * loading. Fix: automatically activate the last-added video as a
+         * fallback before we start watching.
+         */
         private fun observeActiveConfig() {
             val repo = WallpaperConfigRepository.get(this@YoukiGLWallpaperService)
             serviceScope.launch {
                 repo.getActiveOrFallback() // ensures isActive=1 exists before watching
                 repo.observeActive().collectLatest { config ->
                     if (config == null) return@collectLatest
-                    applyConfig(config)
+                    renderer.updateConfig(config)
+                    // Per-wallpaper setting (fragment_ed_unified.xml's "Max
+                    // FPS" slider, saved on WallpaperConfig itself) — read
+                    // here on every config update the same way every other
+                    // per-wallpaper setting below is, so switching to a
+                    // different saved wallpaper also switches its FPS cap
+                    // immediately, same as brightness/contrast/etc. do.
+                    glEngine.maxFps = config.maxFps
+
+                    val isImage = VideoFileStore.isImage(this@YoukiGLWallpaperService, config.videoUri)
+                    if (!isImage) {
+                        val orientation = WallpaperConfig.orientationFor(renderer.screenWidth, renderer.screenHeight)
+                        val audio = config.audioPlaybackFor(orientation)
+                        videoEngine.setMuted(audio.muted)
+                        videoEngine.setSpeed(audio.speed)
+                        videoEngine.setPitch(audio.pitch)
+                    }
+
+                    if (config.videoUri != currentVideoUri) {
+                        currentVideoUri = config.videoUri
+                        pendingVideoUri = config.videoUri // always saved, regardless of whether the Surface is ready
+                        applyMedia(config.videoUri, pendingSurface)
+                    }
+                    glEngine.requestRender()
                 }
             }
         }
@@ -245,7 +250,6 @@ class YoukiGLWallpaperService : WallpaperService() {
 
         override fun onDestroy() {
             super.onDestroy()
-            try { unregisterReceiver(wallpaperReceiver) } catch (_: Exception) {}
             serviceScope.cancel()
             // Patched: Crash — wrong teardown order. the old code used to release
             // renderer before glEngine — but glEngine still uses renderer (via

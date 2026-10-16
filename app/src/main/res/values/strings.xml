@@ -1072,7 +1072,22 @@ To uninstall, remove Device Administrator permission first.</string>
     <string name="trackpad_status_error">Not connected</string>
     <string name="trackpad_mode_direct">This Screen</string>
     <string name="trackpad_mode_otg">USB PC (OTG)</string>
-    <string name="trackpad_status_no_display">No screen connected</string>
-    <string name="trackpad_status_accessibility_needed">Enable YoukiDex\'s accessibility service first (Settings)</string>
+    <!-- User Profile Toggle -->
+    <string name="enable_user_btn">Profile Button</string>
+    <string name="enable_user_btn_summary">Show user profile button on the dock</string>
+
+    <!-- Swap Navigation & Pin -->
+    <string name="swap_nav_pin_title">Swap Navigation &amp; Pin Position</string>
+    <string name="swap_nav_pin_summary">Move navigation buttons to the right and pin button to the left</string>
+
+    <!-- Floating Status Pills -->
+    <string name="status_pills_category">Top Status Pills</string>
+    <string name="enable_pill_time_title">Time Pill (Top-Left)</string>
+    <string name="enable_pill_time_summary">Show floating time pill in the top-left corner</string>
+    <string name="enable_pill_battery_title">Day &amp; Battery Pill (Top-Right)</string>
+    <string name="enable_pill_battery_summary">Show floating day and battery pill in the top-right corner</string>
+    <string name="pill_transparency_title">Pill Opacity</string>
+    <string name="pill_height_title">Pill Height</string>
+    <string name="pill_length_title">Pill Width / Length</string>
 
 </resources>

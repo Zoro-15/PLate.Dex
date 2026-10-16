@@ -49,7 +49,27 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <!-- Status area bubble: pin + notifications + volume + bt + wifi + battery -->
+            <!-- Dedicated Pin Pill -->
+            <LinearLayout
+                android:id="@+id/pin_pill"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:background="@drawable/btn_bubble_rect"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/pin_btn"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_margin="3dp"
+                    android:background="@null"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_unpin" />
+            </LinearLayout>
+
+            <!-- Status area bubble: notifications + volume + bt + wifi + battery -->
             <LinearLayout
                 android:id="@+id/status_area"
                 android:layout_width="wrap_content"
@@ -64,16 +84,6 @@
                 android:orientation="horizontal"
                 android:clickable="true"
                 android:focusable="true">
-
-                <!-- FIX: pin_btn merged inside status_area pill -->
-                <ImageView
-                    android:id="@+id/pin_btn"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_margin="3dp"
-                    android:background="@null"
-                    android:padding="6dp"
-                    android:src="@drawable/ic_unpin" />
 
                 <TextView
                     android:id="@+id/notifications_btn"

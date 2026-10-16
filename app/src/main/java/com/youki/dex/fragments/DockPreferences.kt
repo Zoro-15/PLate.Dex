@@ -89,6 +89,63 @@ class DockPreferences : PreferenceFragmentCompat() {
             }
         })
 
+        // Pill transparency slider
+        val pillTransparency = findPreference<SliderPreference>("pill_transparency")
+        pillTransparency?.setOnDialogShownListener(object : SliderPreference.OnDialogShownListener {
+            override fun onDialogShown() {
+                val slider = pillTransparency.slider ?: return
+                slider.isTickVisible = false
+                slider.labelBehavior = LabelFormatter.LABEL_GONE
+                slider.stepSize = 0.05f
+                slider.valueFrom = 0.1f
+                slider.valueTo = 1f
+                slider.value =
+                    (pillTransparency.sharedPreferences?.getString("pill_transparency", "0.9")?.toFloatOrNull() ?: 0.9f)
+                        .coerceIn(slider.valueFrom, slider.valueTo)
+                slider.addOnChangeListener { _, value, _ ->
+                    pillTransparency.sharedPreferences?.edit { putString("pill_transparency", String.format(java.util.Locale.US, "%.2f", value)) }
+                }
+            }
+        })
+
+        // Pill height slider
+        val pillHeight = findPreference<SliderPreference>("pill_height")
+        pillHeight?.setOnDialogShownListener(object : SliderPreference.OnDialogShownListener {
+            override fun onDialogShown() {
+                val slider = pillHeight.slider ?: return
+                slider.isTickVisible = false
+                slider.labelBehavior = LabelFormatter.LABEL_GONE
+                slider.stepSize = 1f
+                slider.valueFrom = 22f
+                slider.valueTo = 48f
+                slider.value =
+                    (pillHeight.sharedPreferences?.getString("pill_height", "30")?.toFloatOrNull() ?: 30f)
+                        .coerceIn(slider.valueFrom, slider.valueTo)
+                slider.addOnChangeListener { _, value, _ ->
+                    pillHeight.sharedPreferences?.edit { putString("pill_height", value.toInt().toString()) }
+                }
+            }
+        })
+
+        // Pill length slider
+        val pillLength = findPreference<SliderPreference>("pill_length")
+        pillLength?.setOnDialogShownListener(object : SliderPreference.OnDialogShownListener {
+            override fun onDialogShown() {
+                val slider = pillLength.slider ?: return
+                slider.isTickVisible = false
+                slider.labelBehavior = LabelFormatter.LABEL_GONE
+                slider.stepSize = 5f
+                slider.valueFrom = 50f
+                slider.valueTo = 160f
+                slider.value =
+                    (pillLength.sharedPreferences?.getString("pill_length", "85")?.toFloatOrNull() ?: 85f)
+                        .coerceIn(slider.valueFrom, slider.valueTo)
+                slider.addOnChangeListener { _, value, _ ->
+                    pillLength.sharedPreferences?.edit { putString("pill_length", value.toInt().toString()) }
+                }
+            }
+        })
+
         findPreference<Preference>("auto_pin")!!.setOnPreferenceClickListener {
             showAutopinDialog(requireContext())
             false

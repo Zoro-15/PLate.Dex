@@ -23,10 +23,13 @@ import android.content.pm.ActivityInfo
 import android.content.pm.LauncherApps
 import android.content.pm.PackageManager
 import android.content.pm.ShortcutInfo
-import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.Outline
 import android.graphics.PorterDuff
+import android.graphics.drawable.GradientDrawable
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import android.hardware.usb.UsbManager
 import android.media.AudioManager
 import android.net.Uri
@@ -249,13 +252,24 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
     private lateinit var pinBtn: ImageView
     private lateinit var wallpaperBtn: ImageView
     private lateinit var userBtn: ImageView
-
     private lateinit var castBtn: android.widget.ImageView
     private var castManager: com.youki.dex.cast.CastManager? = null
+
     private lateinit var statusArea: android.widget.LinearLayout
     private lateinit var systemTray: android.widget.LinearLayout
     private lateinit var actionBtnsGroup: android.widget.LinearLayout
     private lateinit var navBtnsGroup: android.widget.LinearLayout
+    private lateinit var navPanel: android.widget.LinearLayout
+    private lateinit var pinPill: android.widget.LinearLayout
+
+    // Floating corner status pills
+    private var timePillView: View? = null
+    private var timePillTv: TextClock? = null
+    private var batteryPillView: View? = null
+    private var batteryPillTv: TextView? = null
+    private var timePillParams: WindowManager.LayoutParams? = null
+    private var batteryPillParams: WindowManager.LayoutParams? = null
+    private var timeTickReceiver: BroadcastReceiver? = null
 
     private lateinit var notificationBtn: TextView
     private lateinit var searchTv: TextView
@@ -407,6 +421,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         assistBtn = dock.findViewById(R.id.assist_btn)
         notificationBtn = dock.findViewById(R.id.notifications_btn)
         pinBtn   = dock.findViewById(R.id.pin_btn)
+        pinPill  = dock.findViewById(R.id.pin_pill)
         wallpaperBtn = dock.findViewById(R.id.wallpaper_btn)
         userBtn = dock.findViewById(R.id.user_btn)
         castBtn = dock.findViewById(R.id.cast_btn)
@@ -414,6 +429,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         systemTray = dock.findViewById(R.id.system_tray)
         actionBtnsGroup = dock.findViewById(R.id.action_btns_group)
         navBtnsGroup    = dock.findViewById(R.id.nav_btns_group)
+        navPanel        = dock.findViewById(R.id.nav_panel)
         bluetoothBtn = dock.findViewById(R.id.bluetooth_btn)
         wifiBtn = dock.findViewById(R.id.wifi_btn)
         volumeBtn = dock.findViewById(R.id.volume_btn)
@@ -1008,6 +1024,9 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             batteryBtn,
             sharedPreferences.getBoolean("show_battery_level", false)
         )
+        batteryReceiver.onBatteryChanged = { _, _ ->
+            updateDayBatteryPillText()
+        }
         // FIX #3: ACTION_BATTERY_CHANGED is a sticky broadcast — must use RECEIVER_EXPORTED
         ContextCompat.registerReceiver(
             this, batteryReceiver,
@@ -1069,6 +1088,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         updateNavigationBar()
         updateQuickSettings()
         updateDockShape()
+        updateStatusPills()
         applyTheme()
         updateMenuIcon()
         loadPinnedApps()
@@ -2791,6 +2811,11 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             updateNavigationBar()
         } else if (preference.startsWith("enable_qs_")) {
             updateQuickSettings()
+        } else if (preference == "swap_nav_pin") {
+            updateNavigationBar()
+            updateQuickSettings()
+        } else if (preference.startsWith("pill_") || preference.startsWith("enable_pill_")) {
+            updateStatusPills()
         } else if (preference == "round_dock")
             updateDockShape()
         else if (preference.startsWith("max_running_apps")) {
@@ -3033,6 +3058,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             applyTheme()
             updateNavigationBar()
             updateQuickSettings()
+            updateStatusPills()
             if (::tasksGv.isInitialized) updateRunningTasks(true)
         } catch (e: Exception) {
             android.util.Log.e("PerfectServer", "refreshForDisplayChange error: ${e.message}")
@@ -3503,6 +3529,8 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         val actionAnyVisible = listOf(userBtn, wallpaperBtn, castBtn)
             .any { it.visibility == View.VISIBLE }
         actionBtnsGroup.visibility = if (actionAnyVisible) View.VISIBLE else View.GONE
+
+        updateNavPinPositions()
     }
 
     private fun updateQuickSettings() {
@@ -3514,28 +3542,200 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             if (sharedPreferences.getBoolean("enable_qs_battery", false)) View.VISIBLE else View.GONE
         wifiBtn.visibility =
             if (sharedPreferences.getBoolean("enable_qs_wifi", true)) View.VISIBLE else View.GONE
-        pinBtn.visibility =
-            if (sharedPreferences.getBoolean("enable_qs_pin", true)) View.VISIBLE else View.GONE
+        val pinVisible = sharedPreferences.getBoolean("enable_qs_pin", true)
+        pinBtn.visibility = if (pinVisible) View.VISIBLE else View.GONE
+        if (::pinPill.isInitialized) {
+            pinPill.visibility = if (pinVisible) View.VISIBLE else View.GONE
+        }
         volumeBtn.visibility =
             if (sharedPreferences.getBoolean("enable_qs_vol", true)) View.VISIBLE else View.GONE
         wallpaperBtn.visibility =
             if (sharedPreferences.getBoolean("enable_qs_wallpaper", false)) View.VISIBLE else View.GONE
         userBtn.visibility =
             if (sharedPreferences.getBoolean("enable_qs_user", true)) View.VISIBLE else View.GONE
+        val actionAnyVisible = listOf(userBtn, wallpaperBtn, castBtn)
+            .any { it.visibility == View.VISIBLE }
+        actionBtnsGroup.visibility = if (actionAnyVisible) View.VISIBLE else View.GONE
         dateTv.visibility =
             if (sharedPreferences.getBoolean("enable_qs_date", true)) View.VISIBLE else View.GONE
 
         // FIX: إخفاء statusArea pill كاملاً لما كل أزرار الـ QS تصير GONE
         val qsAnyVisible = listOf(
             notificationBtn, bluetoothBtn, batteryBtn, wifiBtn,
-            pinBtn, volumeBtn, wallpaperBtn, userBtn
+            volumeBtn, wallpaperBtn
         ).any { it.visibility == View.VISIBLE }
         statusArea.visibility = if (qsAnyVisible) View.VISIBLE else View.GONE
 
-        // FIX 2: إخفاء system_tray كاملاً لما statusArea + dateTv كلهم GONE
-        // هذا يحل مشكلة "النتفة" اللي تبقى في اليمين لما تطفي كل العناصر
-        val trayAnyVisible = qsAnyVisible || dateTv.visibility == View.VISIBLE
+        // FIX 2: إخفاء system_tray كاملاً لما statusArea + dateTv + pinPill + navBtnsGroup كلهم GONE
+        val pinInTrayVisible = (::pinPill.isInitialized && pinPill.parent == systemTray && pinPill.visibility == View.VISIBLE)
+        val navInTrayVisible = (::navBtnsGroup.isInitialized && navBtnsGroup.parent == systemTray && navBtnsGroup.visibility == View.VISIBLE)
+        val trayAnyVisible = qsAnyVisible || dateTv.visibility == View.VISIBLE || pinInTrayVisible || navInTrayVisible
         systemTray.visibility = if (trayAnyVisible) View.VISIBLE else View.GONE
+
+        updateNavPinPositions()
+    }
+
+    private fun updateNavPinPositions() {
+        if (!::navPanel.isInitialized || !::pinPill.isInitialized || !::navBtnsGroup.isInitialized) return
+        val swapped = sharedPreferences.getBoolean("swap_nav_pin", false)
+        if (swapped) {
+            // navBtnsGroup moves to systemTray (first child in systemTray)
+            if (navBtnsGroup.parent != systemTray) {
+                (navBtnsGroup.parent as? ViewGroup)?.removeView(navBtnsGroup)
+                systemTray.addView(navBtnsGroup, 0)
+            }
+            // pinPill moves to navPanel (after actionBtnsGroup)
+            if (pinPill.parent != navPanel) {
+                (pinPill.parent as? ViewGroup)?.removeView(pinPill)
+                val idx = navPanel.indexOfChild(actionBtnsGroup).let { if (it >= 0) it + 1 else navPanel.childCount }
+                navPanel.addView(pinPill, idx)
+            }
+        } else {
+            // Normal: navBtnsGroup in navPanel (after actionBtnsGroup)
+            if (navBtnsGroup.parent != navPanel) {
+                (navBtnsGroup.parent as? ViewGroup)?.removeView(navBtnsGroup)
+                val idx = navPanel.indexOfChild(actionBtnsGroup).let { if (it >= 0) it + 1 else navPanel.childCount }
+                navPanel.addView(navBtnsGroup, idx)
+            }
+            // pinPill in systemTray (first child in systemTray)
+            if (pinPill.parent != systemTray) {
+                (pinPill.parent as? ViewGroup)?.removeView(pinPill)
+                systemTray.addView(pinPill, 0)
+            }
+        }
+    }
+
+    private fun updateDayBatteryPillText() {
+        val tv = batteryPillTv ?: return
+        val day = SimpleDateFormat("EEE", Locale.getDefault()).format(Date())
+        val charging = if (::batteryReceiver.isInitialized && batteryReceiver.isCharging) "⚡ " else ""
+        val level = if (::batteryReceiver.isInitialized) batteryReceiver.level else 100
+        tv.text = "$day | $charging$level%"
+    }
+
+    private fun updateStatusPills() {
+        val showTime = sharedPreferences.getBoolean("enable_pill_time", false)
+        val showBattery = sharedPreferences.getBoolean("enable_pill_battery", false)
+
+        val opacity = (sharedPreferences.getString("pill_transparency", "0.9")?.toFloatOrNull() ?: 0.9f)
+            .coerceIn(0.1f, 1f)
+        val heightDp = (sharedPreferences.getString("pill_height", "30")?.toIntOrNull() ?: 30)
+            .coerceIn(20, 50)
+        val lengthDp = (sharedPreferences.getString("pill_length", "85")?.toIntOrNull() ?: 85)
+            .coerceIn(40, 200)
+
+        val heightPx = Utils.dpToPx(context, heightDp)
+        val minWidthPx = Utils.dpToPx(context, lengthDp)
+        val cornerRadius = heightPx / 2f
+
+        // Time Pill (Top-Left)
+        if (showTime) {
+            if (timePillView == null) {
+                timePillView = LayoutInflater.from(ContextThemeWrapper(context, R.style.AppTheme_Dock))
+                    .inflate(R.layout.pill_time, null)
+                timePillTv = timePillView!!.findViewById(R.id.pill_time_tv)
+            }
+            timePillView?.alpha = opacity
+            val timeContainer = timePillView?.findViewById<View>(R.id.pill_time_container)
+            timeContainer?.minimumWidth = minWidthPx
+            val bgTime = GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                this.cornerRadius = cornerRadius
+                setColor(Color.BLACK)
+            }
+            timeContainer?.background = bgTime
+
+            if (timePillParams == null) {
+                timePillParams = Utils.makeWindowParams(
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    context, secondary
+                ).apply {
+                    gravity = Gravity.TOP or Gravity.START
+                    x = Utils.dpToPx(context, 12)
+                    y = Utils.dpToPx(context, 10)
+                }
+            }
+            timePillParams?.height = WindowManager.LayoutParams.WRAP_CONTENT
+            timePillParams?.width = WindowManager.LayoutParams.WRAP_CONTENT
+
+            if (timePillView?.windowToken == null) {
+                safeAddView(timePillView!!, timePillParams!!)
+            } else {
+                safeUpdateViewLayout(timePillView!!, timePillParams!!)
+            }
+        } else {
+            timePillView?.let { v ->
+                if (v.windowToken != null) {
+                    try { windowManager.removeView(v) } catch (e: Exception) {}
+                }
+            }
+        }
+
+        // Battery Pill (Top-Right)
+        if (showBattery) {
+            if (batteryPillView == null) {
+                batteryPillView = LayoutInflater.from(ContextThemeWrapper(context, R.style.AppTheme_Dock))
+                    .inflate(R.layout.pill_battery, null)
+                batteryPillTv = batteryPillView!!.findViewById(R.id.pill_battery_tv)
+            }
+            batteryPillView?.alpha = opacity
+            val batteryContainer = batteryPillView?.findViewById<View>(R.id.pill_battery_container)
+            batteryContainer?.minimumWidth = minWidthPx
+            val bgBattery = GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                this.cornerRadius = cornerRadius
+                setColor(Color.BLACK)
+            }
+            batteryContainer?.background = bgBattery
+
+            updateDayBatteryPillText()
+
+            if (batteryPillParams == null) {
+                batteryPillParams = Utils.makeWindowParams(
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    context, secondary
+                ).apply {
+                    gravity = Gravity.TOP or Gravity.END
+                    x = Utils.dpToPx(context, 12)
+                    y = Utils.dpToPx(context, 10)
+                }
+            }
+            batteryPillParams?.height = WindowManager.LayoutParams.WRAP_CONTENT
+            batteryPillParams?.width = WindowManager.LayoutParams.WRAP_CONTENT
+
+            if (batteryPillView?.windowToken == null) {
+                safeAddView(batteryPillView!!, batteryPillParams!!)
+            } else {
+                safeUpdateViewLayout(batteryPillView!!, batteryPillParams!!)
+            }
+        } else {
+            batteryPillView?.let { v ->
+                if (v.windowToken != null) {
+                    try { windowManager.removeView(v) } catch (e: Exception) {}
+                }
+            }
+        }
+
+        // Register time-tick receiver if either pill is active
+        if ((showTime || showBattery) && timeTickReceiver == null) {
+            timeTickReceiver = object : BroadcastReceiver() {
+                override fun onReceive(context: Context?, intent: Intent?) {
+                    updateDayBatteryPillText()
+                }
+            }
+            val filter = IntentFilter().apply {
+                addAction(Intent.ACTION_TIME_TICK)
+                addAction(Intent.ACTION_DATE_CHANGED)
+                addAction(Intent.ACTION_TIME_CHANGED)
+                addAction(Intent.ACTION_TIMEZONE_CHANGED)
+            }
+            ContextCompat.registerReceiver(this, timeTickReceiver!!, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
+        } else if (!showTime && !showBattery && timeTickReceiver != null) {
+            try { unregisterReceiver(timeTickReceiver) } catch (e: Exception) {}
+            timeTickReceiver = null
+        }
     }
 
     private fun launchAssistant() {
@@ -4315,6 +4515,10 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         try { windowManager.removeView(dockHandle) } catch (e: Exception) {}
         try { windowManager.removeView(topRightCorner) } catch (e: Exception) {}
         try { windowManager.removeView(bottomRightCorner) } catch (e: Exception) {}
+        timePillView?.let { v -> if (v.windowToken != null) try { windowManager.removeView(v) } catch (e: Exception) {} }
+        batteryPillView?.let { v -> if (v.windowToken != null) try { windowManager.removeView(v) } catch (e: Exception) {} }
+        try { timeTickReceiver?.let { unregisterReceiver(it) } } catch (e: Exception) {}
+        timeTickReceiver = null
         try { windowManager.removeView(dock) } catch (e: Exception) {}
         PerfectServer.dock = null  // ✅ أزل المرجع
         super.onDestroy()

@@ -29,6 +29,11 @@
             android:key="enable_nav_assist"
             android:title="@string/enable_nav_assist_title"
             android:defaultValue="false" />
+        <SwitchPreferenceCompat
+            android:key="swap_nav_pin"
+            android:title="@string/swap_nav_pin_title"
+            android:summary="@string/swap_nav_pin_summary"
+            android:defaultValue="false" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/quick_settings">
@@ -79,6 +84,12 @@
             android:key="enable_qs_pin"
             android:title="@string/enable_qs_pin_title"
             android:summary="@string/enable_qs_pin_summary"
+            android:defaultValue="true" />
+
+        <SwitchPreferenceCompat
+            android:key="enable_qs_user"
+            android:title="@string/enable_user_btn"
+            android:summary="@string/enable_user_btn_summary"
             android:defaultValue="true" />
 
     </PreferenceCategory>
@@ -188,6 +199,35 @@
             android:summary="@string/show_search_bar_summary"
             android:defaultValue="true" />
 
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/status_pills_category">
+        <SwitchPreferenceCompat
+            android:key="enable_pill_time"
+            android:title="@string/enable_pill_time_title"
+            android:summary="@string/enable_pill_time_summary"
+            android:defaultValue="false" />
+
+        <SwitchPreferenceCompat
+            android:key="enable_pill_battery"
+            android:title="@string/enable_pill_battery_title"
+            android:summary="@string/enable_pill_battery_summary"
+            android:defaultValue="false" />
+
+        <com.youki.dex.preferences.SliderPreference
+            android:key="pill_transparency"
+            android:title="@string/pill_transparency_title"
+            android:defaultValue="0.9" />
+
+        <com.youki.dex.preferences.SliderPreference
+            android:key="pill_height"
+            android:title="@string/pill_height_title"
+            android:defaultValue="30" />
+
+        <com.youki.dex.preferences.SliderPreference
+            android:key="pill_length"
+            android:title="@string/pill_length_title"
+            android:defaultValue="85" />
     </PreferenceCategory>
 
 </PreferenceScreen>

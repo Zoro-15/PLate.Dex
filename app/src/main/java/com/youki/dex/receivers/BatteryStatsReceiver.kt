@@ -16,6 +16,8 @@ class BatteryStatsReceiver(
 ) : BroadcastReceiver() {
 
     var level = 0
+    var isCharging = false
+    var onBatteryChanged: ((level: Int, charging: Boolean) -> Unit)? = null
     private var lastDrawableRes = -1   // cache to avoid redundant drawable reloads
     private var lastCharging = false
 
@@ -23,16 +25,19 @@ class BatteryStatsReceiver(
         val bm = context.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
         level = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
         val charging = bm.isCharging
+        isCharging = charging
         lastCharging = charging
         lastDrawableRes = Utils.getBatteryDrawable(level, charging)
         applyDrawable(lastDrawableRes)
         if (showLevel) batteryBtn.text = "$level%"
+        onBatteryChanged?.invoke(level, isCharging)
     }
 
     override fun onReceive(context: Context, intent: Intent) {
         val extras = intent.extras ?: return
         val newLevel = extras.getInt("level", level)
         val plugged = extras.getInt("plugged", 0) != 0
+        isCharging = plugged
 
         val newRes = Utils.getBatteryDrawable(newLevel, plugged)
 
@@ -47,6 +52,7 @@ class BatteryStatsReceiver(
             level = newLevel
             if (showLevel) batteryBtn.text = "$level%"
         }
+        onBatteryChanged?.invoke(level, isCharging)
 
         if (!plugged && level == 100) {
             if (Utils.shouldPlayChargeComplete.get())

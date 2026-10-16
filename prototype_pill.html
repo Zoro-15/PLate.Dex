@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><title>Time Pill Prototype</title>
+<style>
+  body { margin:0; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#121214; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; color:#aaa; gap:24px; }
+  .preview-box { display:flex; flex-direction:column; gap:16px; align-items:center; padding:32px; background:#18181b; border-radius:16px; border:1px solid #27272a; }
+  .pill-container { display:inline-flex; align-items:center; background:#000; border-radius:100px; padding:2px 2px 2px 8px; box-shadow:0 4px 12px rgba(0,0,0,0.5); }
+  .pill-date { color:#c9c9c9; font-size:12px; font-weight:800; margin:0 6px 0 4px; letter-spacing:0.02em; white-space:nowrap; }
+  .pill-badge { border-radius:100px; padding:2px 8px; font-size:12px; font-weight:800; letter-spacing:0.02em; white-space:nowrap; transition:all 0.2s ease; }
+  .controls { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
+  button { background:#27272a; color:#fff; border:1px solid #3f3f46; border-radius:8px; padding:6px 12px; font-size:12px; cursor:pointer; }
+  button:hover { background:#3f3f46; }
+</style>
+</head>
+<body>
+  <div class="preview-box">
+    <div style="font-size:13px; color:#71717a;">Time Pill Prototype Preview</div>
+    <div class="pill-container">
+      <span class="pill-date">Fri, 16/10</span>
+      <span id="badge" class="pill-badge" style="background:#C9C9C9; color:#222;">10:39 PM</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:10px; font-size:12px;">
+      <label>Badge Lightness:</label>
+      <input type="range" id="lightness" min="70" max="100" value="79" oninput="update(this.value)">
+      <span id="valLabel">#C9C9C9</span>
+    </div>
+    <div class="controls">
+      <button onclick="setHex('#C9C9C9','#222222')">Standard (#C9C9C9)</button>
+      <button onclick="setHex('#E2E2E6','#222222')">Subtle Gray (#E2E2E6)</button>
+      <button onclick="setHex('#EAEAEA','#222222')">Soft White (#EAEAEA)</button>
+      <button onclick="setHex('#FFFFFF','#222222')">100% Pure White</button>
+    </div>
+  </div>
+<script>
+  function setHex(bg, text) {
+    const b = document.getElementById('badge');
+    b.style.background = bg; b.style.color = text;
+    document.getElementById('valLabel').textContent = bg;
+  }
+  function update(val) {
+    const hex = Math.round(val * 2.55).toString(16).padStart(2,'0');
+    setHex('#' + hex + hex + hex, '#222222');
+  }
+</script>
+</body>
+</html>

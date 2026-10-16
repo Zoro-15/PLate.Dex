@@ -7,16 +7,16 @@
 
     <!-- Capsule Track (Frosted Background) -->
     <path
-        android:fillColor="#66FFFFFF"
+        android:fillColor="#66C9C9C9"
         android:pathData="M 4,1 H 21.5 A 3.8,3.8 0 0,1 25.3,4.8 V 10.2 A 3.8,3.8 0 0,1 21.5,14 H 4 A 3.8,3.8 0 0,1 0.2,10.2 V 4.8 A 3.8,3.8 0 0,1 4,1 Z" />
 
     <!-- External Symmetrical Lightning Bolt (Compact 1:1) -->
     <path
-        android:fillColor="#FFFFFFFF"
+        android:fillColor="#FFC9C9C9"
         android:pathData="M 31.4,3.2 L 26.8,8.2 H 30.2 L 29.6,11.8 L 34.2,6.8 H 30.8 Z" />
 
     <!-- Solid Progress Level Fill (40%) -->
     <path
-        android:fillColor="#FF00D028"
+        android:fillColor="#FFC9C9C9"
         android:pathData="M 4,1 H 13 V 14 H 4 A 3.8,3.8 0 0,1 0.2,10.2 V 4.8 A 3.8,3.8 0 0,1 4,1 Z" />
 </vector>

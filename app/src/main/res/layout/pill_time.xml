@@ -19,7 +19,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginStart="4dp"
         android:layout_marginEnd="6dp"
-        android:textColor="#FFFFFF"
+        android:textColor="#C9C9C9"
         android:textSize="11.5sp"
         android:textStyle="bold"
         android:fontFamily="sans-serif-black"

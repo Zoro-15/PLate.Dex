@@ -267,6 +267,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
     // Floating corner status pills
     private var timePillView: View? = null
     private var timePillTv: TextClock? = null
+    private var datePillTv: TextClock? = null
     private var batteryPillView: View? = null
     private var batteryPillTv: TextView? = null
     private var pillWifiIv: ImageView? = null
@@ -3663,7 +3664,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         val heightDp = (sharedPreferences.getString("pill_height", "30")?.toIntOrNull() ?: 30)
             .coerceIn(20, 50)
         val timeLengthDp = (sharedPreferences.getString("pill_time_length", "75")?.toIntOrNull() ?: 75)
-            .coerceIn(40, 200)
+            .coerceIn(40, 300)
         val batteryLengthDp = (sharedPreferences.getString("pill_battery_length", "115")?.toIntOrNull() ?: 115)
             .coerceIn(60, 240)
 
@@ -3680,17 +3681,14 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
                 timePillView = LayoutInflater.from(ContextThemeWrapper(context, R.style.AppTheme_Dock))
                     .inflate(R.layout.pill_time, null)
                 timePillTv = timePillView!!.findViewById(R.id.pill_time_tv)
+                datePillTv = timePillView!!.findViewById(R.id.pill_date_tv)
+                datePillTv?.format12Hour = "EEE, dd/MM"
+                datePillTv?.format24Hour = "EEE, dd/MM"
             }
             timePillView?.alpha = opacity
             val timeContainer = timePillView?.findViewById<View>(R.id.pill_time_container)
             timeContainer?.minimumWidth = timeMinWidthPx
             timeContainer?.minimumHeight = heightPx
-            val bgTime = GradientDrawable().apply {
-                shape = GradientDrawable.RECTANGLE
-                this.cornerRadius = cornerRadius
-                setColor(Color.BLACK)
-            }
-            timeContainer?.background = bgTime
 
             if (timePillParams == null) {
                 timePillParams = Utils.makeWindowParams(

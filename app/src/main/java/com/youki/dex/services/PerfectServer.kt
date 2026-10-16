@@ -53,7 +53,6 @@ import android.view.ViewOutlineProvider
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
-import android.view.accessibility.AccessibilityNodeInfo
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
@@ -125,7 +124,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import android.hardware.display.DisplayManager
@@ -271,10 +269,6 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
     private lateinit var searchEntry: LinearLayout
     private lateinit var dockLayout: RelativeLayout
     private lateinit var windowManager: WindowManager
-    private lateinit var riceSwitchHud: com.youki.dex.taskview.RiceSwitchHud
-    private lateinit var altTabOverlay: com.youki.dex.taskview.AltTabOverlay
-    private lateinit var taskViewOverlay: com.youki.dex.taskview.TaskViewOverlay
-    private lateinit var taskSwitchManager: com.youki.dex.taskview.TaskSwitchManager
     private lateinit var appsSeparator: View
     private var appMenuVisible = false
 
@@ -327,188 +321,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
     private var maxApps = 0
     private var maxAppsLandscape = 0
     private lateinit var context: Context
-    internal var tasks: ArrayList<AppTask> = ArrayList()
-    val activeSessionApps = LinkedHashSet<String>()
-
-    fun trackSessionApp(pkg: String) {
-        synchronized(activeSessionApps) {
-            activeSessionApps.remove(pkg)
-            activeSessionApps.add(pkg)
-        }
-    }
-
-    fun removeSessionApp(pkg: String) {
-        synchronized(activeSessionApps) {
-            activeSessionApps.remove(pkg)
-        }
-    }
-
-    fun clearSessionApps() {
-        synchronized(activeSessionApps) {
-            activeSessionApps.clear()
-        }
-    }
-
-    internal fun clearRunningTasks() {
-        synchronized(this) {
-            tasks.clear()
-        }
-        updateRunningTasks(true)
-    }
-
-    @Volatile private var isAutomatingClearAll = false
-
-    /**
-     * Automates Android's native system "Clear All" action via AccessibilityService:
-     * 1. Invokes GLOBAL_ACTION_RECENTS to trigger the OS native recents overview
-     * 2. Scans the active window hierarchy for the native "Clear All" button across OEMs
-     * 3. Performs an accessibility click to let the OS terminate tasks and purge RAM
-     * 4. Returns smoothly to the home launcher
-     */
-    fun automateNativeClearAll(onComplete: (() -> Unit)? = null) {
-        if (isAutomatingClearAll) return
-        isAutomatingClearAll = true
-
-        performGlobalAction(GLOBAL_ACTION_RECENTS)
-
-        serviceScope.launch(Dispatchers.Main) {
-            val startTime = System.currentTimeMillis()
-            var clicked = false
-            var attemptedScroll = false
-
-            while (System.currentTimeMillis() - startTime < 1500) {
-                delay(60)
-                if (!isAutomatingClearAll) break
-
-                val root = try { rootInActiveWindow } catch (e: Exception) { null }
-                if (root != null) {
-                    val clearButton = findClearAllNode(root)
-                    if (clearButton != null) {
-                        try {
-                            clicked = clearButton.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                            if (!clicked) {
-                                clicked = clearButton.parent?.performAction(AccessibilityNodeInfo.ACTION_CLICK) == true
-                            }
-                        } catch (e: Exception) {}
-                        clearButton.recycle()
-                        if (clicked) {
-                            break
-                        }
-                    } else if (!attemptedScroll && System.currentTimeMillis() - startTime > 250) {
-                        attemptScrollToClearAll(root)
-                        attemptedScroll = true
-                    }
-                    root.recycle()
-                }
-            }
-
-            isAutomatingClearAll = false
-
-            delay(300)
-            performGlobalAction(GLOBAL_ACTION_HOME)
-            clearSessionApps()
-            clearRunningTasks()
-            onComplete?.invoke()
-        }
-    }
-
-    private fun findClearAllNode(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {
-        val commonIds = listOf(
-            "com.android.systemui:id/clear_all",
-            "com.android.systemui:id/clear_all_button",
-            "com.android.systemui:id/clear_all_recents",
-            "com.android.systemui:id/button_clear_all",
-            "com.android.launcher3:id/clear_all",
-            "com.android.launcher3:id/clear_all_button",
-            "com.google.android.apps.nexuslauncher:id/clear_all",
-            "com.google.android.apps.nexuslauncher:id/clear_all_button",
-            "com.sec.android.app.launcher:id/clear_all_button",
-            "com.miui.home:id/clearAnimView",
-            "com.oppo.launcher:id/clear_all",
-            "com.oneplus.launcher:id/clear_all"
-        )
-        for (id in commonIds) {
-            try {
-                val list = root.findAccessibilityNodeInfosByViewId(id)
-                if (!list.isNullOrEmpty()) {
-                    for (node in list) {
-                        if (node.isVisibleToUser) return node
-                    }
-                }
-            } catch (e: Exception) {}
-        }
-
-        val commonTexts = listOf(
-            "Clear all", "Clear all apps", "Clear all tasks", "Clear",
-            "Close all", "Dismiss all",
-            "مسح الكل", "إغلاق الكل", "حذف الكل", "مسح",
-            "Borrar todo", "Cerrar todo",
-            "Tout effacer", "Fermer tout",
-            "Alle löschen", "Alle schließen",
-            "Очистить все", "Закрыть все",
-            "सभी साफ़ करें", "सभी बंद करें",
-            "全部清除", "全部关闭",
-            "すべてクリア"
-        )
-        for (text in commonTexts) {
-            try {
-                val list = root.findAccessibilityNodeInfosByText(text)
-                if (!list.isNullOrEmpty()) {
-                    for (node in list) {
-                        if (node.isVisibleToUser && (node.isClickable || node.parent?.isClickable == true)) {
-                            return node
-                        }
-                    }
-                }
-            } catch (e: Exception) {}
-        }
-
-        return findClearAllNodeRecursively(root)
-    }
-
-    private fun findClearAllNodeRecursively(node: AccessibilityNodeInfo): AccessibilityNodeInfo? {
-        val resId = node.viewIdResourceName?.lowercase() ?: ""
-        val text = node.text?.toString()?.lowercase() ?: ""
-        val desc = node.contentDescription?.toString()?.lowercase() ?: ""
-
-        val isClearId = resId.contains("clear_all") || resId.contains("clearall") ||
-                resId.contains("close_all") || resId.contains("dismiss_all")
-        val isClearText = text.contains("clear all") || text.contains("close all") ||
-                desc.contains("clear all") || desc.contains("close all")
-
-        if ((isClearId || isClearText) && node.isVisibleToUser) {
-            return node
-        }
-
-        for (i in 0 until node.childCount) {
-            val child = node.getChild(i) ?: continue
-            val found = findClearAllNodeRecursively(child)
-            if (found != null) return found
-            child.recycle()
-        }
-        return null
-    }
-
-    private fun attemptScrollToClearAll(root: AccessibilityNodeInfo) {
-        findScrollableNode(root)?.let { scrollable ->
-            try {
-                scrollable.performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)
-            } catch (e: Exception) {}
-            scrollable.recycle()
-        }
-    }
-
-    private fun findScrollableNode(node: AccessibilityNodeInfo): AccessibilityNodeInfo? {
-        if (node.isScrollable && node.isVisibleToUser) return node
-        for (i in 0 until node.childCount) {
-            val child = node.getChild(i) ?: continue
-            val found = findScrollableNode(child)
-            if (found != null) return found
-            child.recycle()
-        }
-        return null
-    }
-
+    private lateinit var tasks: ArrayList<AppTask>
     @Volatile private var lastUpdate: Long = 0 // FIX #12: @Volatile prevents race condition between Main and IO threads
     private var dockHeight: Int = 0
     private var dockMargin: Int = 0
@@ -541,12 +354,6 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         secondary = sharedPreferences.getBoolean("prefer_last_display", false)
         context = DeviceUtils.getDisplayContext(this, secondary)
         windowManager = context.getSystemService(WINDOW_SERVICE) as WindowManager
-        riceSwitchHud = com.youki.dex.taskview.RiceSwitchHud(context, windowManager)
-        altTabOverlay = com.youki.dex.taskview.AltTabOverlay(context, windowManager)
-        taskViewOverlay = com.youki.dex.taskview.TaskViewOverlay(context, windowManager)
-        taskSwitchManager = com.youki.dex.taskview.TaskSwitchManager(
-            context, activityManager, packageManager, riceSwitchHud, altTabOverlay, taskViewOverlay
-        )
         wifiManager = applicationContext.getSystemService(WIFI_SERVICE) as WifiManager
         bluetoothManager = getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
         launcherApps = getSystemService(LAUNCHER_APPS_SERVICE) as LauncherApps
@@ -701,41 +508,17 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         }
         assistBtn.setOnClickListener { animateBtn(it) { launchAssistant() } }
 
-        backBtn.setOnClickListener {
-            animateBtn(it) {
-                if (::taskSwitchManager.isInitialized && taskSwitchManager.dismissTaskView()) {
-                    return@animateBtn
-                }
-                performGlobalAction(GLOBAL_ACTION_BACK)
-            }
-        }
+        backBtn.setOnClickListener { animateBtn(it) { performGlobalAction(GLOBAL_ACTION_BACK) } }
         backBtn.setOnLongClickListener {
             performNavAction("enable_nav_back")
             true
         }
-        homeBtn.setOnClickListener {
-            animateBtn(it) {
-                if (::taskSwitchManager.isInitialized) taskSwitchManager.dismissTaskView()
-                performGlobalAction(GLOBAL_ACTION_HOME)
-            }
-        }
+        homeBtn.setOnClickListener { animateBtn(it) { performGlobalAction(GLOBAL_ACTION_HOME) } }
         homeBtn.setOnLongClickListener {
             performNavAction("enable_nav_home")
             true
         }
-        recentBtn.setOnClickListener {
-            animateBtn(it) {
-                if (sharedPreferences.getBoolean("enable_desktop_task_view", true)) {
-                    if (::taskSwitchManager.isInitialized) {
-                        taskSwitchManager.toggleTaskView { targetTask ->
-                            launchApp(getDefaultLaunchMode(targetTask.packageName), targetTask.packageName)
-                        }
-                    }
-                } else {
-                    performGlobalAction(GLOBAL_ACTION_RECENTS)
-                }
-            }
-        }
+        recentBtn.setOnClickListener { animateBtn(it) { performGlobalAction(GLOBAL_ACTION_RECENTS) } }
         recentBtn.setOnLongClickListener {
             performNavAction("enable_nav_recents")
             true
@@ -1583,11 +1366,8 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             if (pkg.isNotEmpty()
                 && pkg != packageName
                 && pkg != AppUtils.getCurrentLauncher(packageManager)
-                && !pkg.contains("launcher", ignoreCase = true)
-                && !pkg.contains("quickstep", ignoreCase = true)
-                && !pkg.contains("systemui", ignoreCase = true)
+                && !pkg.contains("com.android.systemui")
             ) {
-                trackSessionApp(pkg)
                 if (AppUtils.currentApp != pkg) {
                     AppUtils.currentApp = pkg
                     // أعد رسم الـ dock ليظهر الخط العريض تحت التطبيق النشط الجديد
@@ -1668,151 +1448,6 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
 
     //Handle keyboard shortcuts
     override fun onKeyEvent(event: KeyEvent): Boolean {
-        val isCtrl = event.isCtrlPressed ||
-                (event.metaState and (KeyEvent.META_CTRL_ON or KeyEvent.META_CTRL_LEFT_ON or KeyEvent.META_CTRL_RIGHT_ON)) != 0
-
-        // ── Compact Dialog Overlay Interactions ──
-        if (::taskSwitchManager.isInitialized && taskSwitchManager.isAltTabShowing()) {
-            if (event.action == KeyEvent.ACTION_DOWN) {
-                when (event.keyCode) {
-                    KeyEvent.KEYCODE_TAB -> {
-                        if (event.isShiftPressed) taskSwitchManager.selectPreviousAltTab()
-                        else taskSwitchManager.selectNextAltTab()
-                        return true
-                    }
-                    KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_COMMA -> {
-                        taskSwitchManager.selectPreviousAltTab()
-                        return true
-                    }
-                    KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_PERIOD -> {
-                        taskSwitchManager.selectNextAltTab()
-                        return true
-                    }
-                    KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> {
-                        taskSwitchManager.commitAltTab()
-                        return true
-                    }
-                    KeyEvent.KEYCODE_ESCAPE -> {
-                        taskSwitchManager.dismissAltTab()
-                        return true
-                    }
-                }
-            } else if (event.action == KeyEvent.ACTION_UP) {
-                // When ALT or CTRL modifier is released, commit the active selection
-                if (event.keyCode == KeyEvent.KEYCODE_ALT_LEFT || event.keyCode == KeyEvent.KEYCODE_ALT_RIGHT ||
-                    event.keyCode == KeyEvent.KEYCODE_CTRL_LEFT || event.keyCode == KeyEvent.KEYCODE_CTRL_RIGHT
-                ) {
-                    taskSwitchManager.commitAltTab()
-                    return true
-                }
-                // Consume ACTION_UP for navigation keys while Alt-Tab is showing so they don't leak underneath
-                if (event.keyCode == KeyEvent.KEYCODE_TAB ||
-                    event.keyCode == KeyEvent.KEYCODE_DPAD_LEFT || event.keyCode == KeyEvent.KEYCODE_COMMA ||
-                    event.keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || event.keyCode == KeyEvent.KEYCODE_PERIOD ||
-                    event.keyCode == KeyEvent.KEYCODE_ENTER || event.keyCode == KeyEvent.KEYCODE_NUMPAD_ENTER ||
-                    event.keyCode == KeyEvent.KEYCODE_ESCAPE
-                ) {
-                    return true
-                }
-            }
-        }
-
-        // ── Task View Overlay Interactions ──
-        if (::taskSwitchManager.isInitialized && taskSwitchManager.isTaskViewShowing()) {
-            if (event.action == KeyEvent.ACTION_DOWN) {
-                when (event.keyCode) {
-                    KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_DPAD_UP -> {
-                        taskSwitchManager.selectPreviousTaskView()
-                        return true
-                    }
-                    KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_TAB -> {
-                        taskSwitchManager.selectNextTaskView()
-                        return true
-                    }
-                    KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER, KeyEvent.KEYCODE_SPACE -> {
-                        taskSwitchManager.commitTaskViewSelection()
-                        return true
-                    }
-                    KeyEvent.KEYCODE_DEL, KeyEvent.KEYCODE_FORWARD_DEL -> {
-                        taskSwitchManager.closeCurrentTaskView()
-                        return true
-                    }
-                    KeyEvent.KEYCODE_ESCAPE, KeyEvent.KEYCODE_BACK -> {
-                        taskSwitchManager.dismissTaskView()
-                        return true
-                    }
-                }
-            } else if (event.action == KeyEvent.ACTION_UP) {
-                if (event.keyCode == KeyEvent.KEYCODE_DPAD_LEFT || event.keyCode == KeyEvent.KEYCODE_DPAD_UP ||
-                    event.keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || event.keyCode == KeyEvent.KEYCODE_DPAD_DOWN ||
-                    event.keyCode == KeyEvent.KEYCODE_TAB || event.keyCode == KeyEvent.KEYCODE_ENTER ||
-                    event.keyCode == KeyEvent.KEYCODE_NUMPAD_ENTER || event.keyCode == KeyEvent.KEYCODE_SPACE ||
-                    event.keyCode == KeyEvent.KEYCODE_DEL || event.keyCode == KeyEvent.KEYCODE_FORWARD_DEL ||
-                    event.keyCode == KeyEvent.KEYCODE_ESCAPE || event.keyCode == KeyEvent.KEYCODE_BACK
-                ) {
-                    return true
-                }
-            }
-        }
-
-        // ── Shortcuts Trigger (ACTION_DOWN) ──
-        if (event.action == KeyEvent.ACTION_DOWN) {
-            // Task View trigger: Win+Tab or Alt+Up or Alt+\ (works cleanly in scrcpy without Windows stealing)
-            val isTaskViewShortcut = (event.isMetaPressed && event.keyCode == KeyEvent.KEYCODE_TAB) ||
-                    (event.isAltPressed && (event.keyCode == KeyEvent.KEYCODE_DPAD_UP || event.keyCode == KeyEvent.KEYCODE_BACKSLASH))
-            if (isTaskViewShortcut && sharedPreferences.getBoolean("enable_desktop_task_view", true)) {
-                if (::taskSwitchManager.isInitialized) {
-                    taskSwitchManager.toggleTaskView { targetTask ->
-                        launchApp(getDefaultLaunchMode(targetTask.packageName), targetTask.packageName)
-                    }
-                    return true
-                }
-            }
-
-            // Compact switcher dialog: Ctrl+Tab (scrcpy safe) OR Alt+Tab
-            val isAltTabShortcut = (event.isAltPressed && event.keyCode == KeyEvent.KEYCODE_TAB) ||
-                    (isCtrl && event.keyCode == KeyEvent.KEYCODE_TAB)
-            if (isAltTabShortcut && sharedPreferences.getBoolean("enable_alt_tab", true)) {
-                if (::taskSwitchManager.isInitialized) {
-                    taskSwitchManager.showAltTab { targetTask ->
-                        launchApp(getDefaultLaunchMode(targetTask.packageName), targetTask.packageName)
-                    }
-                    return true
-                }
-            }
-
-            // Quick App Switching via Alt + < (comma) and Alt + > (period) or Alt + [ / Alt + ]
-            // Avoids Ctrl which triggers Android accessibility selection
-            if (event.isAltPressed && sharedPreferences.getBoolean("enable_ctrl_arrow_switch", true)) {
-                val isPrev = event.keyCode == KeyEvent.KEYCODE_COMMA || event.keyCode == KeyEvent.KEYCODE_LEFT_BRACKET
-                val isNext = event.keyCode == KeyEvent.KEYCODE_PERIOD || event.keyCode == KeyEvent.KEYCODE_RIGHT_BRACKET
-                if (isPrev) {
-                    if (::taskSwitchManager.isInitialized) {
-                        taskSwitchManager.switchRecentApp(direction = -1) { targetTask ->
-                            launchApp(getDefaultLaunchMode(targetTask.packageName), targetTask.packageName)
-                        }
-                        return true
-                    }
-                } else if (isNext) {
-                    if (::taskSwitchManager.isInitialized) {
-                        taskSwitchManager.switchRecentApp(direction = 1) { targetTask ->
-                            launchApp(getDefaultLaunchMode(targetTask.packageName), targetTask.packageName)
-                        }
-                        return true
-                    }
-                }
-            }
-        }
-
-        // Consume ACTION_UP for Alt + < / Alt + > so no commas or periods leak
-        if (event.action == KeyEvent.ACTION_UP && event.isAltPressed &&
-            sharedPreferences.getBoolean("enable_ctrl_arrow_switch", true) &&
-            (event.keyCode == KeyEvent.KEYCODE_COMMA || event.keyCode == KeyEvent.KEYCODE_PERIOD ||
-             event.keyCode == KeyEvent.KEYCODE_LEFT_BRACKET || event.keyCode == KeyEvent.KEYCODE_RIGHT_BRACKET)
-        ) {
-            return true
-        }
-
         if (event.action == KeyEvent.ACTION_UP) {
             if (event.isAltPressed) {
                 if (event.keyCode == KeyEvent.KEYCODE_L && sharedPreferences.getBoolean(
@@ -1983,15 +1618,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
                         false
                     )
                 ) {
-                    if (sharedPreferences.getBoolean("enable_desktop_task_view", true)) {
-                        if (::taskSwitchManager.isInitialized) {
-                            taskSwitchManager.toggleTaskView { targetTask ->
-                                launchApp(getDefaultLaunchMode(targetTask.packageName), targetTask.packageName)
-                            }
-                        }
-                    } else {
-                        performGlobalAction(GLOBAL_ACTION_RECENTS)
-                    }
+                    performGlobalAction(GLOBAL_ACTION_RECENTS)
                     return true
                 } else if (event.keyCode == KeyEvent.KEYCODE_F10 && sharedPreferences.getBoolean(
                         "enable_f10",
@@ -3543,7 +3170,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         }
     }
 
-    internal fun updateRunningTasks(recreateAdapter: Boolean = false) {
+    private fun updateRunningTasks(recreateAdapter: Boolean = false) {
         val now = System.currentTimeMillis()
         if (now - lastUpdate < 500 && !recreateAdapter)
             return
@@ -3639,8 +3266,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
                     else apps.add(DockApp(task))
                 }
             } else {
-                for (j in fetchedTasks.size - 1 downTo 0) {
-                    val task = fetchedTasks[j]
+                fetchedTasks.reversed().forEach { task ->
                     if (AppUtils.containsTask(apps, task) == -1)
                         apps.add(DockApp(task))
                 }
@@ -4668,9 +4294,6 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         if (::soundEventsReceiver.isInitialized)
             try { unregisterReceiver(soundEventsReceiver) } catch (e: Exception) {}
         stopResourceMonitor()
-        if (::taskSwitchManager.isInitialized) {
-            taskSwitchManager.destroy()
-        }
         // Fix for Lifecycle: Remove all tracked popup windows first so nothing
         // outlives the service. Then remove core windows in order.
         cleanupAllPopups()

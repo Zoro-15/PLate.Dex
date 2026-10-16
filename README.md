@@ -138,8 +138,10 @@ Runs on Android 8.0 and up, built with Gradle and Cargo.
 ## Screenshots
 
 <p align="center">
-  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot_home.png" width="49%" alt="PLate.Dex Home Screen" />
-  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot_drawer.png" width="49%" alt="PLate.Dex App Drawer" />
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot_home.png" width="100%" alt="PLate.Dex Home Screen" />
+</p>
+<p align="center">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot_drawer.png" width="100%" alt="PLate.Dex App Drawer" />
 </p>
 
 ---

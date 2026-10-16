@@ -53,6 +53,7 @@ import android.view.ViewOutlineProvider
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityNodeInfo
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
@@ -124,6 +125,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import android.hardware.display.DisplayManager
@@ -352,6 +354,159 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             tasks.clear()
         }
         updateRunningTasks(true)
+    }
+
+    @Volatile private var isAutomatingClearAll = false
+
+    /**
+     * Automates Android's native system "Clear All" action via AccessibilityService:
+     * 1. Invokes GLOBAL_ACTION_RECENTS to trigger the OS native recents overview
+     * 2. Scans the active window hierarchy for the native "Clear All" button across OEMs
+     * 3. Performs an accessibility click to let the OS terminate tasks and purge RAM
+     * 4. Returns smoothly to the home launcher
+     */
+    fun automateNativeClearAll(onComplete: (() -> Unit)? = null) {
+        if (isAutomatingClearAll) return
+        isAutomatingClearAll = true
+
+        performGlobalAction(GLOBAL_ACTION_RECENTS)
+
+        serviceScope.launch(Dispatchers.Main) {
+            val startTime = System.currentTimeMillis()
+            var clicked = false
+            var attemptedScroll = false
+
+            while (System.currentTimeMillis() - startTime < 1500) {
+                delay(60)
+                if (!isAutomatingClearAll) break
+
+                val root = try { rootInActiveWindow } catch (e: Exception) { null }
+                if (root != null) {
+                    val clearButton = findClearAllNode(root)
+                    if (clearButton != null) {
+                        try {
+                            clicked = clearButton.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                            if (!clicked) {
+                                clicked = clearButton.parent?.performAction(AccessibilityNodeInfo.ACTION_CLICK) == true
+                            }
+                        } catch (e: Exception) {}
+                        clearButton.recycle()
+                        if (clicked) {
+                            break
+                        }
+                    } else if (!attemptedScroll && System.currentTimeMillis() - startTime > 250) {
+                        attemptScrollToClearAll(root)
+                        attemptedScroll = true
+                    }
+                    root.recycle()
+                }
+            }
+
+            isAutomatingClearAll = false
+
+            delay(300)
+            performGlobalAction(GLOBAL_ACTION_HOME)
+            clearSessionApps()
+            clearRunningTasks()
+            onComplete?.invoke()
+        }
+    }
+
+    private fun findClearAllNode(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {
+        val commonIds = listOf(
+            "com.android.systemui:id/clear_all",
+            "com.android.systemui:id/clear_all_button",
+            "com.android.systemui:id/clear_all_recents",
+            "com.android.systemui:id/button_clear_all",
+            "com.android.launcher3:id/clear_all",
+            "com.android.launcher3:id/clear_all_button",
+            "com.google.android.apps.nexuslauncher:id/clear_all",
+            "com.google.android.apps.nexuslauncher:id/clear_all_button",
+            "com.sec.android.app.launcher:id/clear_all_button",
+            "com.miui.home:id/clearAnimView",
+            "com.oppo.launcher:id/clear_all",
+            "com.oneplus.launcher:id/clear_all"
+        )
+        for (id in commonIds) {
+            try {
+                val list = root.findAccessibilityNodeInfosByViewId(id)
+                if (!list.isNullOrEmpty()) {
+                    for (node in list) {
+                        if (node.isVisibleToUser) return node
+                    }
+                }
+            } catch (e: Exception) {}
+        }
+
+        val commonTexts = listOf(
+            "Clear all", "Clear all apps", "Clear all tasks", "Clear",
+            "Close all", "Dismiss all",
+            "مسح الكل", "إغلاق الكل", "حذف الكل", "مسح",
+            "Borrar todo", "Cerrar todo",
+            "Tout effacer", "Fermer tout",
+            "Alle löschen", "Alle schließen",
+            "Очистить все", "Закрыть все",
+            "सभी साफ़ करें", "सभी बंद करें",
+            "全部清除", "全部关闭",
+            "すべてクリア"
+        )
+        for (text in commonTexts) {
+            try {
+                val list = root.findAccessibilityNodeInfosByText(text)
+                if (!list.isNullOrEmpty()) {
+                    for (node in list) {
+                        if (node.isVisibleToUser && (node.isClickable || node.parent?.isClickable == true)) {
+                            return node
+                        }
+                    }
+                }
+            } catch (e: Exception) {}
+        }
+
+        return findClearAllNodeRecursively(root)
+    }
+
+    private fun findClearAllNodeRecursively(node: AccessibilityNodeInfo): AccessibilityNodeInfo? {
+        val resId = node.viewIdResourceName?.lowercase() ?: ""
+        val text = node.text?.toString()?.lowercase() ?: ""
+        val desc = node.contentDescription?.toString()?.lowercase() ?: ""
+
+        val isClearId = resId.contains("clear_all") || resId.contains("clearall") ||
+                resId.contains("close_all") || resId.contains("dismiss_all")
+        val isClearText = text.contains("clear all") || text.contains("close all") ||
+                desc.contains("clear all") || desc.contains("close all")
+
+        if ((isClearId || isClearText) && node.isVisibleToUser) {
+            return node
+        }
+
+        for (i in 0 until node.childCount) {
+            val child = node.getChild(i) ?: continue
+            val found = findClearAllNodeRecursively(child)
+            if (found != null) return found
+            child.recycle()
+        }
+        return null
+    }
+
+    private fun attemptScrollToClearAll(root: AccessibilityNodeInfo) {
+        findScrollableNode(root)?.let { scrollable ->
+            try {
+                scrollable.performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)
+            } catch (e: Exception) {}
+            scrollable.recycle()
+        }
+    }
+
+    private fun findScrollableNode(node: AccessibilityNodeInfo): AccessibilityNodeInfo? {
+        if (node.isScrollable && node.isVisibleToUser) return node
+        for (i in 0 until node.childCount) {
+            val child = node.getChild(i) ?: continue
+            val found = findScrollableNode(child)
+            if (found != null) return found
+            child.recycle()
+        }
+        return null
     }
 
     @Volatile private var lastUpdate: Long = 0 // FIX #12: @Volatile prevents race condition between Main and IO threads

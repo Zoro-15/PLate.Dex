@@ -287,9 +287,8 @@ class TaskSwitchManager(
         val tasksToClose = ArrayList(cachedTasks)
         cachedTasks.clear()
 
-        // 1. Immediately dismiss Task View overlay and return to home desktop
+        // 1. Immediately dismiss Task View overlay
         dismissTaskView()
-        PerfectServer.dock?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME)
 
         // 2. Terminate all tasks asynchronously
         CoroutineScope(Dispatchers.IO).launch {
@@ -321,9 +320,19 @@ class TaskSwitchManager(
                 } catch (e: Exception) {}
             }
 
+            // 3. Automate native system Clear All via AccessibilityService so OS terminates tasks & purges RAM
             withContext(Dispatchers.Main) {
-                PerfectServer.dock?.clearSessionApps()
-                PerfectServer.dock?.clearRunningTasks()
+                val dock = PerfectServer.dock
+                if (dock != null) {
+                    dock.automateNativeClearAll {
+                        dock.clearSessionApps()
+                        dock.clearRunningTasks()
+                    }
+                } else {
+                    PerfectServer.dock?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME)
+                    PerfectServer.dock?.clearSessionApps()
+                    PerfectServer.dock?.clearRunningTasks()
+                }
             }
         }
     }

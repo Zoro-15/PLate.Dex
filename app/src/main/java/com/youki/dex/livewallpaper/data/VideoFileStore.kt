@@ -67,14 +67,14 @@ object VideoFileStore {
         }
 
         try {
-            if ((publicDir.exists() || publicDir.mkdirs()) && publicDir.canWrite()) {
+            if ((publicDir.exists() || publicDir.mkdirs()) && isDirWritable(publicDir)) {
                 return publicDir
             }
         } catch (_: Exception) {}
 
         // Fallback 1: app-specific external storage
         val extAppDir = context.getExternalFilesDir(FOLDER_NAME)
-        if (extAppDir != null && (extAppDir.exists() || extAppDir.mkdirs()) && extAppDir.canWrite()) {
+        if (extAppDir != null && (extAppDir.exists() || extAppDir.mkdirs()) && isDirWritable(extAppDir)) {
             return extAppDir
         }
 
@@ -82,6 +82,21 @@ object VideoFileStore {
         val internalDir = File(context.filesDir, FOLDER_NAME)
         if (!internalDir.exists()) internalDir.mkdirs()
         return internalDir
+    }
+
+    private fun isDirWritable(dir: File): Boolean {
+        return try {
+            if (!dir.exists() && !dir.mkdirs()) return false
+            val testFile = File(dir, ".test_${System.currentTimeMillis()}")
+            if (testFile.createNewFile()) {
+                testFile.delete()
+                true
+            } else {
+                dir.canWrite()
+            }
+        } catch (_: Exception) {
+            false
+        }
     }
 
     /** The WorkshopFragment downloads folder */
@@ -186,48 +201,61 @@ object VideoFileStore {
 
     /**
      * Copies a wallpaper (video or image) picked via SAF into the wallpapers folder.
+     * Uses resilient target directory fallbacks (public downloads -> app external -> app internal).
      */
     fun importVideo(context: Context, sourceUri: Uri, suggestedName: String?): VideoFile? {
-        return try {
-            val resolver: ContentResolver = context.contentResolver
-            val mimeType = resolver.getType(sourceUri)
-            val extFromMime = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)
+        val resolver: ContentResolver = context.contentResolver
+        val mimeType = resolver.getType(sourceUri)
+        val extFromMime = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)
 
-            var safeName = sanitizeFilename(suggestedName?.takeIf { it.isNotBlank() }
-                ?: "wallpaper_${System.currentTimeMillis()}")
+        var safeName = sanitizeFilename(suggestedName?.takeIf { it.isNotBlank() }
+            ?: "wallpaper_${System.currentTimeMillis()}")
 
-            // Ensure the filename has an appropriate extension
-            val currentExt = safeName.substringAfterLast('.', "")
-            if (currentExt.isBlank() || currentExt !in ALL_EXTS) {
-                val resolvedExt = extFromMime ?: if (mimeType?.startsWith("image/") == true) "jpg" else "mp4"
-                safeName = "$safeName.$resolvedExt"
-            }
-
-            val targetDir = folder(context)
-            var destFile = File(targetDir, safeName)
-
-            // Resolve name collision by suffixing counter
-            val baseName = destFile.nameWithoutExtension
-            val ext = if (destFile.extension.isNotBlank()) ".${destFile.extension}" else ""
-            var counter = 1
-            while (destFile.exists()) {
-                destFile = File(targetDir, "${baseName}_$counter$ext")
-                counter++
-            }
-
-            resolver.openInputStream(sourceUri)?.use { input ->
-                destFile.outputStream().use { output -> input.copyTo(output) }
-            } ?: run {
-                Log.e(TAG, "Cannot openInputStream for $sourceUri")
-                return null
-            }
-
-            Log.d(TAG, "Successfully imported wallpaper: ${destFile.absolutePath} (${destFile.length()} bytes)")
-            VideoFile.fromFile(destFile)
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to import wallpaper from $sourceUri", e)
-            null
+        // Ensure the filename has an appropriate extension
+        val currentExt = safeName.substringAfterLast('.', "")
+        if (currentExt.isBlank() || currentExt !in ALL_EXTS) {
+            val resolvedExt = extFromMime ?: if (mimeType?.startsWith("image/") == true) "jpg" else "mp4"
+            safeName = "$safeName.$resolvedExt"
         }
+
+        val candidateDirs = mutableListOf<File>()
+        candidateDirs.add(folder(context))
+        context.getExternalFilesDir(FOLDER_NAME)?.let { candidateDirs.add(it) }
+        candidateDirs.add(File(context.filesDir, FOLDER_NAME))
+
+        val distinctDirs = candidateDirs.distinctBy { it.absolutePath }
+        for (targetDir in distinctDirs) {
+            try {
+                if (!targetDir.exists() && !targetDir.mkdirs()) continue
+                var destFile = File(targetDir, safeName)
+
+                // Resolve name collision by suffixing counter
+                val baseName = destFile.nameWithoutExtension
+                val ext = if (destFile.extension.isNotBlank()) ".${destFile.extension}" else ""
+                var counter = 1
+                while (destFile.exists()) {
+                    destFile = File(targetDir, "${baseName}_$counter$ext")
+                    counter++
+                }
+
+                val copiedBytes = resolver.openInputStream(sourceUri)?.use { input ->
+                    destFile.outputStream().use { output ->
+                        input.copyTo(output, bufferSize = 64 * 1024)
+                    }
+                } ?: -1L
+
+                if (copiedBytes > 0 && destFile.exists() && destFile.length() > 0) {
+                    Log.d(TAG, "Successfully imported wallpaper: ${destFile.absolutePath} (${destFile.length()} bytes)")
+                    return VideoFile.fromFile(destFile)
+                } else {
+                    destFile.delete()
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Write attempt failed in $targetDir for $sourceUri: ${e.message}")
+            }
+        }
+        Log.e(TAG, "All target directories failed to import wallpaper from $sourceUri")
+        return null
     }
 
     /**

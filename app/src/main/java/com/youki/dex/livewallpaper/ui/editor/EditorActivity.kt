@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.Surface
 import androidx.activity.viewModels
 import androidx.fragment.app.commitNow
 import androidx.lifecycle.lifecycleScope
@@ -91,6 +92,7 @@ class EditorActivity : com.youki.dex.activities.BaseFontScaleActivity(), ColorPi
     private lateinit var freeGestureOverlay: FreeGestureOverlay
     private lateinit var freeHint: android.widget.TextView
     private lateinit var videoEngine: VideoEngine
+    private var activePreviewSurface: Surface? = null
 
     // ── Portrait-group-only state (drag sheet) ──
     private var editorSheet: android.widget.LinearLayout? = null
@@ -340,11 +342,12 @@ class EditorActivity : com.youki.dex.activities.BaseFontScaleActivity(), ColorPi
      */
     private fun bindPreviewSurface() {
         previewView.setOnSurfaceReady { surface ->
+            activePreviewSurface = surface
             applyCurrentMedia(surface)
         }
     }
 
-    private fun applyCurrentMedia(surface: Surface? = videoEngine.currentSurface) {
+    private fun applyCurrentMedia(surface: Surface? = activePreviewSurface ?: videoEngine.currentSurface) {
         val isImage = com.youki.dex.livewallpaper.data.VideoFileStore.isImage(this, videoUri)
         if (isImage) {
             videoEngine.release()
@@ -354,11 +357,12 @@ class EditorActivity : com.youki.dex.activities.BaseFontScaleActivity(), ColorPi
             }
         } else {
             previewView.renderer.clearImage()
-            if (surface != null) {
+            val targetSurface = surface ?: activePreviewSurface ?: videoEngine.currentSurface
+            if (targetSurface != null) {
                 val audio = viewModel.config.value.audioPlaybackFor(currentOrientation)
                 videoEngine.prepare(
                     videoUri = videoUri,
-                    outputSurface = surface,
+                    outputSurface = targetSurface,
                     muted = true,
                     playbackSpeed = audio.speed,
                     audioPitch = audio.pitch,
@@ -735,6 +739,7 @@ class EditorActivity : com.youki.dex.activities.BaseFontScaleActivity(), ColorPi
         //      WHEN_DIRTY, then one final onPause to stop the render
         //      thread for good
         //   3. Then release the renderer (safe because the GL thread has stopped)
+        activePreviewSurface = null
         videoEngine.release()
         previewView.renderMode = android.opengl.GLSurfaceView.RENDERMODE_WHEN_DIRTY
         previewView.renderer.release()

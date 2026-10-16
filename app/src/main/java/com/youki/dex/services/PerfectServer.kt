@@ -2185,9 +2185,11 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         val menuDockPosition = com.youki.dex.utils.DockPositionUtils.get(sharedPreferences)
         val satelliteGravity = com.youki.dex.utils.DockPositionUtils.satelliteGravity(menuDockPosition)
         layoutParams.gravity = satelliteGravity or halign
-        // درج التطبيقات يتبع لون الفقاعة مباشرة
-        // ✅ نفس لون الدوك بالضبط
-        ColorUtils.applyMainColor(this, sharedPreferences, appMenu)
+        // درج التطبيقات يتبع لون الفقاعة مباشرة (الموحد مع الدوك وبقية العناصر)
+        val bubbleColor = ColorUtils.getBubbleColor(sharedPreferences, this)
+        val bubbleAlpha = android.graphics.Color.alpha(bubbleColor)
+        appMenu.background?.setColorFilter(bubbleColor, android.graphics.PorterDuff.Mode.SRC_ATOP)
+        appMenu.background?.alpha = bubbleAlpha
         ColorUtils.applyColor(appsSeparator, ColorUtils.getMainColors(sharedPreferences, this)[4])
         // Apply custom font if set
         com.youki.dex.utils.FontManager.applyIfSet(context, appMenu)
@@ -4326,9 +4328,13 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             it.background?.alpha = alpha
         }
 
-        // App dock background (icons island)
+        // App drawer background (appMenu) — standardized to unified bubble color & master opacity
+        appMenu.background?.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_ATOP)
+        appMenu.background?.alpha = alpha
+
+        // App dock background (icons island) — standardized to unified bubble color & master opacity
         if (::centerGroup.isInitialized) {
-            val enableAppDockBg = sharedPreferences.getBoolean("enable_app_dock_bg", false)
+            val enableAppDockBg = sharedPreferences.getBoolean("enable_app_dock_bg", true)
             if (enableAppDockBg) {
                 if (centerGroup.background == null) {
                     centerGroup.background = ContextCompat.getDrawable(context, R.drawable.btn_bubble_rect)?.mutate()
@@ -4337,12 +4343,8 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
                 val padV = Utils.dpToPx(context, 2)
                 centerGroup.setPadding(padH, padV, padH, padV)
 
-                val defaultAppDockAlpha = android.graphics.Color.alpha(color)
-                val appDockAlpha = sharedPreferences.getString("app_dock_bg_opacity", defaultAppDockAlpha.toString())
-                    ?.toIntOrNull()?.coerceIn(0, 255) ?: defaultAppDockAlpha
-
                 centerGroup.background?.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_ATOP)
-                centerGroup.background?.alpha = appDockAlpha
+                centerGroup.background?.alpha = alpha
             } else {
                 centerGroup.background = null
                 centerGroup.setPadding(0, 0, 0, 0)
@@ -4377,8 +4379,11 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             val alpha = sharedPreferences.getString("dock_background_alpha", "255")?.toIntOrNull() ?: 255
             dockLayout.background?.alpha = alpha
         }
-        // ✅ قائمة التطبيقات تتبع نفس لون الدوك بالضبط
-        ColorUtils.applyMainColor(this, sharedPreferences, appMenu)
+        // ✅ قائمة التطبيقات (App Drawer) تتبع لون الفقاعة الموحد
+        val bubbleColor = ColorUtils.getBubbleColor(sharedPreferences, this)
+        val bubbleAlpha = android.graphics.Color.alpha(bubbleColor)
+        appMenu.background?.setColorFilter(bubbleColor, android.graphics.PorterDuff.Mode.SRC_ATOP)
+        appMenu.background?.alpha = bubbleAlpha
         ColorUtils.applySecondaryColor(this, sharedPreferences, searchEntry)
 
         // ── Apply custom font (Plugins → خط مخصص) ─────────────────────────────

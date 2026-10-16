@@ -92,7 +92,7 @@ class AppearancePreferences : PreferenceFragmentCompat() {
         findPreference<Preference>("bubble_opacity_picker")?.let { opacityPref ->
             opacityPref.isVisible = true
             fun updateOpacitySummary() {
-                val alpha = prefs.getInt("bubble_alpha", 255)
+                val alpha = prefs.getInt("bubble_alpha", 115)
                 val pct = (alpha / 255f * 100).toInt()
                 opacityPref.summary = "$pct%"
             }
@@ -145,9 +145,9 @@ class AppearancePreferences : PreferenceFragmentCompat() {
             }
         })
 
-        // App Dock Background Transparency slider
+        // App Dock Background Transparency slider — interconnected with bubble_alpha
         val appDockAlphaPref = findPreference<SliderPreference>("app_dock_bg_opacity")
-        val defaultAppDockAlpha = prefs.getInt("bubble_alpha", 255).toFloat()
+        val defaultAppDockAlpha = prefs.getInt("bubble_alpha", 115).toFloat()
         val curAppDockVal = (appDockAlphaPref?.sharedPreferences?.getString("app_dock_bg_opacity", defaultAppDockAlpha.toInt().toString())?.toFloatOrNull() ?: defaultAppDockAlpha).toInt()
         val initPct = (curAppDockVal / 255f * 100).toInt()
         appDockAlphaPref?.summary = "$initPct%"
@@ -159,14 +159,19 @@ class AppearancePreferences : PreferenceFragmentCompat() {
                 slider.stepSize = 1f
                 slider.valueFrom = 0f
                 slider.valueTo = 255f
-                val defAlpha = prefs.getInt("bubble_alpha", 255).toFloat()
+                val defAlpha = prefs.getInt("bubble_alpha", 115).toFloat()
                 slider.value =
                     (appDockAlphaPref.sharedPreferences?.getString("app_dock_bg_opacity", defAlpha.toInt().toString())?.toFloatOrNull() ?: defAlpha)
                         .coerceIn(slider.valueFrom, slider.valueTo)
                 slider.addOnChangeListener { _, value, _ ->
                     val pct = (value / 255f * 100).toInt()
                     appDockAlphaPref.summary = "$pct%"
-                    appDockAlphaPref.sharedPreferences?.edit { putString("app_dock_bg_opacity", value.toInt().toString()) }
+                    val alphaInt = value.toInt()
+                    appDockAlphaPref.sharedPreferences?.edit {
+                        putString("app_dock_bg_opacity", alphaInt.toString())
+                        putInt("bubble_alpha", alphaInt)
+                    }
+                    findPreference<Preference>("bubble_opacity_picker")?.summary = "$pct%"
                 }
             }
         })
@@ -288,7 +293,7 @@ class AppearancePreferences : PreferenceFragmentCompat() {
 
     private fun showBubbleColorPickerDialog(context: Context) {
         val prefs = preferenceManager.sharedPreferences ?: return
-        val currentHex = prefs.getString("bubble_color", "#808080").orEmpty().ifEmpty { "#808080" }
+        val currentHex = prefs.getString("bubble_color", "#0C0C0C").orEmpty().ifEmpty { "#0C0C0C" }
 
         val dialog = MaterialAlertDialogBuilder(context)
         val view = LayoutInflater.from(context).inflate(R.layout.dialog_color_picker, null)
@@ -306,7 +311,7 @@ class AppearancePreferences : PreferenceFragmentCompat() {
         alphaSb.valueFrom = 0f
         alphaSb.valueTo = 255f
         alphaSb.stepSize = 1f
-        val savedAlpha = prefs.getInt("bubble_alpha", 255)
+        val savedAlpha = prefs.getInt("bubble_alpha", 115)
         alphaSb.value = savedAlpha.toFloat()
 
         fun updatePreview() {
@@ -355,10 +360,14 @@ class AppearancePreferences : PreferenceFragmentCompat() {
         dialog.setPositiveButton(R.string.ok) { _, _ ->
             val hex = colorHexEt.text.toString()
             if (ColorUtils.toColor(hex) != -1) {
+                val alphaVal = alphaSb.value.toInt()
                 prefs.edit()
                     .putString("bubble_color", hex)
-                    .putInt("bubble_alpha", alphaSb.value.toInt())
+                    .putInt("bubble_alpha", alphaVal)
+                    .putString("app_dock_bg_opacity", alphaVal.toString())
                     .apply()
+                findPreference<Preference>("bubble_opacity_picker")?.summary = "${(alphaVal / 255f * 100).toInt()}%"
+                findPreference<SliderPreference>("app_dock_bg_opacity")?.summary = "${(alphaVal / 255f * 100).toInt()}%"
             }
         }
         dialog.setView(view)
@@ -372,7 +381,7 @@ class AppearancePreferences : PreferenceFragmentCompat() {
             setPadding(pad, pad, pad, 0)
         }
         val label = android.widget.TextView(context).apply {
-            val alpha = prefs.getInt("bubble_alpha", 255)
+            val alpha = prefs.getInt("bubble_alpha", 115)
             text = "${(alpha / 255f * 100).toInt()}%"
             textSize = 16f
             gravity = android.view.Gravity.CENTER
@@ -381,7 +390,7 @@ class AppearancePreferences : PreferenceFragmentCompat() {
             valueFrom = 0f
             valueTo = 100f
             stepSize = 1f
-            value = (prefs.getInt("bubble_alpha", 255) / 255f * 100).toInt().toFloat()
+            value = (prefs.getInt("bubble_alpha", 115) / 255f * 100).toInt().toFloat()
             isTickVisible = false
             labelBehavior = com.google.android.material.slider.LabelFormatter.LABEL_GONE
             addOnChangeListener { _, v, _ -> label.text = "${v.toInt()}%" }
@@ -395,7 +404,11 @@ class AppearancePreferences : PreferenceFragmentCompat() {
             .setNegativeButton(R.string.cancel, null)
             .setPositiveButton(R.string.ok) { _, _ ->
                 val alpha = (slider.value / 100f * 255).toInt().coerceIn(0, 255)
-                prefs.edit().putInt("bubble_alpha", alpha).apply()
+                prefs.edit()
+                    .putInt("bubble_alpha", alpha)
+                    .putString("app_dock_bg_opacity", alpha.toString())
+                    .apply()
+                findPreference<SliderPreference>("app_dock_bg_opacity")?.summary = "${(alpha / 255f * 100).toInt()}%"
                 onSaved()
             }
             .show()

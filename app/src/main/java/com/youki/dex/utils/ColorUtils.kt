@@ -209,11 +209,11 @@ object ColorUtils {
     /**
      * Returns the bubble color with user-controlled opacity.
      * bubble_mode = "material_u" → Material You colorPrimary dark
-     * bubble_mode = "custom"     → user-picked hex + bubble_alpha (0-255, default 255)
+     * bubble_mode = "custom"     → user-picked hex + bubble_alpha (0-255, default 115 = 45%)
      */
     fun getBubbleColor(sp: SharedPreferences, context: Context): Int {
-        val mode = sp.getString("bubble_mode", "material_u") ?: "material_u"
-        val alpha = sp.getInt("bubble_alpha", 255).coerceIn(0, 255)
+        val mode = sp.getString("bubble_mode", "custom") ?: "custom"
+        val alpha = sp.getInt("bubble_alpha", 115).coerceIn(0, 255)
         val baseColor = when {
             mode == "material_u" &&
             com.google.android.material.color.DynamicColors.isDynamicColorAvailable() -> {
@@ -221,7 +221,7 @@ object ColorUtils {
                     // The dark colorSurface — the darkest color in Material You
                     val surface = getThemeColors(context, true)[1]
                     manipulateColor(surface, 0.80f)
-                } catch (e: Exception) { android.graphics.Color.rgb(30, 30, 30) }
+                } catch (e: Exception) { android.graphics.Color.parseColor("#0C0C0C") }
             }
             mode == "material_u_light" &&
             com.google.android.material.color.DynamicColors.isDynamicColorAvailable() -> {
@@ -232,8 +232,8 @@ object ColorUtils {
                 } catch (e: Exception) { android.graphics.Color.rgb(220, 220, 220) }
             }
             else -> {
-                val hex = sp.getString("bubble_color", "#808080") ?: "#808080"
-                try { hex.toColorInt() } catch (e: Exception) { android.graphics.Color.GRAY }
+                val hex = sp.getString("bubble_color", "#0C0C0C") ?: "#0C0C0C"
+                try { hex.toColorInt() } catch (e: Exception) { android.graphics.Color.parseColor("#0C0C0C") }
             }
         }
         // Apply the user's alpha to the color (the RGB isn't affected)

@@ -48,8 +48,14 @@ class WallpaperGLRenderer(
         private fun openStream(context: Context, uri: Uri): java.io.InputStream? {
             return try {
                 if (uri.scheme == "file" || uri.scheme.isNullOrEmpty()) {
-                    val path = uri.path ?: uri.toString()
-                    java.io.File(path).inputStream()
+                    val rawPath = uri.path ?: uri.toString()
+                    val decodedPath = try { Uri.decode(rawPath) } catch (_: Exception) { rawPath }
+                    val file = java.io.File(decodedPath)
+                    if (file.exists() && file.isFile) {
+                        file.inputStream()
+                    } else {
+                        context.contentResolver.openInputStream(uri)
+                    }
                 } else {
                     context.contentResolver.openInputStream(uri)
                 }
@@ -321,6 +327,8 @@ class WallpaperGLRenderer(
 
         if (isImageMode && currentBitmap != null && !currentBitmap!!.isRecycled) {
             uploadImageTexture(currentBitmap!!)
+        } else if (currentBitmap == null && pendingBitmap == null) {
+            isImageMode = false
         }
 
         val surface = Surface(surfaceTexture)

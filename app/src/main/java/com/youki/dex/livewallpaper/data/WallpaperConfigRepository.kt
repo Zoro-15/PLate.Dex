@@ -27,7 +27,8 @@ import kotlinx.coroutines.flow.flow
  */
 class WallpaperConfigRepository private constructor(context: Context) {
 
-    private val dao = WallpaperConfigDao(context)
+    private val appContext = context.applicationContext
+    private val dao = WallpaperConfigDao(appContext)
 
     private val changePulse = MutableSharedFlow<Unit>(
         replay = 1,
@@ -36,6 +37,12 @@ class WallpaperConfigRepository private constructor(context: Context) {
 
     private fun notifyChanged() {
         changePulse.tryEmit(Unit)
+        try {
+            val intent = android.content.Intent(ACTION_WALLPAPER_CHANGED).apply {
+                setPackage(appContext.packageName)
+            }
+            appContext.sendBroadcast(intent)
+        } catch (_: Exception) {}
     }
 
     suspend fun get(videoUri: String): WallpaperConfig =
@@ -78,6 +85,8 @@ class WallpaperConfigRepository private constructor(context: Context) {
     }
 
     companion object {
+        const val ACTION_WALLPAPER_CHANGED = "com.youki.dex.ACTION_WALLPAPER_CHANGED"
+
         @Volatile private var instance: WallpaperConfigRepository? = null
 
         fun get(context: Context): WallpaperConfigRepository =

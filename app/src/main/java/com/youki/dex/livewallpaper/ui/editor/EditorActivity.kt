@@ -468,6 +468,11 @@ class EditorActivity : com.youki.dex.activities.BaseFontScaleActivity(), ColorPi
      * this, used only to anchor the Snackbar to a currently-visible view.
      */
     private fun requestSetLiveWallpaper(anchorViewId: Int) {
+        val updateIntent = Intent(WallpaperConfigRepository.ACTION_WALLPAPER_CHANGED).apply {
+            setPackage(packageName)
+        }
+        sendBroadcast(updateIntent)
+
         if (isYoukiWallpaperCurrentlyActive()) {
             // The service is already running and watching the database —
             // saving to Room (which already happened before this function was

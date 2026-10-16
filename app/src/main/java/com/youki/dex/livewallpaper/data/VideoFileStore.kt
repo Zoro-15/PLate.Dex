@@ -30,12 +30,8 @@ object VideoFileStore {
         val clean = Uri.parse(uriString).path ?: uriString
         if (clean.contains('.')) {
             val ext = clean.substringAfterLast('.', "").lowercase().substringBefore('?')
+            if (ext in VIDEO_EXTS) return false
             if (ext in IMAGE_EXTS) return true
-            if (ext in VIDEO_EXTS) {
-                val header = readHeader(clean)
-                if (header != null && isImageHeader(header)) return true
-                return false
-            }
         }
         val header = readHeader(clean)
         return header != null && isImageHeader(header)
@@ -44,14 +40,19 @@ object VideoFileStore {
     fun isImage(context: Context?, uriString: String): Boolean {
         if (isImage(uriString)) return true
         val clean = Uri.parse(uriString).path ?: uriString
-        val header = readHeader(clean, context)
-        if (header != null && isImageHeader(header)) return true
+        if (clean.contains('.')) {
+            val ext = clean.substringAfterLast('.', "").lowercase().substringBefore('?')
+            if (ext in VIDEO_EXTS) return false
+            if (ext in IMAGE_EXTS) return true
+        }
+        val header = readHeader(uriString, context)
         if (header != null && isVideoHeader(header)) return false
+        if (header != null && isImageHeader(header)) return true
         if (context != null) {
             try {
                 val mime = context.contentResolver.getType(Uri.parse(uriString))
-                if (mime?.startsWith("image/") == true) return true
                 if (mime?.startsWith("video/") == true) return false
+                if (mime?.startsWith("image/") == true) return true
             } catch (_: Exception) {}
         }
         return false
@@ -61,10 +62,16 @@ object VideoFileStore {
         return try {
             val uri = Uri.parse(uriOrPath)
             val stream = if (uri.scheme == "file" || uri.scheme.isNullOrEmpty()) {
-                val path = uri.path ?: uriOrPath
-                val file = File(path)
-                if (!file.exists() || !file.isFile) return null
-                file.inputStream()
+                val rawPath = uri.path ?: uriOrPath
+                val decodedPath = try { Uri.decode(rawPath) } catch (_: Exception) { rawPath }
+                val file = File(decodedPath)
+                if (!file.exists() || !file.isFile) {
+                    if (context != null && uri.scheme != null) {
+                        context.contentResolver.openInputStream(uri)
+                    } else null
+                } else {
+                    file.inputStream()
+                }
             } else if (context != null) {
                 context.contentResolver.openInputStream(uri) ?: return null
             } else {
@@ -206,7 +213,8 @@ object VideoFileStore {
     }
 
     /**
-     * Inspects files without an extension or misnamed files and restores their extension using file headers.
+     * Inspects extensionless files and restores their extension using file headers.
+     * Also recovers any video file that was misnamed as an image.
      */
     private fun repairExtensionlessFiles(dir: File) {
         try {
@@ -218,12 +226,20 @@ object VideoFileStore {
                     file.inputStream().use { it.read(header) }
                 } catch (_: Exception) { 0 }
                 if (read >= 4) {
-                    val realExt = detectExtensionFromHeader(header)
-                    if (realExt != null) {
-                        val isImageReal = realExt in IMAGE_EXTS
-                        val isVideoExt = ext in VIDEO_EXTS
-                        if (ext.isBlank() || (isVideoExt && isImageReal)) {
-                            val newFile = File(dir, "${file.nameWithoutExtension}.$realExt")
+                    // Self-healing: if a video was accidentally renamed to an image, restore it to mp4
+                    if (ext in IMAGE_EXTS && isVideoHeader(header)) {
+                        val newFile = File(dir, "${file.nameWithoutExtension}.mp4")
+                        if (!newFile.exists()) {
+                            file.renameTo(newFile)
+                            Log.d(TAG, "Restored misnamed video ${file.name} -> ${newFile.name}")
+                        }
+                        continue
+                    }
+
+                    if (ext.isBlank()) {
+                        val realExt = detectExtensionFromHeader(header)
+                        if (realExt != null) {
+                            val newFile = File(dir, "${file.name}.$realExt")
                             if (!newFile.exists()) {
                                 file.renameTo(newFile)
                                 Log.d(TAG, "Restored extension for file ${file.name} -> ${newFile.name}")
@@ -238,17 +254,17 @@ object VideoFileStore {
     }
 
     fun detectExtensionFromHeader(header: ByteArray): String? {
+        if (isVideoHeader(header)) {
+            if (header.size >= 8 && header[4] == 'f'.code.toByte() && header[5] == 't'.code.toByte()) return "mp4"
+            return "mkv"
+        }
         if (isImageHeader(header)) {
             if ((header[0].toInt() and 0xFF) == 0xFF && (header[1].toInt() and 0xFF) == 0xD8) return "jpg"
             if (header.size >= 4 && (header[0].toInt() and 0xFF) == 0x89) return "png"
-            if (header[0] == 'G'.code.toByte()) return "gif"
-            if (header[0] == 'B'.code.toByte()) return "bmp"
-            if (header.size >= 12 && header[8] == 'W'.code.toByte()) return "webp"
+            if (header.size >= 3 && header[0] == 'G'.code.toByte() && header[1] == 'I'.code.toByte() && header[2] == 'F'.code.toByte()) return "gif"
+            if (header.size >= 2 && header[0] == 'B'.code.toByte() && header[1] == 'M'.code.toByte()) return "bmp"
+            if (header.size >= 12 && header[8] == 'W'.code.toByte() && header[9] == 'E'.code.toByte() && header[10] == 'B'.code.toByte() && header[11] == 'P'.code.toByte()) return "webp"
             return "jpg"
-        }
-        if (isVideoHeader(header)) {
-            if (header.size >= 8 && header[4] == 'f'.code.toByte()) return "mp4"
-            return "mkv"
         }
         return null
     }

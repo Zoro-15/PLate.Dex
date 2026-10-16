@@ -3663,7 +3663,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         val heightDp = (sharedPreferences.getString("pill_height", "30")?.toIntOrNull() ?: 30)
             .coerceIn(20, 50)
         val timeLengthDp = (sharedPreferences.getString("pill_time_length", "75")?.toIntOrNull() ?: 75)
-            .coerceIn(40, 200)
+            .coerceIn(40, 300)
         val batteryLengthDp = (sharedPreferences.getString("pill_battery_length", "115")?.toIntOrNull() ?: 115)
             .coerceIn(60, 240)
 
@@ -3685,12 +3685,6 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             val timeContainer = timePillView?.findViewById<View>(R.id.pill_time_container)
             timeContainer?.minimumWidth = timeMinWidthPx
             timeContainer?.minimumHeight = heightPx
-            val bgTime = GradientDrawable().apply {
-                shape = GradientDrawable.RECTANGLE
-                this.cornerRadius = cornerRadius
-                setColor(Color.BLACK)
-            }
-            timeContainer?.background = bgTime
 
             if (timePillParams == null) {
                 timePillParams = Utils.makeWindowParams(

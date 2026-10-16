@@ -1094,4 +1094,9 @@ To uninstall, remove Device Administrator permission first.</string>
     <string name="pill_time_length_title">Time Pill Width</string>
     <string name="pill_battery_length_title">Status Pill Width</string>
 
+    <!-- App Dock Background -->
+    <string name="enable_app_dock_bg_title">App Dock Background</string>
+    <string name="enable_app_dock_bg_summary">Show a background pill behind app icons in the dock</string>
+    <string name="app_dock_bg_opacity_title">App Dock Background Opacity</string>
+
 </resources>

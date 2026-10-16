@@ -262,6 +262,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
     private lateinit var navBtnsGroup: android.widget.LinearLayout
     private lateinit var navPanel: android.widget.LinearLayout
     private lateinit var pinPill: android.widget.LinearLayout
+    private lateinit var centerGroup: android.widget.LinearLayout
 
     // Floating corner status pills
     private var timePillView: View? = null
@@ -434,6 +435,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         actionBtnsGroup = dock.findViewById(R.id.action_btns_group)
         navBtnsGroup    = dock.findViewById(R.id.nav_btns_group)
         navPanel        = dock.findViewById(R.id.nav_panel)
+        centerGroup     = dock.findViewById(R.id.center_group)
         bluetoothBtn = dock.findViewById(R.id.bluetooth_btn)
         wifiBtn = dock.findViewById(R.id.wifi_btn)
         volumeBtn = dock.findViewById(R.id.volume_btn)
@@ -2770,6 +2772,8 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             || preference == "round_dock" || preference == "dock_height"
             || preference == "override_dock_background_alpha"
             || preference == "dock_background_alpha"
+            || preference == "enable_app_dock_bg"
+            || preference == "app_dock_bg_opacity"
 )
             applyTheme()
         // FIX (user report — "the dock doesn't update live, you have to
@@ -3099,6 +3103,8 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             RelativeLayout.LayoutParams.WRAP_CONTENT,
             RelativeLayout.LayoutParams.WRAP_CONTENT
         )
+        val m = Utils.dpToPx(context, 4)
+        groupParams.setMargins(m, 0, m, 0)
         if (sharedPreferences.getBoolean("center_running_apps", true)) {
             groupParams.addRule(RelativeLayout.CENTER_IN_PARENT)
         } else {
@@ -4289,6 +4295,29 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         appMenu.findViewById<android.view.View?>(R.id.user_chip_container)?.let {
             it.background?.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_ATOP)
             it.background?.alpha = alpha
+        }
+
+        // App dock background (icons island)
+        if (::centerGroup.isInitialized) {
+            val enableAppDockBg = sharedPreferences.getBoolean("enable_app_dock_bg", false)
+            if (enableAppDockBg) {
+                if (centerGroup.background == null) {
+                    centerGroup.background = ContextCompat.getDrawable(context, R.drawable.btn_bubble_rect)?.mutate()
+                }
+                val padH = Utils.dpToPx(context, 6)
+                val padV = Utils.dpToPx(context, 2)
+                centerGroup.setPadding(padH, padV, padH, padV)
+
+                val defaultAppDockAlpha = android.graphics.Color.alpha(color)
+                val appDockAlpha = sharedPreferences.getString("app_dock_bg_opacity", defaultAppDockAlpha.toString())
+                    ?.toIntOrNull()?.coerceIn(0, 255) ?: defaultAppDockAlpha
+
+                centerGroup.background?.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_ATOP)
+                centerGroup.background?.alpha = appDockAlpha
+            } else {
+                centerGroup.background = null
+                centerGroup.setPadding(0, 0, 0, 0)
+            }
         }
 
         // مزامنة فورية مع NotificationService

@@ -145,6 +145,32 @@ class AppearancePreferences : PreferenceFragmentCompat() {
             }
         })
 
+        // App Dock Background Transparency slider
+        val appDockAlphaPref = findPreference<SliderPreference>("app_dock_bg_opacity")
+        val defaultAppDockAlpha = prefs.getInt("bubble_alpha", 255).toFloat()
+        val curAppDockVal = (appDockAlphaPref?.sharedPreferences?.getString("app_dock_bg_opacity", defaultAppDockAlpha.toInt().toString())?.toFloatOrNull() ?: defaultAppDockAlpha).toInt()
+        val initPct = (curAppDockVal / 255f * 100).toInt()
+        appDockAlphaPref?.summary = "$initPct%"
+        appDockAlphaPref?.setOnDialogShownListener(object : SliderPreference.OnDialogShownListener {
+            override fun onDialogShown() {
+                val slider = appDockAlphaPref.slider ?: return
+                slider.isTickVisible = false
+                slider.labelBehavior = com.google.android.material.slider.LabelFormatter.LABEL_GONE
+                slider.stepSize = 1f
+                slider.valueFrom = 0f
+                slider.valueTo = 255f
+                val defAlpha = prefs.getInt("bubble_alpha", 255).toFloat()
+                slider.value =
+                    (appDockAlphaPref.sharedPreferences?.getString("app_dock_bg_opacity", defAlpha.toInt().toString())?.toFloatOrNull() ?: defAlpha)
+                        .coerceIn(slider.valueFrom, slider.valueTo)
+                slider.addOnChangeListener { _, value, _ ->
+                    val pct = (value / 255f * 100).toInt()
+                    appDockAlphaPref.summary = "$pct%"
+                    appDockAlphaPref.sharedPreferences?.edit { putString("app_dock_bg_opacity", value.toInt().toString()) }
+                }
+            }
+        })
+
         // Icon padding slider (Appearance section)
         val iconPaddingPref = findPreference<SliderPreference>("icon_padding")
         iconPaddingPref?.setOnDialogShownListener(object : SliderPreference.OnDialogShownListener {

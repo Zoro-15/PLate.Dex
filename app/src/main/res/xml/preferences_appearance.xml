@@ -54,6 +54,19 @@
             android:defaultValue="255"
             android:dependency="override_dock_background_alpha" />
 
+        <!-- App Dock (Icons) Background & Opacity -->
+        <SwitchPreferenceCompat
+            android:key="enable_app_dock_bg"
+            android:title="@string/enable_app_dock_bg_title"
+            android:summary="@string/enable_app_dock_bg_summary"
+            android:defaultValue="false" />
+
+        <com.youki.dex.preferences.SliderPreference
+            android:key="app_dock_bg_opacity"
+            android:title="@string/app_dock_bg_opacity_title"
+            android:defaultValue="255"
+            android:dependency="enable_app_dock_bg" />
+
         <Preference
             android:key="dock_layout"
             android:title="@string/dock_layout" />

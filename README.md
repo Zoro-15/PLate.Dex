@@ -143,6 +143,9 @@ Runs on Android 8.0 and up, built with Gradle and Cargo.
 <p align="center">
   <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot_drawer.png" width="100%" alt="PLate.Dex App Drawer" />
 </p>
+<p align="center">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot_quicksettings.png" width="100%" alt="PLate.Dex Quick Settings &amp; Notifications" />
+</p>
 
 ---
 

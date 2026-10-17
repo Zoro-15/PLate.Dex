@@ -203,6 +203,25 @@ class DockPreferences : PreferenceFragmentCompat() {
             }
         })
 
+        // Pill side edge margin slider
+        val pillSideMargin = findPreference<SliderPreference>("pill_side_margin")
+        pillSideMargin?.setOnDialogShownListener(object : SliderPreference.OnDialogShownListener {
+            override fun onDialogShown() {
+                val slider = pillSideMargin.slider ?: return
+                slider.isTickVisible = false
+                slider.labelBehavior = LabelFormatter.LABEL_GONE
+                slider.stepSize = 1f
+                slider.valueFrom = 0f
+                slider.valueTo = 30f
+                slider.value =
+                    (pillSideMargin.sharedPreferences?.getString("pill_side_margin", "4")?.toFloatOrNull() ?: 4f)
+                        .coerceIn(slider.valueFrom, slider.valueTo)
+                slider.addOnChangeListener { _, value, _ ->
+                    pillSideMargin.sharedPreferences?.edit { putString("pill_side_margin", value.toInt().toString()) }
+                }
+            }
+        })
+
         findPreference<Preference>("auto_pin")!!.setOnPreferenceClickListener {
             showAutopinDialog(requireContext())
             false

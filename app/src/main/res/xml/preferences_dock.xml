@@ -243,6 +243,11 @@
             android:key="pill_text_weight"
             android:title="@string/pill_text_weight_title"
             android:defaultValue="4" />
+
+        <com.youki.dex.preferences.SliderPreference
+            android:key="pill_side_margin"
+            android:title="@string/pill_side_margin_title"
+            android:defaultValue="4" />
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -32,7 +32,7 @@
     <!-- Battery Capsule Icon -->
     <ImageView
         android:id="@+id/pill_battery_iv"
-        android:layout_width="35dp"
+        android:layout_width="28dp"
         android:layout_height="15dp"
         android:layout_marginEnd="4dp"
         android:layout_gravity="center_vertical"

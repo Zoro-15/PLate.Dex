@@ -1,4 +1,4 @@
-﻿package com.plate.launcher.services
+package com.plate.launcher.services
 
 import android.accessibilityservice.AccessibilityService
 import android.animation.Animator
@@ -3655,10 +3655,20 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         // 1. Battery percentage text
         batteryPillTv?.text = "$level%"
 
-        // 2. Battery icon: charging mode with lightning bolt vs discharging capsule
-        pillBatteryIv?.setImageResource(
-            if (isCharging) R.drawable.stat_sys_battery_charge else R.drawable.stat_sys_battery
-        )
+        // 2. Battery icon: charging mode (green with border thunderbolt) vs low battery (<20% red) vs discharging capsule
+        val batteryRes = when {
+            isCharging -> R.drawable.stat_sys_battery_charge
+            level < 20 -> R.drawable.stat_sys_battery_low
+            else -> R.drawable.stat_sys_battery
+        }
+        pillBatteryIv?.setImageResource(batteryRes)
+
+        val textColor = when {
+            isCharging -> Color.parseColor("#00E676")
+            level < 20 -> Color.parseColor("#E50914")
+            else -> Color.parseColor("#FFC9C9C9")
+        }
+        batteryPillTv?.setTextColor(textColor)
 
         // 3. Wi-Fi state: highlight when connected, unhighlight (alpha 0.35f) when not connected
         try {

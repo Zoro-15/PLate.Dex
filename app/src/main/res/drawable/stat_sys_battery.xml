@@ -1,22 +1,17 @@
-<!-- res/drawable/stat_sys_battery.xml (Clean, Unbloated Vector Capsule Battery) -->
+<!-- res/drawable/stat_sys_battery.xml (Android 16 QPR2 Authentic Vector Capsule Battery) -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="35dp"
+    android:width="28dp"
     android:height="15dp"
-    android:viewportWidth="35"
+    android:viewportWidth="28"
     android:viewportHeight="15">
 
-    <!-- Capsule Track (Frosted Background) -->
+    <!-- Capsule Track (Android 16 QPR2 Authentic) -->
     <path
-        android:fillColor="#66C9C9C9"
-        android:pathData="M 4,1 H 21.5 A 3.8,3.8 0 0,1 25.3,4.8 V 10.2 A 3.8,3.8 0 0,1 21.5,14 H 4 A 3.8,3.8 0 0,1 0.2,10.2 V 4.8 A 3.8,3.8 0 0,1 4,1 Z" />
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M 4.5,1.0 H 19.0 A 3.5,3.5 0 0,1 22.5,4.5 V 10.5 A 3.5,3.5 0 0,1 19.0,14.0 H 4.5 A 3.5,3.5 0 0,1 1.0,10.5 V 4.5 A 3.5,3.5 0 0,1 4.5,1.0 Z" />
 
-    <!-- Delicate Terminal Nipple -->
+    <!-- Terminal Cap (1.4dp Distance Gap) -->
     <path
-        android:fillColor="#66C9C9C9"
-        android:pathData="M 26.2,5.5 H 27.4 A 0.6,0.6 0 0,1 28.0,6.1 V 8.9 A 0.6,0.6 0 0,1 27.4,9.5 H 26.2 Z" />
-
-    <!-- Solid Progress Level Fill (40%) -->
-    <path
-        android:fillColor="#FFC9C9C9"
-        android:pathData="M 4,1 H 13 V 14 H 4 A 3.8,3.8 0 0,1 0.2,10.2 V 4.8 A 3.8,3.8 0 0,1 4,1 Z" />
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M 24.8,4.9 H 24.8 A 0.9,0.9 0 0,1 25.7,5.8 V 9.2 A 0.9,0.9 0 0,1 24.8,10.1 H 24.8 A 0.9,0.9 0 0,1 23.9,9.2 V 5.8 A 0.9,0.9 0 0,1 24.8,4.9 Z" />
 </vector>

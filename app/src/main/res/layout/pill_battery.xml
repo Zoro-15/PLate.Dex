@@ -6,36 +6,39 @@
     android:background="@drawable/pill_status_bg"
     android:orientation="horizontal"
     android:gravity="center"
-    android:paddingStart="10dp"
-    android:paddingEnd="10dp"
-    android:paddingTop="3dp"
-    android:paddingBottom="3dp">
+    android:paddingStart="7dp"
+    android:paddingEnd="7dp"
+    android:paddingTop="2dp"
+    android:paddingBottom="2dp">
 
     <!-- Wi-Fi Icon -->
     <ImageView
         android:id="@+id/pill_wifi_iv"
-        android:layout_width="18dp"
-        android:layout_height="15dp"
-        android:layout_marginEnd="5dp"
+        android:layout_width="13dp"
+        android:layout_height="11dp"
+        android:layout_marginEnd="3dp"
         android:layout_gravity="center_vertical"
+        android:scaleType="fitCenter"
         android:src="@drawable/stat_sys_wifi_signal_3" />
 
     <!-- Signal Strength Icon -->
     <ImageView
         android:id="@+id/pill_signal_iv"
-        android:layout_width="20dp"
-        android:layout_height="15dp"
-        android:layout_marginEnd="6dp"
+        android:layout_width="13dp"
+        android:layout_height="11dp"
+        android:layout_marginEnd="3dp"
         android:layout_gravity="center_vertical"
+        android:scaleType="fitCenter"
         android:src="@drawable/stat_sys_signal_4" />
 
     <!-- Battery Capsule Icon -->
     <ImageView
         android:id="@+id/pill_battery_iv"
-        android:layout_width="28dp"
-        android:layout_height="15dp"
-        android:layout_marginEnd="4dp"
+        android:layout_width="19dp"
+        android:layout_height="11dp"
+        android:layout_marginEnd="3dp"
         android:layout_gravity="center_vertical"
+        android:scaleType="fitCenter"
         android:src="@drawable/stat_sys_battery" />
 
     <!-- Battery Level Percentage Text -->
@@ -47,7 +50,7 @@
         android:textColor="#FFC9C9C9"
         android:textStyle="bold"
         android:fontFamily="sans-serif-black"
-        android:textSize="11.5sp"
+        android:textSize="11sp"
         android:includeFontPadding="false"
         android:text="100%" />
 

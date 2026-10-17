@@ -3707,8 +3707,8 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             .coerceIn(20, 50)
         val timeLengthDp = (sharedPreferences.getString("pill_time_length", "75")?.toIntOrNull() ?: 75)
             .coerceIn(40, 300)
-        val batteryLengthDp = (sharedPreferences.getString("pill_battery_length", "115")?.toIntOrNull() ?: 115)
-            .coerceIn(60, 240)
+        val batteryLengthDp = (sharedPreferences.getString("pill_battery_length", "90")?.toIntOrNull() ?: 90)
+            .coerceIn(40, 240)
 
         val sideMarginDp = (sharedPreferences.getString("pill_side_margin", "4")?.toIntOrNull() ?: 4)
             .coerceIn(0, 50)

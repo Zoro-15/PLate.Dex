@@ -1,4 +1,4 @@
-﻿<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
         android:title="@string/dock_position_category">
         <Preference
@@ -232,7 +232,7 @@
         <com.plate.launcher.preferences.SliderPreference
             android:key="pill_battery_length"
             android:title="@string/pill_battery_length_title"
-            android:defaultValue="115" />
+            android:defaultValue="90" />
 
         <com.plate.launcher.preferences.SliderPreference
             android:key="pill_text_size"

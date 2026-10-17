@@ -1,7 +1,7 @@
 <!-- res/drawable/stat_sys_battery_charge.xml (Android 16 QPR2 Charging - Green & Thunderbolt on Boundary) -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="28dp"
-    android:height="15dp"
+    android:width="19dp"
+    android:height="11dp"
     android:viewportWidth="28"
     android:viewportHeight="15">
 
@@ -13,7 +13,7 @@
     <!-- Green Level Fill (#00E676) -->
     <path
         android:fillColor="#FF00E676"
-        android:pathData="M 4.5,1.0 H 6.5 V 14.0 H 4.5 A 3.5,3.5 0 0,1 1.0,10.5 V 4.5 A 3.5,3.5 0 0,1 4.5,1.0 Z" />
+        android:pathData="M 4.5,1.0 H 19.0 A 3.5,3.5 0 0,1 22.5,4.5 V 10.5 A 3.5,3.5 0 0,1 19.0,14.0 H 4.5 A 3.5,3.5 0 0,1 1.0,10.5 V 4.5 A 3.5,3.5 0 0,1 4.5,1.0 Z" />
 
     <!-- Authentic Android 16 QPR2 Charging Bolt on Border/Boundary -->
     <path

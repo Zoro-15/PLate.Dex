@@ -1,4 +1,4 @@
-﻿package com.plate.launcher.fragments
+package com.plate.launcher.fragments
 
 import android.content.Context
 import android.os.Bundle
@@ -154,10 +154,10 @@ class DockPreferences : PreferenceFragmentCompat() {
                 slider.isTickVisible = false
                 slider.labelBehavior = LabelFormatter.LABEL_GONE
                 slider.stepSize = 5f
-                slider.valueFrom = 70f
-                slider.valueTo = 220f
+                slider.valueFrom = 50f
+                slider.valueTo = 200f
                 slider.value =
-                    (pillBatteryLength.sharedPreferences?.getString("pill_battery_length", "115")?.toFloatOrNull() ?: 115f)
+                    (pillBatteryLength.sharedPreferences?.getString("pill_battery_length", "90")?.toFloatOrNull() ?: 90f)
                         .coerceIn(slider.valueFrom, slider.valueTo)
                 slider.addOnChangeListener { _, value, _ ->
                     pillBatteryLength.sharedPreferences?.edit { putString("pill_battery_length", value.toInt().toString()) }

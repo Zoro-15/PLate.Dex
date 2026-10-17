@@ -1,7 +1,7 @@
 <!-- res/drawable/stat_sys_signal_4.xml (4 Clean Separated Stadium Bars) -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="20dp"
-    android:height="15dp"
+    android:width="13dp"
+    android:height="11dp"
     android:viewportWidth="20"
     android:viewportHeight="15">
 

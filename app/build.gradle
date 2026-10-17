@@ -10,15 +10,13 @@ if (versionPropsFile.exists()) {
     versionPropsFile.withInputStream { versionProps.load(it) }
 }
 
-def vMajor = (versionProps['version_major'] ?: "0").toInteger()
-def vMinor = (versionProps['version_minor'] ?: "11").toInteger()
-def vCode = (versionProps['version_code'] ?: (3500 + vMinor)).toInteger()
+def vMajor = (versionProps['version_major'] ?: "1").toInteger()
+def vMinor = (versionProps['version_minor'] ?: "0").toInteger()
+def vCode = (versionProps['version_code'] ?: 3600).toInteger()
 
 def ciRunNumber = System.getenv("GITHUB_RUN_NUMBER")
 if (ciRunNumber != null && ciRunNumber.isInteger()) {
-    def runNum = ciRunNumber.toInteger()
-    vMinor = Math.max(vMinor, 10 + runNum)
-    vCode = 3500 + vMinor
+    vCode = Math.max(vCode, 3600 + ciRunNumber.toInteger())
 } else {
     try {
         def stdout = new ByteArrayOutputStream()
@@ -29,10 +27,7 @@ if (ciRunNumber != null && ciRunNumber.isInteger()) {
         }
         def countStr = stdout.toString().trim()
         if (countStr.isInteger()) {
-            int gitCount = countStr.toInteger()
-            int offset = Math.max(0, gitCount - 18)
-            vMinor = Math.max(vMinor, 11 + offset)
-            vCode = 3500 + vMinor
+            vCode = Math.max(vCode, 3600 + countStr.toInteger())
         }
     } catch (Exception ignored) {}
 }
@@ -45,13 +40,13 @@ tasks.register('bumpVersion') {
         if (propsFile.exists()) {
             propsFile.withInputStream { props.load(it) }
         }
-        int curMinor = (props['version_minor'] ?: "11").toInteger()
+        int curMinor = (props['version_minor'] ?: "0").toInteger()
         int nextMinor = curMinor + 1
-        props['version_major'] = (props['version_major'] ?: "0").toString()
+        props['version_major'] = (props['version_major'] ?: "1").toString()
         props['version_minor'] = nextMinor.toString()
-        props['version_code'] = (3500 + nextMinor).toString()
+        props['version_code'] = (3600 + nextMinor).toString()
         propsFile.withOutputStream { props.store(it, "PLate.Dex Build Version Configuration") }
-        println "Bumped version to v0.${nextMinor} (versionCode: ${3500 + nextMinor})"
+        println "Bumped version to v${props['version_major']}.${nextMinor} (versionCode: ${3600 + nextMinor})"
     }
 }
 

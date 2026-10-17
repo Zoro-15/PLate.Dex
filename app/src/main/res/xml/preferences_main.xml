@@ -1,75 +1,75 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
+﻿<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
 	xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.youki.dex.preferences.PreferenceHeader
+    <com.plate.launcher.preferences.PreferenceHeader
 		android:key="lw_open_gallery"
 		android:icon="@drawable/ic_movie"
 		android:title="@string/lw_section_title" />
 
-    <com.youki.dex.preferences.PreferenceHeader
+    <com.plate.launcher.preferences.PreferenceHeader
 		android:icon="@drawable/ic_appearance"
 		android:title="@string/appearance" 
-		app:fragment="com.youki.dex.fragments.AppearancePreferences" />
+		app:fragment="com.plate.launcher.fragments.AppearancePreferences" />
     
 
-    <com.youki.dex.preferences.PreferenceHeader
+    <com.plate.launcher.preferences.PreferenceHeader
 		android:icon="@drawable/ic_apps_menu" 
-		app:fragment="com.youki.dex.fragments.AppMenuPreferences" 
+		app:fragment="com.plate.launcher.fragments.AppMenuPreferences" 
 		android:title="@string/app_menu"  />
-	<com.youki.dex.preferences.PreferenceHeader
+	<com.plate.launcher.preferences.PreferenceHeader
         android:icon="@drawable/ic_dock"
-        android:fragment="com.youki.dex.fragments.DockPreferences"
+        android:fragment="com.plate.launcher.fragments.DockPreferences"
         android:title="@string/dock" />
-    <com.youki.dex.preferences.PreferenceHeader
+    <com.plate.launcher.preferences.PreferenceHeader
         android:icon="@drawable/ic_star"
-        android:fragment="com.youki.dex.fragments.DefaultAppsPreferences"
+        android:fragment="com.plate.launcher.fragments.DefaultAppsPreferences"
         android:title="@string/default_apps" />
-    <com.youki.dex.preferences.PreferenceHeader
+    <com.plate.launcher.preferences.PreferenceHeader
         android:icon="@drawable/ic_keyboard"
-        android:fragment="com.youki.dex.fragments.KeyboardPreferences"
+        android:fragment="com.plate.launcher.fragments.KeyboardPreferences"
         android:title="@string/keyboard" />
-	<com.youki.dex.preferences.PreferenceHeader
+	<com.plate.launcher.preferences.PreferenceHeader
         android:icon="@drawable/ic_corners"
-        android:fragment="com.youki.dex.fragments.HotCornersPreferences"
+        android:fragment="com.plate.launcher.fragments.HotCornersPreferences"
         android:title="@string/hot_corners" />
-	<com.youki.dex.preferences.PreferenceHeader
+	<com.plate.launcher.preferences.PreferenceHeader
         android:icon="@drawable/ic_notifications"
-        android:fragment="com.youki.dex.fragments.NotificationPreferences"
+        android:fragment="com.plate.launcher.fragments.NotificationPreferences"
         android:title="@string/notifications" />
-    <com.youki.dex.preferences.PreferenceHeader
+    <com.plate.launcher.preferences.PreferenceHeader
         android:icon="@drawable/ic_sounds"
-        android:fragment="com.youki.dex.fragments.SoundsPreferences"
+        android:fragment="com.plate.launcher.fragments.SoundsPreferences"
         android:title="@string/sounds" />
-    <com.youki.dex.preferences.PreferenceHeader
+    <com.plate.launcher.preferences.PreferenceHeader
         android:icon="@drawable/ic_user"
-        app:fragment="com.youki.dex.fragments.MultiUserFragment"
+        app:fragment="com.plate.launcher.fragments.MultiUserFragment"
         android:title="@string/multi_user" />
-    <com.youki.dex.preferences.PreferenceHeader
+    <com.plate.launcher.preferences.PreferenceHeader
         android:icon="@drawable/ic_plugin"
-        app:fragment="com.youki.dex.fragments.PluginsFragment"
+        app:fragment="com.plate.launcher.fragments.PluginsFragment"
         android:title="@string/plugins" />
-    <com.youki.dex.preferences.PreferenceHeader
+    <com.plate.launcher.preferences.PreferenceHeader
         android:icon="@drawable/ic_search"
-        app:fragment="com.youki.dex.fragments.WorkshopFragment"
+        app:fragment="com.plate.launcher.fragments.WorkshopFragment"
         android:title="@string/workshop_title" />
-    <com.youki.dex.preferences.PreferenceHeader
+    <com.plate.launcher.preferences.PreferenceHeader
         android:icon="@drawable/ic_advanced"
-        android:fragment="com.youki.dex.fragments.AdvancedPreferences"
+        android:fragment="com.plate.launcher.fragments.AdvancedPreferences"
         android:title="@string/advanced" />
     <!-- Hidden until Developer Mode is unlocked (7 taps on the version
          number in Help & About — see HelpAboutPreferences.handleVersionTap).
          Visibility toggled in PreferencesFragment.refreshBetaVisibility(),
          which reads the same "developer_mode_enabled" flag that unlock
          sets. -->
-    <com.youki.dex.preferences.PreferenceHeader
+    <com.plate.launcher.preferences.PreferenceHeader
         android:key="beta_preview"
         android:icon="@drawable/ic_beta"
-        android:fragment="com.youki.dex.fragments.BetaPreferences"
+        android:fragment="com.plate.launcher.fragments.BetaPreferences"
         android:title="@string/beta"
         app:isPreferenceVisible="false" />
-    <com.youki.dex.preferences.PreferenceHeader
+    <com.plate.launcher.preferences.PreferenceHeader
         android:icon="@drawable/ic_info"
-        android:fragment="com.youki.dex.fragments.HelpAboutPreferences"
+        android:fragment="com.plate.launcher.fragments.HelpAboutPreferences"
         android:title="@string/help_and_about" />
 
 </PreferenceScreen>

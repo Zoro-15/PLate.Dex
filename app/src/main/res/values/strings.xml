@@ -1,7 +1,7 @@
 <resources>
 
     <!-- General -->
-    <string name="app_name">Youki DEX</string>
+    <string name="app_name">PLate.Launcher</string>
     <string name="multi_user">Users</string>
     <string name="none">None</string>
     <string name="move">Move</string>
@@ -32,15 +32,15 @@
     <string name="overlays_in_settings">Allow overlays on Settings</string>
     <string name="overlays_in_settings_desc">Used to keep the dock visible while the Settings app is open. This allows <b>any app</b> to display content on top of the Settings app not just the Dock. Must be enabled from Developer options</string>
     <string name="write_secure">Write secure settings</string>
-    <string name="write_secure_desc">Needed for advanced settings. This is a special permission that must be granted with root or adb by running: \npm grant com.youki.dex android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="write_secure_desc">Needed for advanced settings. This is a special permission that must be granted with root or adb by running: \npm grant com.plate.launcher android.permission.WRITE_SECURE_SETTINGS</string>
     <string name="default_launcher">Set as default launcher</string>
-    <string name="default_launcher_desc">Set Youki DEX as your default home screen launcher so the desktop loads automatically.</string>
+    <string name="default_launcher_desc">Set PLate.Launcher as your default home screen launcher so the desktop loads automatically.</string>
     <string name="shizuku">Shizuku</string>
     <string name="shizuku_desc">Shizuku grants privileged shell access without wireless ADB. Install Shizuku from Play Store, run it once via ADB or Wireless Debugging, then grant permission here.</string>
     <string name="shizuku_active_app_detection_title">Detect active app via Shizuku</string>
     <string name="shizuku_active_app_detection_summary">Uses Shizuku (when connected) to reliably detect the foreground app and apps running in the background, instead of the restricted default method</string>
     <string name="shizuku_open">Open Shizuku</string>
-    <string name="shell_terminal">Youki Shell Terminal</string>
+    <string name="shell_terminal">PLate Shell Terminal</string>
     <string name="shell_terminal_desc">A built-in terminal that runs shell commands directly inside the app using Root or Shizuku.</string>
     <string name="manage">Manage…</string>
     <string name="grant">Grant</string>
@@ -333,7 +333,7 @@
     <string name="help_and_about">Help and about</string>
     <string name="a_launcher_for_android_x86_by_">A DeX mode launcher by Mr Youki</string>
     <string name="help">Help</string>
-    <string name="youki_dex_its_free_and_open_">Youki DEX is free and open source. Contribute on GitHub</string>
+    <string name="youki_dex_its_free_and_open_">PLate.Launcher is free and open source. Contribute on GitHub</string>
     <string name="github">GitHub</string>
     <string name="discord">Discord</string>
     <string name="about_project_discord_summary">Join our Discord community</string>
@@ -347,7 +347,7 @@ Grant Accessibility permission from Settings to use all features.
 To uninstall, remove Device Administrator permission first.</string>
     <string name="more_help">More help</string>
     <string name="contributors">Contributors</string>
-    <string name="tap_to_see_the_list_of_great_p">Tap to see the list of great people that has contributed to Youki DEX</string>
+    <string name="tap_to_see_the_list_of_great_p">Tap to see the list of great people that has contributed to PLate.Launcher</string>
     <string name="accessibility_service_description">Allows to perform actions such as Back</string>
     <string name="join_telegram_title">Telegram group</string>
     <string name="join_telegram_summary">Got any questions? Join the Telegram support group</string>
@@ -410,8 +410,8 @@ To uninstall, remove Device Administrator permission first.</string>
     <!-- Toasts -->
     <string name="tablet_mode_on">Tablet mode on</string>
     <string name="tablet_mode_off">Tablet mode off</string>
-    <string name="start_message">Youki DEX started</string>
-    <string name="enable_access_help">Find and enable Youki DEX service</string>
+    <string name="start_message">PLate.Launcher started</string>
+    <string name="enable_access_help">Find and enable PLate.Launcher service</string>
 
     <!-- Crash dialog -->
     <string name="something_wrong">Something went wrong</string>
@@ -438,7 +438,7 @@ To uninstall, remove Device Administrator permission first.</string>
     <string name="bubble_mode_custom">Custom Color</string>
 
     <string name="system_sounds">System UI Sounds</string>
-    <string name="youki_sounds">YoukiDex Sounds</string>
+    <string name="youki_sounds">PLate Sounds</string>
     <string name="sound_lock">Lock</string>
     <string name="sound_unlock">Unlock</string>
     <string name="sound_low_battery">Low Battery</string>
@@ -523,7 +523,7 @@ To uninstall, remove Device Administrator permission first.</string>
 
     <!-- Plugins section -->
     <string name="plugins">Plugins</string>
-    <string name="plugins_subtitle">Extend YoukiDEX capabilities</string>
+    <string name="plugins_subtitle">Extend PLate.Launcher capabilities</string>
     <string name="plugin_font">Custom Font</string>
     <string name="plugin_font_desc">Apply a TTF or OTF font to the entire DEX interface</string>
     <string name="plugin_font_active">Font active</string>
@@ -592,9 +592,9 @@ To uninstall, remove Device Administrator permission first.</string>
     <string name="tweak_section">Performance tweaks</string>
     <string name="tweak_section_root">Requires Root</string>
 
-    <!-- ═══ Youki Live Wallpaper Engine (rebuilt) ═══ -->
+    <!-- ═══ PLate Live Wallpaper Engine (rebuilt) ═══ -->
     <string name="lw_section_title">Live Wallpaper</string>
-    <string name="lw_service_label">YoukiDex Live Wallpaper</string>
+    <string name="lw_service_label">PLate.Launcher Live Wallpaper</string>
     <string name="lw_service_description">Animated video wallpapers with free transform, color tuning, and performance controls.</string>
     <string name="lw_gallery_title">Wallpapers</string>
     <string name="lw_gallery_empty">No wallpapers yet — tap + to add a video</string>
@@ -607,7 +607,7 @@ To uninstall, remove Device Administrator permission first.</string>
     <string name="qa_self_test_title">Run self-test</string>
     <string name="qa_self_test_summary">Opens every screen in an isolated background process and checks for crashes or silent failures. A crash here can\'t affect the app you\'re using. Takes a few minutes.</string>
     <string name="qa_self_test_confirm_title">Run self-test?</string>
-    <string name="qa_self_test_confirm_message">This opens every screen in the app, one by one, inside a separate isolated process to look for bugs. It will take a few minutes and can\'t crash the app you\'re currently using. A log is saved to Download/YoukiDex/.</string>
+    <string name="qa_self_test_confirm_message">This opens every screen in the app, one by one, inside a separate isolated process to look for bugs. It will take a few minutes and can\'t crash the app you\'re currently using. A log is saved to Download/PLateLauncher/.</string>
     <string name="qa_self_test_confirm_start">Start</string>
     <string name="qa_please_wait">Please wait…</string>
     <string name="qa_checking_target">Checking: %1$s</string>
@@ -627,7 +627,7 @@ To uninstall, remove Device Administrator permission first.</string>
     <string name="qa_error_exceeded_timeout">Exceeded %1$dms</string>
     <string name="qa_error_failed_after_restart">Failed again after automatic restart (%1$s): %2$s</string>
     <string name="lw_applied">Wallpaper applied</string>
-    <string name="lw_apply_unsupported">Your device doesn\'t support setting live wallpapers from apps directly. Go to Settings → Wallpaper to select Youki DEX manually.</string>
+    <string name="lw_apply_unsupported">Your device doesn\'t support setting live wallpapers from apps directly. Go to Settings → Wallpaper to select PLate.Launcher manually.</string>
     <string name="lw_tab_position">Position &amp; Performance</string>
     <string name="lw_tab_color">Color</string>
     <string name="lw_tab_performance">Performance</string>
@@ -717,10 +717,10 @@ To uninstall, remove Device Administrator permission first.</string>
     <string name="no_other_launcher_found">No other launcher found</string>
     <string name="failed_to_open_app">Failed to open app</string>
     <string name="notification_access_required">Notification access required</string>
-    <string name="notification_access_message">YoukiDex needs notification access to work correctly. You will be redirected to enable it.</string>
+    <string name="notification_access_message">PLate.Launcher needs notification access to work correctly. You will be redirected to enable it.</string>
     <string name="skip">Skip</string>
     <string name="accessibility_service_required">Accessibility service required</string>
-    <string name="accessibility_service_message">YoukiDex needs the Accessibility service to work. You will be redirected to Settings.</string>
+    <string name="accessibility_service_message">PLate.Launcher needs the Accessibility service to work. You will be redirected to Settings.</string>
     <string name="accessibility_service_auto_failed_message">Could not enable the service automatically. You will be redirected to enable it manually from Settings.</string>
     <string name="all">All</string>
     <string name="add_new_source">Add new source</string>
@@ -1032,7 +1032,7 @@ To uninstall, remove Device Administrator permission first.</string>
     <string name="editor_preview_scale_summary">How much of the editor\'s width the 16:9 preview takes up, as a percentage (40-100). Requires reopening the editor.</string>
     <string name="editor_preview_aspect_title">Preview aspect ratio</string>
     <string name="editor_preview_aspect_summary">The shape of the preview window. \"Auto\" reads your screen ratio automatically. Requires reopening the editor.</string>
-    <string name="onboarding_welcome_title">Welcome to Youki DEX</string>
+    <string name="onboarding_welcome_title">Welcome to PLate.Launcher</string>
     <string name="onboarding_welcome_body">Let\'s get your desktop set up. This will only take a minute.</string>
     <string name="onboarding_permissions_title">One more thing</string>
     <string name="onboarding_permissions_body">Granting Shizuku access lets the desktop start up directly, with no extra prompts along the way. You can skip this and grant it later from Settings instead.</string>
@@ -1047,7 +1047,7 @@ To uninstall, remove Device Administrator permission first.</string>
     <string name="workshop_page_load_timeout">This page is taking too long to load. Pull down to try again.</string>
     <string name="onboarding_done_title">You\'re all set</string>
     <string name="onboarding_done_body">Your desktop is ready to go.</string>
-    <string name="onboarding_support_title">Enjoying Youki DEX?</string>
+    <string name="onboarding_support_title">Enjoying PLate.Launcher?</string>
     <string name="onboarding_support_star_github">Star it on GitHub</string>
     <string name="onboarding_support_join_discord">Join our Discord community</string>
     <string name="onboarding_support_report_issue">Found a bug or have an idea?</string>
@@ -1073,7 +1073,7 @@ To uninstall, remove Device Administrator permission first.</string>
     <string name="trackpad_mode_direct">This Screen</string>
     <string name="trackpad_mode_otg">USB PC (OTG)</string>
     <string name="trackpad_status_no_display">No screen connected</string>
-    <string name="trackpad_status_accessibility_needed">Enable YoukiDex\'s accessibility service first (Settings)</string>
+    <string name="trackpad_status_accessibility_needed">Enable PLate.Launcher\'s accessibility service first (Settings)</string>
 
     <!-- User Profile Toggle -->
     <string name="enable_user_btn">Profile Button</string>

@@ -1,12 +1,12 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+﻿<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <Preference
         android:icon="@drawable/ic_info"
         android:title="@string/hot_corners_help"/>
-    <com.youki.dex.preferences.NavActionChooserPreference
+    <com.plate.launcher.preferences.NavActionChooserPreference
         android:defaultValue="false"
         android:key="enable_corner_top_right"
         android:title="@string/enable_corner_top_right_title" />
-    <com.youki.dex.preferences.NavActionChooserPreference
+    <com.plate.launcher.preferences.NavActionChooserPreference
         android:defaultValue="false"
         android:key="enable_corner_bottom_right"
         android:title="@string/enable_corner_bottom_right_title" />

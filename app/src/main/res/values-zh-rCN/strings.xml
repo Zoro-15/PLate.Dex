@@ -1,7 +1,7 @@
-<resources>
+﻿<resources>
 
     <!-- General -->
-    <string name="app_name">Youki DEX</string>
+    <string name="app_name">PLate.Launcher</string>
     <string name="none">无</string>
     <string name="move">移动</string>
     <string name="ok">确定</string>
@@ -31,7 +31,7 @@
     <string name="overlays_in_settings">允许在设置中覆盖</string>
     <string name="overlays_in_settings_desc">允许在设置应用打开时保持dock可见。这将允许<b>任何应用</b>在设置应用上层显示内容,而不仅仅是Dock。需要从开发者选项中启用</string>
     <string name="write_secure">写入安全设置</string>
-    <string name="write_secure_desc">使用高级设置所需。这是一个特殊权限,需要通过root或adb执行以下命令授予:\npm grant com.youki.dex android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="write_secure_desc">使用高级设置所需。这是一个特殊权限,需要通过root或adb执行以下命令授予:\npm grant com.plate.launcher android.permission.WRITE_SECURE_SETTINGS</string>
     <string name="manage">管理…</string>
     <string name="grant">授予</string>
     <string name="enable">启用</string>
@@ -269,7 +269,7 @@
     <string name="help_and_about">帮助和关于</string>
     <string name="a_launcher_for_android_x86_by_">一个由Mr Youki开发的Android x86启动器</string>
     <string name="help">帮助</string>
-    <string name="youki_dex_its_free_and_open_">Youki DEX是免费的开源软件。在GitHub上贡献</string>
+    <string name="youki_dex_its_free_and_open_">PLate.Launcher是免费的开源软件。在GitHub上贡献</string>
     <string name="github">GitHub</string>
     <string name="show_help_summary">点击获取帮助</string>
     <string name="app_help">激活Shizuku以解锁所有功能。没有它，一半的功能将无法使用。
@@ -281,7 +281,7 @@
 卸载前请先移除设备管理员权限。</string>
     <string name="more_help">更多帮助</string>
     <string name="contributors">贡献者</string>
-    <string name="tap_to_see_the_list_of_great_p">点击查看对Youki DEX做出贡献的伟大人物名单</string>
+    <string name="tap_to_see_the_list_of_great_p">点击查看对PLate.Launcher做出贡献的伟大人物名单</string>
     <string name="accessibility_service_description">允许执行返回等操作</string>
     <string name="join_telegram_title">Telegram群组</string>
     <string name="join_telegram_summary">有问题吗?加入Telegram支持群组</string>
@@ -321,8 +321,8 @@
     <!-- Toasts -->
     <string name="tablet_mode_on">平板模式已启用</string>
     <string name="tablet_mode_off">平板模式已禁用</string>
-    <string name="start_message">Youki DEX已启动</string>
-    <string name="enable_access_help">找到并启用Youki DEX服务</string>
+    <string name="start_message">PLate.Launcher已启动</string>
+    <string name="enable_access_help">找到并启用PLate.Launcher服务</string>
 
     <!-- Crash dialog -->
     <string name="something_wrong">出了点问题</string>
@@ -480,8 +480,8 @@
     <string name="bubble_opacity_title">气泡不透明度</string>
     <string name="lw_free_pro_subtitle">精确控制宽度、高度、位置和旋转的滑块</string>
     <string name="perf_thermal_reset">默认</string>
-    <string name="notification_access_message">YoukiDex 需要通知访问权限才能正常工作。系统将引导您启用该权限。</string>
-    <string name="default_launcher_desc">将 Youki DEX 设为默认主屏幕启动器，桌面将自动加载。</string>
+    <string name="notification_access_message">PLate.Launcher 需要通知访问权限才能正常工作。系统将引导您启用该权限。</string>
+    <string name="default_launcher_desc">将 PLate.Launcher 设为默认主屏幕启动器，桌面将自动加载。</string>
     <string name="lw_free_scale_y">高度缩放</string>
     <string name="plugin_font">自定义字体</string>
     <string name="lw_cc_enable">启用色彩调节</string>
@@ -498,7 +498,7 @@
     <string name="perf_zram_title">ZRAM</string>
     <string name="accessibility_service_auto_failed_message">无法自动启用该服务。系统将引导您前往设置手动启用。</string>
     <string name="perf_zram_current">当前大小</string>
-    <string name="plugins_subtitle">扩展 YoukiDEX 的功能</string>
+    <string name="plugins_subtitle">扩展 PLate.Launcher 的功能</string>
     <string name="notification_access_required">需要通知访问权限</string>
     <string name="edited_successfully">已编辑</string>
     <string name="lw_active_badge">活动中</string>
@@ -520,7 +520,7 @@
     <string name="no_permission">无权限</string>
     <string name="delete_file">删除文件</string>
     <string name="workshop_title">创意工坊</string>
-    <string name="accessibility_service_message">YoukiDex 需要无障碍服务才能工作。系统将引导您前往设置。</string>
+    <string name="accessibility_service_message">PLate.Launcher 需要无障碍服务才能工作。系统将引导您前往设置。</string>
     <string name="extraction_failed">解压失败：%1$s</string>
     <string name="shell_terminal_desc">内置终端，使用 Root 或 Shizuku 直接在应用内运行 Shell 命令。</string>
     <string name="prop_size">大小</string>
@@ -572,7 +572,7 @@
     <string name="delete_failed">删除失败</string>
     <string name="write_system_settings">修改系统设置</string>
     <string name="tweak_c2d_title">C2D 渲染模式和 GPU 最大性能</string>
-    <string name="lw_service_label">YoukiDex 动态壁纸</string>
+    <string name="lw_service_label">PLate.Launcher 动态壁纸</string>
     <string name="no_app_to_open_file">没有安装可打开此文件的应用</string>
     <string name="creation_failed">创建失败</string>
     <string name="win11_style_center_button_summary">将应用菜单按钮与正在运行的应用（最多 5 个）一起移到中间</string>
@@ -635,7 +635,7 @@
     <string name="no_access_permission">无访问权限</string>
     <string name="new_user">新用户</string>
     <string name="failed_colon">失败：%1$s</string>
-    <string name="lw_apply_unsupported">您的设备不支持直接从应用设置动态壁纸。请前往 设置 → 壁纸 手动选择 Youki DEX。</string>
+    <string name="lw_apply_unsupported">您的设备不支持直接从应用设置动态壁纸。请前往 设置 → 壁纸 手动选择 PLate.Launcher。</string>
     <string name="perf_need_privilege">需要 Shizuku 或 Root</string>
     <string name="copied">已复制</string>
     <string name="beta_new_animations_summary">启用新的窗口动画（可能影响性能）</string>
@@ -669,7 +669,7 @@
     <string name="enter_source_name">输入网站名称</string>
     <string name="plugin_font_none">无自定义字体 — 使用默认字体</string>
     <string name="share_display_info">分享显示信息</string>
-    <string name="youki_sounds">YoukiDex 声音</string>
+    <string name="youki_sounds">PLate.Launcher 声音</string>
     <string name="bluetooth_already_granted">蓝牙权限已授予</string>
     <string name="device_admin_already_enabled">%1$s 已启用</string>
     <string name="tweak_amoled_title">Amoled 和 HDR 显示增强</string>
@@ -770,7 +770,7 @@
     <string name="workshop_type_fonts">字体</string>
     <string name="sound_low_battery">电量不足</string>
     <string name="lw_gallery_title">壁纸</string>
-    <string name="shell_terminal">Youki Shell 终端</string>
+    <string name="shell_terminal">PLate Shell 终端</string>
     <string name="font_installed">字体已安装：%1$s</string>
     <string name="n_selected">已选择 %1$d 个</string>
     <string name="restart_dex">重启 DEX</string>
@@ -836,7 +836,7 @@
     <string name="qa_self_test_title">运行自检</string>
     <string name="qa_self_test_summary">在隔离的后台进程中打开每个屏幕，检查崩溃或静默故障。此处发生的崩溃不会影响您正在使用的应用。需要几分钟时间。</string>
     <string name="qa_self_test_confirm_title">运行自检？</string>
-    <string name="qa_self_test_confirm_message">这将在一个独立的隔离进程中逐一打开应用中的每个屏幕以查找错误。这需要几分钟时间，并且不会使您当前正在使用的应用崩溃。日志将保存到 Download/YoukiDex/。</string>
+    <string name="qa_self_test_confirm_message">这将在一个独立的隔离进程中逐一打开应用中的每个屏幕以查找错误。这需要几分钟时间，并且不会使您当前正在使用的应用崩溃。日志将保存到 Download/PLateLauncher/。</string>
     <string name="qa_self_test_confirm_start">开始</string>
     <string name="qa_please_wait">请稍候…</string>
     <string name="qa_checking_target">正在检查：%1$s</string>
@@ -857,7 +857,7 @@
     <string name="qa_error_failed_after_restart">自动重启后再次失败 (%1$s)：%2$s</string>
 
     <!-- Onboarding screen (was missing translations entirely) -->
-    <string name="onboarding_welcome_title">欢迎使用 Youki DEX</string>
+    <string name="onboarding_welcome_title">欢迎使用 PLate.Launcher</string>
     <string name="onboarding_welcome_body">让我们来设置你的桌面吧，只需一分钟。</string>
     <string name="onboarding_permissions_title">还有一件事</string>
     <string name="onboarding_permissions_body">授予 Shizuku 权限可让桌面直接启动，无需额外提示。你可以跳过此步骤，稍后在设置中授予权限。</string>
@@ -882,7 +882,7 @@
     <string name="onboarding_ui_customization_skip_note">跳过此步骤将改用默认设置——你可以随时稍后在高级设置中进行配置。</string>
     <string name="onboarding_done_title">一切就绪</string>
     <string name="onboarding_done_body">你的桌面已准备就绪。</string>
-    <string name="onboarding_support_title">喜欢 Youki DEX 吗？</string>
+    <string name="onboarding_support_title">喜欢 PLate.Launcher 吗？</string>
     <string name="onboarding_support_star_github">在 GitHub 上点星</string>
     <string name="onboarding_support_join_discord">加入我们的 Discord 社区</string>
     <string name="onboarding_support_report_issue">发现了 bug 或有新想法？</string>

@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Youki DEX</string>
+    <string name="app_name">PLate.Launcher</string>
     <string name="ok">ОК</string>
     <string name="cancel">Отмена</string>
     <string name="enable">Включить</string>
@@ -12,7 +12,7 @@
     <string name="advanced">Дополнительно</string>
     <string name="about_project">О проекте</string>
     <string name="plugins">Плагины</string>
-    <string name="plugins_subtitle">Расширьте возможности YoukiDEX</string>
+    <string name="plugins_subtitle">Расширьте возможности PLate.Launcher</string>
     <string name="plugin_font">Пользовательский шрифт</string>
     <string name="plugin_font_pick">Выбрать файл шрифта</string>
     <string name="plugin_font_applied">Шрифт применён — перезапустите DEX для применения изменений</string>
@@ -64,7 +64,7 @@
     <string name="beta_experimental_ui">Экспериментальный интерфейс</string>
     <string name="sound_charge_complete">Зарядка завершена</string>
     <string name="lock_landscape_summary">Всегда держать экран в альбомной ориентации (рекомендуется для использования рабочего стола)</string>
-    <string name="shell_terminal">Терминал оболочки Youki</string>
+    <string name="shell_terminal">Терминал оболочки PLate</string>
     <string name="tweak_touch_desc">Улучшить чувствительность к касанию для ощущения, похожего на iPhone</string>
     <string name="unknown">Неизвестно</string>
     <string name="font_installed">Шрифт установлен: %1$s</string>
@@ -161,8 +161,8 @@
     <string name="root_access_detected">Обнаружен доступ Root (Magisk/KernelSU/su)</string>
     <string name="handle">Ручка</string>
     <string name="move">Переместить</string>
-    <string name="enable_access_help">Найти и активировать службу Youki DEX</string>
-    <string name="start_message">Youki DEX запущен</string>
+    <string name="enable_access_help">Найти и активировать службу PLate.Launcher</string>
+    <string name="start_message">PLate.Launcher запущен</string>
     <string name="enable_qs_pin_summary">Вы всё равно можете закрепить/открепить Док, проведя по нему вниз, или используя сочетание клавиш</string>
     <string name="more_help">Больше справки</string>
     <string name="open_as">Открыть как…</string>
@@ -222,7 +222,7 @@
     <string name="win11_style_center_button">Стиль Windows 11 (центрированная кнопка Пуск)</string>
     <string name="notification_access">Доступ к уведомлениям</string>
     <string name="select_category">Выбрать категорию</string>
-    <string name="lw_service_label">Живые обои YoukiDex</string>
+    <string name="lw_service_label">Живые обои PLate.Launcher</string>
     <string name="enable_soft_reboot_summary">Система может не отвечать в течение короткого времени</string>
     <string name="rename">Переименовать</string>
     <string name="no_fonts_in_archive">В архиве нет шрифтов</string>
@@ -395,7 +395,7 @@
     <string name="default_apps">Приложения по умолчанию</string>
     <string name="vp_aspect_4_3">Соотношение 4:3</string>
     <string name="allow_sysapp_uninstall_summary">Будьте осторожны, это может быть очень опасно</string>
-    <string name="default_launcher_desc">Установите Youki DEX как launcher главного экрана по умолчанию, чтобы рабочий стол загружался автоматически.</string>
+    <string name="default_launcher_desc">Установите PLate.Launcher как launcher главного экрана по умолчанию, чтобы рабочий стол загружался автоматически.</string>
     <string name="a_launcher_for_android_x">Launcher для Android X</string>
     <string name="required">Обязательно</string>
     <string name="root_access">Доступ Root</string>
@@ -412,7 +412,7 @@
     <string name="could_not_read_users">Не удалось прочитать пользователей</string>
     <string name="add_to">Добавить в…</string>
     <string name="show_running_app_dots">Показывать точки запущенных приложений</string>
-    <string name="write_secure_desc">Необходимо для расширенных настроек. Это специальное разрешение, которое должно предоставляться с root или adb, выполнив: \npm grant com.youki.dex android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="write_secure_desc">Необходимо для расширенных настроек. Это специальное разрешение, которое должно предоставляться с root или adb, выполнив: \npm grant com.plate.launcher android.permission.WRITE_SECURE_SETTINGS</string>
     <string name="wallpaper_app">Приложение обоев</string>
     <string name="bubble_mode_material_u_light">Material You (Светлый)</string>
     <string name="file_exists">Файл уже существует</string>
@@ -476,12 +476,12 @@
     <string name="reboot_required_text">Для применения изменений требуется перезагрузка. Хотите перезагрузить сейчас?</string>
     <string name="notifications">Уведомления</string>
     <string name="no_permission">нет разрешения</string>
-    <string name="notification_access_message">YoukiDex необходим доступ к уведомлениям для правильной работы. Вы будете перенаправлены для его включения.</string>
+    <string name="notification_access_message">PLate.Launcher необходим доступ к уведомлениям для правильной работы. Вы будете перенаправлены для его включения.</string>
     <string name="allow_app_freeze_summary">Вам понадобится внешний инструмент вроде Ice Box (или выполнить pm enable [pkgname]) для повторного включения приложений</string>
     <string name="play_video">Воспроизвести видео</string>
     <string name="tweak_hardcore_desc">Снимает термальные ограничения и ограничения FPS для плавного игрового процесса</string>
     <string name="app_browser_title">Веб-браузер</string>
-    <string name="youki_dex_its_free_and_open_">Youki DEX бесплатен и имеет открытый исходный код. Внесите свой вклад на GitHub</string>
+    <string name="youki_dex_its_free_and_open_">PLate.Launcher бесплатен и имеет открытый исходный код. Внесите свой вклад на GitHub</string>
     <string name="join_telegram_summary">Есть вопросы? Присоединяйтесь к группе поддержки в Telegram</string>
     <string name="bluetooth_permission_desc">Подключение и обнаружение ближайших устройств Bluetooth. Необходимо для элементов управления Bluetooth в launcher.</string>
     <string name="moved">Перемещено</string>
@@ -505,14 +505,14 @@
     <string name="wallpaper">Обои</string>
     <string name="write_secure">Запись защищённых настроек</string>
     <string name="blocked_notifications_title">Игнорируемые уведомления</string>
-    <string name="youki_sounds">Звуки YoukiDex</string>
+    <string name="youki_sounds">Звуки PLate.Launcher</string>
     <string name="folder_empty">Папка пуста</string>
     <string name="enable_nav_recents_title">Недавние</string>
     <string name="perf_thermal_desc">Управление производительностью и энергопотреблением ЦП</string>
     <string name="grant">Предоставить</string>
     <string name="requires_shizuku_or_root_manage_accounts">Для этой опции требуется Shizuku или Root\nдля управления учётными записями на этом устройстве</string>
     <string name="copied_to_clipboard">Скопировано в буфер обмена</string>
-    <string name="lw_apply_unsupported">Ваше устройство не поддерживает прямую установку живых обоев из приложений. Перейдите в Настройки → Обои, чтобы выбрать Youki DEX вручную.</string>
+    <string name="lw_apply_unsupported">Ваше устройство не поддерживает прямую установку живых обоев из приложений. Перейдите в Настройки → Обои, чтобы выбрать PLate.Launcher вручную.</string>
     <string name="saved_file">Сохранено: %1$s</string>
     <string name="thermal_mode_powersave">Энергосбережение</string>
     <string name="tint_indicators_title">Окрашивать индикаторы запущенных приложений</string>
@@ -594,7 +594,7 @@
     <string name="behaviour">Поведение</string>
     <string name="no_access_permission">Нет разрешения на доступ</string>
     <string name="fps_set_to">Частота кадров установлена на %1$d Гц</string>
-    <string name="accessibility_service_message">YoukiDex необходима служба специальных возможностей для работы. Вы будете перенаправлены в Настройки.</string>
+    <string name="accessibility_service_message">PLate.Launcher необходима служба специальных возможностей для работы. Вы будете перенаправлены в Настройки.</string>
     <string name="app_menu_width_title">Ширина меню приложений</string>
     <string name="perf_thermal_current">Текущий режим</string>
     <string name="desktop_mode">Режим рабочего стола</string>
@@ -683,7 +683,7 @@
     <string name="performance_mode_colon">Режим производительности: %1$s</string>
     <string name="all">Все</string>
     <string name="tweak_thermalkiller_desc">Отключить термальное ограничение для максимальной производительности</string>
-    <string name="tap_to_see_the_list_of_great_p">Нажмите, чтобы увидеть список замечательных людей, внёсших вклад в Youki DEX</string>
+    <string name="tap_to_see_the_list_of_great_p">Нажмите, чтобы увидеть список замечательных людей, внёсших вклад в PLate.Launcher</string>
     <string name="restore_menu_icon_title">Восстановить значок меню по умолчанию</string>
     <string name="center_running_apps_title">Центрировать запущенные приложения</string>
     <string name="save">Сохранить</string>
@@ -783,7 +783,7 @@
     <string name="qa_self_test_title">Запустить самотестирование</string>
     <string name="qa_self_test_summary">Открывает каждый экран в изолированном фоновом процессе и проверяет наличие сбоев или скрытых ошибок. Сбой здесь не может повлиять на используемое вами приложение. Занимает несколько минут.</string>
     <string name="qa_self_test_confirm_title">Запустить самотестирование?</string>
-    <string name="qa_self_test_confirm_message">Это откроет каждый экран приложения по очереди в отдельном изолированном процессе для поиска ошибок. Это займёт несколько минут и не может привести к сбою используемого вами приложения. Журнал сохраняется в Download/YoukiDex/.</string>
+    <string name="qa_self_test_confirm_message">Это откроет каждый экран приложения по очереди в отдельном изолированном процессе для поиска ошибок. Это займёт несколько минут и не может привести к сбою используемого вами приложения. Журнал сохраняется в Download/PLateLauncher/.</string>
     <string name="qa_self_test_confirm_start">Начать</string>
     <string name="qa_please_wait">Пожалуйста, подождите…</string>
     <string name="qa_checking_target">Проверка: %1$s</string>
@@ -804,7 +804,7 @@
     <string name="qa_error_failed_after_restart">Снова не удалось после автоматического перезапуска (%1$s): %2$s</string>
 
     <!-- Onboarding screen (was missing translations entirely) -->
-    <string name="onboarding_welcome_title">Добро пожаловать в Youki DEX</string>
+    <string name="onboarding_welcome_title">Добро пожаловать в PLate.Launcher</string>
     <string name="onboarding_welcome_body">Давайте настроим ваш рабочий стол. Это займёт всего минуту.</string>
     <string name="onboarding_permissions_title">Ещё кое-что</string>
     <string name="onboarding_permissions_body">Предоставление доступа Shizuku позволяет рабочему столу запускаться напрямую, без дополнительных запросов. Вы можете пропустить это и предоставить доступ позже в Настройках.</string>
@@ -829,7 +829,7 @@
     <string name="onboarding_ui_customization_skip_note">Если пропустить этот шаг, будут использованы значения по умолчанию — вы всегда можете настроить это позже в Расширенных настройках.</string>
     <string name="onboarding_done_title">Всё готово</string>
     <string name="onboarding_done_body">Ваш рабочий стол готов к использованию.</string>
-    <string name="onboarding_support_title">Нравится Youki DEX?</string>
+    <string name="onboarding_support_title">Нравится PLate.Launcher?</string>
     <string name="onboarding_support_star_github">Поставьте звезду на GitHub</string>
     <string name="onboarding_support_join_discord">Присоединяйтесь к нашему сообществу в Discord</string>
     <string name="onboarding_support_report_issue">Нашли баг или есть идея?</string>

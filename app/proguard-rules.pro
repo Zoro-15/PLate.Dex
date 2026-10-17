@@ -46,7 +46,7 @@
 # Fragments/Activities referenced only by class name (string), not by
 # compile-time Kotlin/Java reference. Two separate call sites do this:
 #
-#  1. res/xml/preferences_*.xml — android:fragment="com.youki.dex.
+#  1. res/xml/preferences_*.xml — android:fragment="com.plate.launcher.
 #     fragments.X" — PreferenceScreen resolves these via reflection
 #     using the literal string in the XML.
 #  2. QaTargetRegistry.kt — QA self-test builds "$PKG.activities.$it"
@@ -63,8 +63,8 @@
 # is hand-maintained in QaTargetRegistry.kt and grows independently of
 # this file — a per-class allowlist here would silently go stale.
 # ====================================================================
--keep class com.youki.dex.fragments.** { <init>(); *; }
--keep class com.youki.dex.activities.** { <init>(); *; }
+-keep class com.plate.launcher.fragments.** { <init>(); *; }
+-keep class com.plate.launcher.activities.** { <init>(); *; }
 
 # ====================================================================
 # JNI & Native Rust Engine Support
@@ -77,10 +77,10 @@
 # signatures — Rust calls back into these by fully-qualified name/sig,
 # so renaming (even though it's "only Kotlin-side") breaks the JNI
 # lookup on the native side, which has no visibility into R8 renaming.
--keep class com.youki.dex.livewallpaper.NativeBridge {
+-keep class com.plate.launcher.livewallpaper.NativeBridge {
     *;
 }
--keepclassmembers class com.youki.dex.livewallpaper.NativeBridge {
+-keepclassmembers class com.plate.launcher.livewallpaper.NativeBridge {
     *;
 }
 
@@ -92,8 +92,8 @@
 # SDK has no compile-time reference to it, so R8 will strip or rename
 # it unless explicitly kept, causing a crash the moment cast options
 # are requested.
--keep class com.youki.dex.cast.CastOptionsProvider { *; }
--keep class com.youki.dex.cast.** { *; }
+-keep class com.plate.launcher.cast.CastOptionsProvider { *; }
+-keep class com.plate.launcher.cast.** { *; }
 -keep class * implements com.google.android.gms.cast.framework.OptionsProvider { *; }
 -keep class * implements com.google.android.gms.cast.framework.SessionProvider { *; }
 -dontwarn com.google.android.gms.cast.**

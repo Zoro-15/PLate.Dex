@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Youki DEX</string>
+    <string name="app_name">PLate.Launcher</string>
     <string name="ok">OK</string>
     <string name="cancel">Annulla</string>
     <string name="enable">Abilita</string>
@@ -12,7 +12,7 @@
     <string name="advanced">Avanzate</string>
     <string name="about_project">Informazioni sul progetto</string>
     <string name="plugins">Plugin</string>
-    <string name="plugins_subtitle">Espandi le funzionalità di YoukiDEX</string>
+    <string name="plugins_subtitle">Espandi le funzionalità di PLate.Launcher</string>
     <string name="plugin_font">Font personalizzato</string>
     <string name="plugin_font_pick">Scegli un file font</string>
     <string name="plugin_font_applied">Font applicato — riavvia DEX per vedere il cambiamento</string>
@@ -72,7 +72,7 @@
     <string name="user_diagnostics">Diagnostica utenti</string>
     <string name="enable_open_terminal_title">Alt+T per aprire il terminale</string>
     <string name="prefer_last_display_summary">Preferisci schermi secondari per visualizzare app e dock</string>
-    <string name="shell_terminal">Terminale Shell Youki</string>
+    <string name="shell_terminal">Terminale Shell PLate</string>
     <string name="num_columns_title">Numero di colonne</string>
     <string name="tweak_section_root">Richiede Root</string>
     <string name="perf_thermal_desc">Controlla le prestazioni e il consumo della CPU</string>
@@ -205,7 +205,7 @@
     <string name="hot_corners_help">Passa il puntatore del mouse sugli angoli per attivare le loro azioni</string>
     <string name="enable_tiling_shortcut">Alt+frecce per disporre le finestre a mosaico</string>
     <string name="enable_open_rec_title">Alt+R per avviare la tua app di registrazione schermo predefinita</string>
-    <string name="write_secure_desc">Necessario per le impostazioni avanzate. Questa è un\'autorizzazione speciale che deve essere concessa con root o adb eseguendo: \npm grant com.youki.dex android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="write_secure_desc">Necessario per le impostazioni avanzate. Questa è un\'autorizzazione speciale che deve essere concessa con root o adb eseguendo: \npm grant com.plate.launcher android.permission.WRITE_SECURE_SETTINGS</string>
     <string name="enable_open_settings_title">Alt+P per aprire le impostazioni</string>
     <string name="remember_launch_mode_summary">Ricorda l\'ultima modalità di avvio usata per ogni app</string>
     <string name="plugin_font_reset">Rimuovi font</string>
@@ -216,7 +216,7 @@
     <string name="view_text">Visualizza testo</string>
     <string name="internal_storage">Archiviazione interna</string>
     <string name="disable_heads_up_summary">Disattiva le notifiche pop-up di Android</string>
-    <string name="youki_dex_its_free_and_open_">Youki DEX è gratuito e open source. Contribuisci su GitHub</string>
+    <string name="youki_dex_its_free_and_open_">PLate.Launcher è gratuito e open source. Contribuisci su GitHub</string>
     <string name="enable_qs_wifi_title">Wi-Fi</string>
     <string name="device_administrator">Amministratore dispositivo</string>
     <string name="notifications">Notifiche</string>
@@ -339,7 +339,7 @@
     <string name="create_new_folder">Crea nuova cartella</string>
     <string name="sound_charge_complete">Ricarica completata</string>
     <string name="manage_workshop_sources_summary">Aggiungi nuove categorie e siti per il workshop</string>
-    <string name="accessibility_service_message">YoukiDex ha bisogno del servizio di Accessibilità per funzionare. Verrai reindirizzato alle Impostazioni.</string>
+    <string name="accessibility_service_message">PLate.Launcher ha bisogno del servizio di Accessibilità per funzionare. Verrai reindirizzato alle Impostazioni.</string>
     <string name="show_running_app_dots">Mostra punti app in esecuzione</string>
     <string name="failed">Fallito</string>
     <string name="sound_copy_failed">Impossibile copiare il file audio</string>
@@ -362,7 +362,7 @@
     <string name="all_contents_will_be_deleted">Tutti i contenuti verranno eliminati!</string>
     <string name="recent_apps">App recenti</string>
     <string name="sound_applied">Suono applicato ✓</string>
-    <string name="youki_sounds">Suoni YoukiDex</string>
+    <string name="youki_sounds">Suoni PLate.Launcher</string>
     <string name="dock_layout">Layout del Dock</string>
     <string name="enable_f10_title">F10 per attivare/disattivare lo schermo diviso</string>
     <string name="notifications_already_granted">Notifiche già concesse</string>
@@ -402,7 +402,7 @@
     <string name="desktop_res_value_title">Risoluzione desktop</string>
     <string name="could_not_read_users">Impossibile leggere gli utenti</string>
     <string name="dock_activation_area_summary">L\'altezza dell\'area di attivazione invisibile nella parte inferiore dello schermo</string>
-    <string name="lw_apply_unsupported">Il tuo dispositivo non supporta l\'impostazione diretta degli sfondi animati dalle app. Vai su Impostazioni → Sfondo per selezionare Youki DEX manualmente.</string>
+    <string name="lw_apply_unsupported">Il tuo dispositivo non supporta l\'impostazione diretta degli sfondi animati dalle app. Vai su Impostazioni → Sfondo per selezionare PLate.Launcher manualmente.</string>
     <string name="close">Chiudi</string>
     <string name="allow_app_hiding">Consenti di nascondere le app</string>
     <string name="disable_taskbar_title">Disattiva barra delle applicazioni</string>
@@ -420,7 +420,7 @@
     <string name="desktop">Desktop</string>
     <string name="app_hiding_category">Occultamento app</string>
     <string name="lw_section_title">Sfondo animato</string>
-    <string name="default_launcher_desc">Imposta Youki DEX come il tuo launcher della schermata principale predefinito in modo che il desktop si carichi automaticamente.</string>
+    <string name="default_launcher_desc">Imposta PLate.Launcher come il tuo launcher della schermata principale predefinito in modo che il desktop si carichi automaticamente.</string>
     <string name="accessibility_service_auto_failed_message">Impossibile attivare automaticamente il servizio. Verrai reindirizzato per attivarlo manualmente dalle Impostazioni.</string>
     <string name="enable_expand_notifications_title">Alt+Q per aprire le impostazioni rapide</string>
     <string name="manage_external_storage">Accesso a tutti i file</string>
@@ -479,13 +479,13 @@
     <string name="skip">Salta</string>
     <string name="new_user">Nuovo utente</string>
     <string name="allow_sysapp_uninstall_title">Consenti disinstallazione app di sistema</string>
-    <string name="tap_to_see_the_list_of_great_p">Tocca per vedere l\'elenco delle persone fantastiche che hanno contribuito a Youki DEX</string>
+    <string name="tap_to_see_the_list_of_great_p">Tocca per vedere l\'elenco delle persone fantastiche che hanno contribuito a PLate.Launcher</string>
     <string name="sound_low_battery">Batteria scarica</string>
     <string name="lw_free_hint">Trascina per spostare • Pizzica per zoomare • Ruota per girare</string>
     <string name="report_copied">Rapporto copiato</string>
     <string name="move_to">Sposta in...</string>
     <string name="maximized">Massimizzata</string>
-    <string name="enable_access_help">Trova e attiva il servizio Youki DEX</string>
+    <string name="enable_access_help">Trova e attiva il servizio PLate.Launcher</string>
     <string name="source_already_exists">Il sito esiste già</string>
     <string name="hide_status_bar_title">Nascondi barra di stato</string>
     <string name="enable_open_menu_title">Meta o Home per aprire il menu app</string>
@@ -511,7 +511,7 @@
     <string name="lw_orientation_portrait">Impostazioni verticali — separate dall\'orizzontale</string>
     <string name="show_hidden_files">Mostra file nascosti</string>
     <string name="plugin_font_add">Aggiungi font</string>
-    <string name="start_message">Youki DEX avviato</string>
+    <string name="start_message">PLate.Launcher avviato</string>
     <string name="processing">Elaborazione…</string>
     <string name="all_files_access_already_granted">Accesso a tutti i file già concesso</string>
     <string name="prop_writable">Scrivibile</string>
@@ -597,7 +597,7 @@
     <string name="handle">Maniglia</string>
     <string name="lw_rotation">Rotazione</string>
     <string name="root_access_not_detected">Nessun Root rilevato. Root deve essere concesso da Magisk o KernelSU dall\'esterno dell\'app.</string>
-    <string name="notification_access_message">YoukiDex ha bisogno dell\'accesso alle notifiche per funzionare correttamente. Verrai reindirizzato per attivarlo.</string>
+    <string name="notification_access_message">PLate.Launcher ha bisogno dell\'accesso alle notifiche per funzionare correttamente. Verrai reindirizzato per attivarlo.</string>
     <string name="lw_bg_white">Bianco</string>
     <string name="tweak_hardcore_title">HardCoreGT – Sblocco termico e FPS</string>
     <string name="enable_toggle_pin_title">Alt+W per bloccare/sbloccare il dock</string>
@@ -697,7 +697,7 @@
     <string name="circle">Cerchio</string>
     <string name="lw_tab_performance">Prestazioni</string>
     <string name="silenced_notifications">Notifiche silenziate per questa app</string>
-    <string name="lw_service_label">Sfondo animato YoukiDex</string>
+    <string name="lw_service_label">Sfondo animato PLate.Launcher</string>
     <string name="vp_repeat_off">Ripetizione disattivata</string>
     <string name="disabled">Disattivato</string>
     <string name="lw_audio_pitch">Tono audio</string>
@@ -783,7 +783,7 @@
     <string name="qa_self_test_title">Esegui autotest</string>
     <string name="qa_self_test_summary">Apre ogni schermata in un processo in background isolato e controlla la presenza di crash o errori silenziosi. Un crash qui non può influire sull\'app che stai utilizzando. Richiede alcuni minuti.</string>
     <string name="qa_self_test_confirm_title">Eseguire l\'autotest?</string>
-    <string name="qa_self_test_confirm_message">Questo apre ogni schermata dell\'app, una per una, all\'interno di un processo isolato separato per cercare bug. Richiederà alcuni minuti e non può mandare in crash l\'app che stai utilizzando attualmente. Un log viene salvato in Download/YoukiDex/.</string>
+    <string name="qa_self_test_confirm_message">Questo apre ogni schermata dell\'app, una per una, all\'interno di un processo isolato separato per cercare bug. Richiederà alcuni minuti e non può mandare in crash l\'app che stai utilizzando attualmente. Un log viene salvato in Download/PLateLauncher/.</string>
     <string name="qa_self_test_confirm_start">Avvia</string>
     <string name="qa_please_wait">Attendere…</string>
     <string name="qa_checking_target">Controllo: %1$s</string>
@@ -804,7 +804,7 @@
     <string name="qa_error_failed_after_restart">Fallito di nuovo dopo il riavvio automatico (%1$s): %2$s</string>
 
     <!-- Onboarding screen (was missing translations entirely) -->
-    <string name="onboarding_welcome_title">Benvenuto in Youki DEX</string>
+    <string name="onboarding_welcome_title">Benvenuto in PLate.Launcher</string>
     <string name="onboarding_welcome_body">Configuriamo il tuo desktop. Ci vorrà solo un minuto.</string>
     <string name="onboarding_permissions_title">Un\'altra cosa</string>
     <string name="onboarding_permissions_body">Concedere l\'accesso a Shizuku consente al desktop di avviarsi direttamente, senza richieste aggiuntive. Puoi saltare questo passaggio e concederlo più tardi dalle Impostazioni.</string>
@@ -829,7 +829,7 @@
     <string name="onboarding_ui_customization_skip_note">Saltando questo passaggio verranno usate le impostazioni predefinite — puoi sempre configurarlo più tardi dalle Impostazioni avanzate.</string>
     <string name="onboarding_done_title">Tutto pronto</string>
     <string name="onboarding_done_body">Il tuo desktop è pronto all\'uso.</string>
-    <string name="onboarding_support_title">Ti piace Youki DEX?</string>
+    <string name="onboarding_support_title">Ti piace PLate.Launcher?</string>
     <string name="onboarding_support_star_github">Mettigli una stella su GitHub</string>
     <string name="onboarding_support_join_discord">Unisciti alla nostra community Discord</string>
     <string name="onboarding_support_report_issue">Hai trovato un bug o hai un\'idea?</string>

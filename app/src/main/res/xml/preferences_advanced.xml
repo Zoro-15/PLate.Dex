@@ -1,4 +1,4 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+﻿<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <Preference
         android:icon="@drawable/ic_info"
@@ -23,12 +23,12 @@
         android:summary="@string/custom_toasts_summary"
         android:title="@string/custom_toasts" />
 
-    <com.youki.dex.preferences.SliderPreference
+    <com.plate.launcher.preferences.SliderPreference
         android:defaultValue="48"
         android:key="dock_height"
         android:title="@string/dock_height" />
 
-    <com.youki.dex.preferences.IconPackPreference
+    <com.plate.launcher.preferences.IconPackPreference
         android:key="icon_pack"
         android:title="@string/icon_pack" />
 

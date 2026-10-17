@@ -1,4 +1,4 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+﻿<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
         android:title="@string/dock_position_category">
         <Preference
@@ -13,15 +13,15 @@
             android:title="@string/enable_apps_btn"
 			android:summary="@string/enable_apps_btn_summary"
             android:defaultValue="true" />
-        <com.youki.dex.preferences.NavActionChooserPreference
+        <com.plate.launcher.preferences.NavActionChooserPreference
             android:key="enable_nav_back"
             android:title="@string/enable_nav_back_title"
             android:defaultValue="true" />
-        <com.youki.dex.preferences.NavActionChooserPreference
+        <com.plate.launcher.preferences.NavActionChooserPreference
             android:key="enable_nav_home"
             android:title="@string/enable_nav_home_title"
             android:defaultValue="true" />
-        <com.youki.dex.preferences.NavActionChooserPreference
+        <com.plate.launcher.preferences.NavActionChooserPreference
             android:key="enable_nav_recents"
             android:title="@string/enable_nav_recents_title"
             android:defaultValue="true" />
@@ -73,7 +73,7 @@
             android:summary="@string/wallpaper_button_summary"
             android:defaultValue="false" />
 
-        <com.youki.dex.preferences.AppChooserPreference
+        <com.plate.launcher.preferences.AppChooserPreference
             android:key="app_wallpaper"
             android:title="@string/wallpaper_app"
             android:summary="@string/wallpaper_app_summary"
@@ -108,7 +108,7 @@
             android:summary="@string/dock_hover_show_hide_summary"
             android:defaultValue="true" />
 		
-		<com.youki.dex.preferences.SliderPreference
+		<com.plate.launcher.preferences.SliderPreference
 		    android:inputType="number"
 			android:key="handle_opacity"
 			android:defaultValue="0.5"
@@ -121,7 +121,7 @@
 			android:defaultValue="start"
 			android:title="@string/handle_position"/>
 			
-		<com.youki.dex.preferences.SliderPreference
+		<com.plate.launcher.preferences.SliderPreference
 			android:key="dock_activation_area"
 			android:defaultValue="10"
 			android:summary="@string/dock_activation_area_summary"
@@ -188,7 +188,7 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/appearance">
-        <com.youki.dex.preferences.SliderPreference
+        <com.plate.launcher.preferences.SliderPreference
             android:defaultValue="48"
             android:key="dock_height"
             android:title="@string/dock_height" />
@@ -214,37 +214,37 @@
             android:summary="@string/enable_pill_battery_summary"
             android:defaultValue="false" />
 
-        <com.youki.dex.preferences.SliderPreference
+        <com.plate.launcher.preferences.SliderPreference
             android:key="pill_transparency"
             android:title="@string/pill_transparency_title"
             android:defaultValue="0.9" />
 
-        <com.youki.dex.preferences.SliderPreference
+        <com.plate.launcher.preferences.SliderPreference
             android:key="pill_height"
             android:title="@string/pill_height_title"
             android:defaultValue="30" />
 
-        <com.youki.dex.preferences.SliderPreference
+        <com.plate.launcher.preferences.SliderPreference
             android:key="pill_time_length"
             android:title="@string/pill_time_length_title"
             android:defaultValue="75" />
 
-        <com.youki.dex.preferences.SliderPreference
+        <com.plate.launcher.preferences.SliderPreference
             android:key="pill_battery_length"
             android:title="@string/pill_battery_length_title"
             android:defaultValue="115" />
 
-        <com.youki.dex.preferences.SliderPreference
+        <com.plate.launcher.preferences.SliderPreference
             android:key="pill_text_size"
             android:title="@string/pill_text_size_title"
             android:defaultValue="12" />
 
-        <com.youki.dex.preferences.SliderPreference
+        <com.plate.launcher.preferences.SliderPreference
             android:key="pill_text_weight"
             android:title="@string/pill_text_weight_title"
             android:defaultValue="4" />
 
-        <com.youki.dex.preferences.SliderPreference
+        <com.plate.launcher.preferences.SliderPreference
             android:key="pill_side_margin"
             android:title="@string/pill_side_margin_title"
             android:defaultValue="4" />

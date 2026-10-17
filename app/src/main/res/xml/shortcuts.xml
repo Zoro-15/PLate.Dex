@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
 
     <shortcut
@@ -9,8 +9,8 @@
         android:shortcutLongLabel="@string/app_name" >
         <intent
             android:action="android.intent.action.MAIN"
-            android:targetPackage="com.youki.dex"
-            android:targetClass="com.youki.dex.activities.ShortcutLauncherActivity" />
+            android:targetPackage="com.plate.launcher"
+            android:targetClass="com.plate.launcher.activities.ShortcutLauncherActivity" />
         <categories android:name="android.shortcut.conversation" />
     </shortcut>
 

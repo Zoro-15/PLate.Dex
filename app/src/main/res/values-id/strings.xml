@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Youki DEX</string>
+    <string name="app_name">PLate.Launcher</string>
     <string name="ok">OK</string>
     <string name="cancel">Batal</string>
     <string name="enable">Aktifkan</string>
@@ -12,7 +12,7 @@
     <string name="advanced">Lanjutan</string>
     <string name="about_project">Tentang proyek</string>
     <string name="plugins">Plugin</string>
-    <string name="plugins_subtitle">Perluas kemampuan YoukiDEX</string>
+    <string name="plugins_subtitle">Perluas kemampuan PLate.Launcher</string>
     <string name="plugin_font">Font kustom</string>
     <string name="plugin_font_pick">Pilih file font</string>
     <string name="plugin_font_applied">Font diterapkan — restart DEX untuk melihat perubahan</string>
@@ -67,7 +67,7 @@
     <string name="perf_root_required">Fitur ini memerlukan Root</string>
     <string name="no">Tidak</string>
     <string name="backup_preferences">Cadangkan preferensi</string>
-    <string name="start_message">Youki DEX dimulai</string>
+    <string name="start_message">PLate.Launcher dimulai</string>
     <string name="bluetooth_already_granted">Bluetooth sudah diberikan</string>
     <string name="cannot_fetch_users">Tidak dapat mengambil pengguna</string>
     <string name="write_system_settings_desc">Mengubah pengaturan tingkat sistem seperti kecerahan layar dan volume media dari launcher.</string>
@@ -85,7 +85,7 @@
     <string name="delete">Hapus</string>
     <string name="workshop_sources">Sumber workshop</string>
     <string name="overlays_in_settings">Izinkan overlay di Pengaturan</string>
-    <string name="default_launcher_desc">Setel Youki DEX sebagai launcher layar utama default Anda agar desktop dimuat secara otomatis.</string>
+    <string name="default_launcher_desc">Setel PLate.Launcher sebagai launcher layar utama default Anda agar desktop dimuat secara otomatis.</string>
     <string name="sound_lock">Kunci</string>
     <string name="custom_toasts">Toast kustom</string>
     <string name="lock_device">Kunci perangkat</string>
@@ -154,7 +154,7 @@
     <string name="thermal_mode_gaming">Gaming</string>
     <string name="about_version">Versi</string>
     <string name="app_info">Info aplikasi</string>
-    <string name="youki_dex_its_free_and_open_">Youki DEX gratis dan sumber terbuka. Berkontribusi di GitHub</string>
+    <string name="youki_dex_its_free_and_open_">PLate.Launcher gratis dan sumber terbuka. Berkontribusi di GitHub</string>
     <string name="silenced_notifications">Notifikasi yang dibisukan untuk aplikasi ini</string>
     <string name="reboot_required_title">Reboot diperlukan</string>
     <string name="hide_hidden_files">Sembunyikan file tersembunyi</string>
@@ -162,7 +162,7 @@
     <string name="plugin_font_reset">Hapus font</string>
     <string name="requires_shizuku_or_root_manage_users">Shizuku atau Root diperlukan untuk mengelola pengguna</string>
     <string name="bytes">byte</string>
-    <string name="enable_access_help">Temukan dan aktifkan layanan Youki DEX</string>
+    <string name="enable_access_help">Temukan dan aktifkan layanan PLate.Launcher</string>
     <string name="root_access">Akses Root</string>
     <string name="desktop_density_value_title">Nilai kepadatan desktop</string>
     <string name="prop_path">Jalur</string>
@@ -313,7 +313,7 @@
     <string name="restart_accessibility">Mengubah pengaturan ini memerlukan restart layanan Aksesibilitas</string>
     <string name="open_as">Buka sebagai…</string>
     <string name="fullscreen">Layar penuh</string>
-    <string name="lw_service_label">Wallpaper Hidup YoukiDex</string>
+    <string name="lw_service_label">Wallpaper Hidup PLate.Launcher</string>
     <string name="bluetooth_permission_desc">Menyambungkan dan menemukan perangkat Bluetooth terdekat. Diperlukan untuk kontrol Bluetooth di launcher.</string>
     <string name="lw_scale_fit">Sesuaikan</string>
     <string name="name_is_empty_short">Nama kosong</string>
@@ -426,13 +426,13 @@
     <string name="delete_n_items">Hapus %1$d item</string>
     <string name="on_google">di Google</string>
     <string name="bottom">Bawah</string>
-    <string name="lw_apply_unsupported">Perangkat Anda tidak mendukung pengaturan wallpaper hidup langsung dari aplikasi. Buka Pengaturan → Wallpaper untuk memilih Youki DEX secara manual.</string>
-    <string name="notification_access_message">YoukiDex memerlukan akses notifikasi agar berfungsi dengan benar. Anda akan diarahkan untuk mengaktifkannya.</string>
+    <string name="lw_apply_unsupported">Perangkat Anda tidak mendukung pengaturan wallpaper hidup langsung dari aplikasi. Buka Pengaturan → Wallpaper untuk memilih PLate.Launcher secara manual.</string>
+    <string name="notification_access_message">PLate.Launcher memerlukan akses notifikasi agar berfungsi dengan benar. Anda akan diarahkan untuk mengaktifkannya.</string>
     <string name="sound_charge_complete">Pengisian selesai</string>
     <string name="add">Tambahkan</string>
     <string name="permission_write_settings_required">Berikan WRITE_SETTINGS terlebih dahulu melalui Shizuku</string>
     <string name="lw_tab_performance">Performa</string>
-    <string name="tap_to_see_the_list_of_great_p">Ketuk untuk melihat daftar orang-orang hebat yang telah berkontribusi pada Youki DEX</string>
+    <string name="tap_to_see_the_list_of_great_p">Ketuk untuk melihat daftar orang-orang hebat yang telah berkontribusi pada PLate.Launcher</string>
     <string name="lw_add_video">Tambahkan video</string>
     <string name="write_secure">Tulis pengaturan aman</string>
     <string name="custom_display_size_hint">biarkan kosong untuk default</string>
@@ -496,7 +496,7 @@
     <string name="beta_new_animations">Animasi baru</string>
     <string name="secure_settings">Pengaturan aman</string>
     <string name="compress_to_zip">Kompres ke ZIP</string>
-    <string name="shell_terminal">Terminal Shell Youki</string>
+    <string name="shell_terminal">Terminal Shell PLate</string>
     <string name="enable_apps_btn">Menu aplikasi</string>
     <string name="lock_landscape_summary">Selalu jaga layar dalam orientasi lanskap (disarankan untuk penggunaan desktop)</string>
     <string name="lw_free_scale_y">Skala tinggi</string>
@@ -543,7 +543,7 @@
     <string name="no_video_player_installed">Tidak ada pemutar video yang terinstal</string>
     <string name="enable_f10_title">F10 untuk mengalihkan layar terpisah</string>
     <string name="perf_zram_off">Nonaktifkan ZRAM</string>
-    <string name="youki_sounds">Suara YoukiDex</string>
+    <string name="youki_sounds">Suara PLate.Launcher</string>
     <string name="app_help">Aktifkan Shizuku untuk membuka semua fitur. Tanpanya, setengah dari fitur tidak akan tersedia.\n\nUntuk bantuan mengenai masalah apa pun, kunjungi halaman GitHub.\n\nBerikan izin Aksesibilitas dari Pengaturan untuk menggunakan semua fitur.\n\nUntuk menghapus instalan, hapus dulu izin Administrator perangkat.</string>
     <string name="name_is_empty">Nama kosong!</string>
     <string name="tweak_touch_title">Mode Ultra-Touch (sensasi iPhone)</string>
@@ -571,7 +571,7 @@
     <string name="file_access_permission">Izin akses file</string>
     <string name="lw_tab_position">Posisi &amp; performa</string>
     <string name="done_colon">Selesai: %1$s</string>
-    <string name="accessibility_service_message">YoukiDex memerlukan layanan Aksesibilitas agar dapat berfungsi. Anda akan diarahkan ke Pengaturan.</string>
+    <string name="accessibility_service_message">PLate.Launcher memerlukan layanan Aksesibilitas agar dapat berfungsi. Anda akan diarahkan ke Pengaturan.</string>
     <string name="dock_shortcut_app_summary">Aplikasi yang terbuka saat Anda mengetuk tombol pintasan di dock</string>
     <string name="charge_sound_title">Suara pengisian daya</string>
     <string name="failed">Gagal</string>
@@ -629,7 +629,7 @@
     <string name="enabled">Diaktifkan</string>
     <string name="join_telegram_summary">Ada pertanyaan? Bergabunglah dengan grup dukungan Telegram</string>
     <string name="handle_position">Posisi pegangan</string>
-    <string name="write_secure_desc">Diperlukan untuk pengaturan lanjutan. Ini adalah izin khusus yang harus diberikan dengan root atau adb dengan menjalankan: \npm grant com.youki.dex android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="write_secure_desc">Diperlukan untuk pengaturan lanjutan. Ini adalah izin khusus yang harus diberikan dengan root atau adb dengan menjalankan: \npm grant com.plate.launcher android.permission.WRITE_SECURE_SETTINGS</string>
     <string name="silence_current_title">Bisukan untuk aplikasi saat ini</string>
     <string name="shizuku_open">Buka Shizuku</string>
     <string name="new_user">Pengguna baru</string>
@@ -783,7 +783,7 @@
     <string name="qa_self_test_title">Jalankan uji mandiri</string>
     <string name="qa_self_test_summary">Membuka setiap layar dalam proses latar belakang yang terisolasi dan memeriksa error atau kegagalan diam-diam. Error di sini tidak dapat memengaruhi aplikasi yang sedang Anda gunakan. Membutuhkan beberapa menit.</string>
     <string name="qa_self_test_confirm_title">Jalankan uji mandiri?</string>
-    <string name="qa_self_test_confirm_message">Ini akan membuka setiap layar di aplikasi, satu per satu, dalam proses terisolasi terpisah untuk mencari bug. Ini akan memakan waktu beberapa menit dan tidak dapat membuat aplikasi yang sedang Anda gunakan mengalami crash. Log disimpan ke Download/YoukiDex/.</string>
+    <string name="qa_self_test_confirm_message">Ini akan membuka setiap layar di aplikasi, satu per satu, dalam proses terisolasi terpisah untuk mencari bug. Ini akan memakan waktu beberapa menit dan tidak dapat membuat aplikasi yang sedang Anda gunakan mengalami crash. Log disimpan ke Download/PLateLauncher/.</string>
     <string name="qa_self_test_confirm_start">Mulai</string>
     <string name="qa_please_wait">Harap tunggu…</string>
     <string name="qa_checking_target">Memeriksa: %1$s</string>
@@ -804,7 +804,7 @@
     <string name="qa_error_failed_after_restart">Gagal lagi setelah mulai ulang otomatis (%1$s): %2$s</string>
 
     <!-- Onboarding screen (was missing translations entirely) -->
-    <string name="onboarding_welcome_title">Selamat datang di Youki DEX</string>
+    <string name="onboarding_welcome_title">Selamat datang di PLate.Launcher</string>
     <string name="onboarding_welcome_body">Mari siapkan desktop Anda. Ini hanya perlu waktu semenit.</string>
     <string name="onboarding_permissions_title">Satu hal lagi</string>
     <string name="onboarding_permissions_body">Memberikan akses Shizuku memungkinkan desktop memulai langsung, tanpa perlu perintah tambahan. Anda bisa melewati ini dan memberikannya nanti dari Pengaturan.</string>
@@ -829,7 +829,7 @@
     <string name="onboarding_ui_customization_skip_note">Melewati langkah ini akan menggunakan pengaturan default — Anda selalu bisa mengaturnya nanti dari Pengaturan Lanjutan.</string>
     <string name="onboarding_done_title">Semua siap</string>
     <string name="onboarding_done_body">Desktop Anda siap digunakan.</string>
-    <string name="onboarding_support_title">Menikmati Youki DEX?</string>
+    <string name="onboarding_support_title">Menikmati PLate.Launcher?</string>
     <string name="onboarding_support_star_github">Beri bintang di GitHub</string>
     <string name="onboarding_support_join_discord">Bergabunglah dengan komunitas Discord kami</string>
     <string name="onboarding_support_report_issue">Menemukan bug atau punya ide?</string>

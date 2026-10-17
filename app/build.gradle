@@ -54,7 +54,7 @@ def calculatedVersionName = "${vMajor}.${vMinor}"
 def calculatedVersionCode = vCode
 
 android {
-    namespace "com.youki.dex"
+    namespace "com.plate.launcher"
     compileSdk 35
 
     signingConfigs {
@@ -70,7 +70,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.youki.dex"
+        applicationId "com.plate.launcher"
         minSdk 26
         targetSdk 35
         versionCode calculatedVersionCode
@@ -98,7 +98,7 @@ android {
 
     applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "PLateDex-v${variant.versionName}-${variant.buildType.name}.apk"
+            outputFileName = "PLateLauncher-v${variant.versionName}-${variant.buildType.name}.apk"
         }
     }
 

@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Youki DEX</string>
+    <string name="app_name">PLate.Launcher</string>
     <string name="ok">OK</string>
     <string name="cancel">Annuler</string>
     <string name="enable">Activer</string>
@@ -12,7 +12,7 @@
     <string name="advanced">Avancé</string>
     <string name="about_project">À propos du projet</string>
     <string name="plugins">Extensions</string>
-    <string name="plugins_subtitle">Étendre les capacités de YoukiDEX</string>
+    <string name="plugins_subtitle">Étendre les capacités de PLate.Launcher</string>
     <string name="plugin_font">Police personnalisée</string>
     <string name="plugin_font_pick">Choisir un fichier de police</string>
     <string name="plugin_font_applied">Police appliquée — redémarrez DEX pour voir le changement</string>
@@ -76,7 +76,7 @@
     <string name="compressed_prefix">Compressé</string>
     <string name="perf_thermal_current">Mode actuel</string>
     <string name="blocked_notifications_title">Notifications ignorées</string>
-    <string name="tap_to_see_the_list_of_great_p">Appuyez pour voir la liste des personnes formidables qui ont contribué à Youki DEX</string>
+    <string name="tap_to_see_the_list_of_great_p">Appuyez pour voir la liste des personnes formidables qui ont contribué à PLate.Launcher</string>
     <string name="resource_monitor_summary">Afficher l\'utilisation du CPU et de la RAM dans la barre des tâches</string>
     <string name="about_version_value">3.0</string>
     <string name="share_via">Partager via…</string>
@@ -197,7 +197,7 @@
     <string name="behaviour">Comportement</string>
     <string name="default_apps">Applications par défaut</string>
     <string name="delete_failed">Échec de la suppression</string>
-    <string name="default_launcher_desc">Définissez Youki DEX comme votre lanceur d\'écran d\'accueil par défaut afin que le bureau se charge automatiquement.</string>
+    <string name="default_launcher_desc">Définissez PLate.Launcher comme votre lanceur d\'écran d\'accueil par défaut afin que le bureau se charge automatiquement.</string>
     <string name="enable_ctrl_back_title">Ctrl droit agit comme le bouton retour</string>
     <string name="charge_complete_sound_title">Son de charge terminée</string>
     <string name="tweak_fpsinjector_desc">Ajustez finement le FPS et le taux de rafraîchissement avec flexibilité</string>
@@ -241,7 +241,7 @@
     <string name="launch_new_instance_secondary_summary">Si l\'application le prend en charge, créer une nouvelle fenêtre lors du lancement sur des écrans secondaires</string>
     <string name="app_frozen">Application gelée</string>
     <string name="join_telegram_title">Groupe Telegram</string>
-    <string name="lw_service_label">Fond d\'écran animé YoukiDex</string>
+    <string name="lw_service_label">Fond d\'écran animé PLate.Launcher</string>
     <string name="storage_desc">Utilisé pour changer l\'icône du menu et les sons d\'événements</string>
     <string name="new_folder">Nouveau dossier</string>
     <string name="quick_settings_panel">Paramètres rapides</string>
@@ -260,7 +260,7 @@
     <string name="round_dock">Coins arrondis pour le dock</string>
     <string name="running_apps_number_title">Nombre d\'applications en cours/récentes à afficher</string>
     <string name="plugin_font_remove">Retirer la police</string>
-    <string name="youki_dex_its_free_and_open_">Youki DEX est gratuit et open source. Contribuez sur GitHub</string>
+    <string name="youki_dex_its_free_and_open_">PLate.Launcher est gratuit et open source. Contribuez sur GitHub</string>
     <string name="lw_free_pro_subtitle">Curseurs précis pour la largeur, la hauteur, la position et la rotation</string>
     <string name="hot_corners_delay_title">Délai d\'activation (en millisecondes)</string>
     <string name="root_access">Accès Root</string>
@@ -276,7 +276,7 @@
     <string name="n_items_total">%1$d éléments — Total : %2$s</string>
     <string name="lw_scale_stretch">Étirer</string>
     <string name="no_app_to_open_file">Aucune application installée pour ouvrir ce fichier</string>
-    <string name="enable_access_help">Trouver et activer le service Youki DEX</string>
+    <string name="enable_access_help">Trouver et activer le service PLate.Launcher</string>
     <string name="file_access_permission">Autorisation d\'accès aux fichiers</string>
     <string name="tweak_touch_title">Mode Ultra-Touch (sensation iPhone)</string>
     <string name="create_new_folder">Créer un nouveau dossier</string>
@@ -302,7 +302,7 @@
     <string name="play">Lire</string>
     <string name="delete_user">Supprimer l\'utilisateur</string>
     <string name="sound_copy_failed">Échec de la copie du fichier audio</string>
-    <string name="start_message">Youki DEX démarré</string>
+    <string name="start_message">PLate.Launcher démarré</string>
     <string name="snap">Aligner…</string>
     <string name="new_name">Nouveau nom</string>
     <string name="circle">Cercle</string>
@@ -350,7 +350,7 @@
     <string name="select_category">Sélectionner une catégorie</string>
     <string name="media_access_already_granted">Accès aux médias déjà accordé</string>
     <string name="loading_ellipsis">Chargement...</string>
-    <string name="lw_apply_unsupported">Votre appareil ne prend pas en charge la définition directe des fonds d\'écran animés depuis les applications. Allez dans Paramètres → Fond d\'écran pour sélectionner Youki DEX manuellement.</string>
+    <string name="lw_apply_unsupported">Votre appareil ne prend pas en charge la définition directe des fonds d\'écran animés depuis les applications. Allez dans Paramètres → Fond d\'écran pour sélectionner PLate.Launcher manuellement.</string>
     <string name="lw_bg_white">Blanc</string>
     <string name="off">Désactivé</string>
     <string name="shizuku_desc">Shizuku accorde un accès shell privilégié sans ADB sans fil. Installez Shizuku depuis le Play Store, exécutez-le une fois via ADB ou le débogage sans fil, puis accordez l\'autorisation ici.</string>
@@ -360,7 +360,7 @@
     <string name="hot_corners">Coins actifs</string>
     <string name="open_as">Ouvrir en tant que…</string>
     <string name="tweak_mtk_desc">Améliorer les performances du CPU via un correctif pilote personnalisé</string>
-    <string name="notification_access_message">YoukiDex a besoin de l\'accès aux notifications pour fonctionner correctement. Vous serez redirigé pour l\'activer.</string>
+    <string name="notification_access_message">PLate.Launcher a besoin de l\'accès aux notifications pour fonctionner correctement. Vous serez redirigé pour l\'activer.</string>
     <string name="delete_file">Supprimer le fichier</string>
     <string name="apps">Applications</string>
     <string name="lw_free_scale_y">Échelle de hauteur</string>
@@ -434,7 +434,7 @@
     <string name="open_with">Ouvrir avec…</string>
     <string name="open_accessibility">Ouvrir Accessibilité</string>
     <string name="transparency">Transparence</string>
-    <string name="shell_terminal">Terminal Shell Youki</string>
+    <string name="shell_terminal">Terminal Shell PLate</string>
     <string name="share">Partager</string>
     <string name="single_line_labels">Une seule ligne pour les noms d\'applications</string>
     <string name="app_music_title">Musique</string>
@@ -493,7 +493,7 @@
     <string name="view_text">Voir le texte</string>
     <string name="sound_startup">Démarrage</string>
     <string name="num_columns_title">Nombre de colonnes</string>
-    <string name="youki_sounds">Sons YoukiDex</string>
+    <string name="youki_sounds">Sons PLate.Launcher</string>
     <string name="no_access_permission">Aucune autorisation d\'accès</string>
     <string name="sound_lock">Verrouillage</string>
     <string name="extract_to">Extraire vers...</string>
@@ -652,7 +652,7 @@
     <string name="about_version">Version</string>
     <string name="prop_writable">Modifiable</string>
     <string name="tweak_hardcore_title">HardCoreGT – Déblocage thermique et FPS</string>
-    <string name="write_secure_desc">Nécessaire pour les paramètres avancés. Il s\'agit d\'une autorisation spéciale qui doit être accordée avec root ou adb en exécutant : \npm grant com.youki.dex android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="write_secure_desc">Nécessaire pour les paramètres avancés. Il s\'agit d\'une autorisation spéciale qui doit être accordée avec root ou adb en exécutant : \npm grant com.plate.launcher android.permission.WRITE_SECURE_SETTINGS</string>
     <string name="dock_height">Hauteur du dock</string>
     <string name="enable_power_menu_summary">Utiliser un menu d\'alimentation personnalisé au lieu de celui du système</string>
     <string name="tweak_section">Optimisations de performance</string>
@@ -679,7 +679,7 @@
     <string name="app_browser_title">Navigateur Web</string>
     <string name="remember_launch_mode_summary">Mémoriser le dernier mode de lancement utilisé pour chaque application</string>
     <string name="perf_root_required">Cette fonctionnalité nécessite Root</string>
-    <string name="accessibility_service_message">YoukiDex a besoin du service d\'accessibilité pour fonctionner. Vous serez redirigé vers les Paramètres.</string>
+    <string name="accessibility_service_message">PLate.Launcher a besoin du service d\'accessibilité pour fonctionner. Vous serez redirigé vers les Paramètres.</string>
     <string name="enable_open_settings_title">Alt+P pour ouvrir les paramètres</string>
     <string name="folder_creation_failed">Impossible de créer le dossier</string>
     <string name="auto_pin_summary">Configurer l\'épinglage automatique</string>
@@ -783,7 +783,7 @@
     <string name="qa_self_test_title">Lancer l\'autotest</string>
     <string name="qa_self_test_summary">Ouvre chaque écran dans un processus d\'arrière-plan isolé et recherche les plantages ou erreurs silencieuses. Un plantage ici ne peut pas affecter l\'application que vous utilisez. Prend quelques minutes.</string>
     <string name="qa_self_test_confirm_title">Lancer l\'autotest ?</string>
-    <string name="qa_self_test_confirm_message">Cela ouvre chaque écran de l\'application, un par un, dans un processus isolé distinct afin de rechercher des bugs. Cela prendra quelques minutes et ne peut pas faire planter l\'application que vous utilisez actuellement. Un journal est enregistré dans Download/YoukiDex/.</string>
+    <string name="qa_self_test_confirm_message">Cela ouvre chaque écran de l\'application, un par un, dans un processus isolé distinct afin de rechercher des bugs. Cela prendra quelques minutes et ne peut pas faire planter l\'application que vous utilisez actuellement. Un journal est enregistré dans Download/PLateLauncher/.</string>
     <string name="qa_self_test_confirm_start">Démarrer</string>
     <string name="qa_please_wait">Veuillez patienter…</string>
     <string name="qa_checking_target">Vérification : %1$s</string>
@@ -804,7 +804,7 @@
     <string name="qa_error_failed_after_restart">Échec à nouveau après redémarrage automatique (%1$s) : %2$s</string>
 
     <!-- Onboarding screen (was missing translations entirely) -->
-    <string name="onboarding_welcome_title">Bienvenue sur Youki DEX</string>
+    <string name="onboarding_welcome_title">Bienvenue sur PLate.Launcher</string>
     <string name="onboarding_welcome_body">Configurons votre bureau. Cela ne prendra qu\'une minute.</string>
     <string name="onboarding_permissions_title">Une dernière chose</string>
     <string name="onboarding_permissions_body">Accorder l\'accès à Shizuku permet au bureau de démarrer directement, sans invites supplémentaires. Vous pouvez ignorer cela et l\'accorder plus tard depuis les Paramètres.</string>
@@ -829,7 +829,7 @@
     <string name="onboarding_ui_customization_skip_note">Ignorer cette étape utilisera les paramètres par défaut à la place — vous pourrez toujours configurer cela plus tard depuis les Paramètres avancés.</string>
     <string name="onboarding_done_title">Tout est prêt</string>
     <string name="onboarding_done_body">Votre bureau est prêt à l\'emploi.</string>
-    <string name="onboarding_support_title">Vous aimez Youki DEX ?</string>
+    <string name="onboarding_support_title">Vous aimez PLate.Launcher ?</string>
     <string name="onboarding_support_star_github">Mettez une étoile sur GitHub</string>
     <string name="onboarding_support_join_discord">Rejoignez notre communauté Discord</string>
     <string name="onboarding_support_report_issue">Un bug trouvé ou une idée ?</string>

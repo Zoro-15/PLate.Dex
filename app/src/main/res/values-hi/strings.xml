@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Youki DEX</string>
+    <string name="app_name">PLate.Launcher</string>
     <string name="ok">ठीक है</string>
     <string name="cancel">रद्द करें</string>
     <string name="enable">सक्षम करें</string>
@@ -12,7 +12,7 @@
     <string name="advanced">उन्नत</string>
     <string name="about_project">प्रोजेक्ट के बारे में</string>
     <string name="plugins">प्लगइन्स</string>
-    <string name="plugins_subtitle">YoukiDEX की क्षमताओं का विस्तार करें</string>
+    <string name="plugins_subtitle">PLate.Launcher की क्षमताओं का विस्तार करें</string>
     <string name="plugin_font">कस्टम फ़ॉन्ट</string>
     <string name="plugin_font_pick">फ़ॉन्ट फ़ाइल चुनें</string>
     <string name="plugin_font_applied">फ़ॉन्ट लागू किया गया — परिवर्तन देखने के लिए DEX पुनः आरंभ करें</string>
@@ -162,7 +162,7 @@
     <string name="display_over_other_apps">अन्य ऐप्स के ऊपर प्रदर्शित करें</string>
     <string name="copy_n_items_to">%1$d आइटम को कॉपी करें...</string>
     <string name="allow_sysapp_uninstall_summary">सावधान रहें, यह वास्तव में खतरनाक हो सकता है</string>
-    <string name="lw_apply_unsupported">आपका डिवाइस ऐप्स से सीधे लाइव वॉलपेपर सेट करने का समर्थन नहीं करता है। मैन्युअल रूप से Youki DEX चुनने के लिए सेटिंग्स → वॉलपेपर पर जाएं।</string>
+    <string name="lw_apply_unsupported">आपका डिवाइस ऐप्स से सीधे लाइव वॉलपेपर सेट करने का समर्थन नहीं करता है। मैन्युअल रूप से PLate.Launcher चुनने के लिए सेटिंग्स → वॉलपेपर पर जाएं।</string>
     <string name="create">बनाएं</string>
     <string name="app_info">ऐप जानकारी</string>
     <string name="show_notes_title">नोट्स विजेट</string>
@@ -182,7 +182,7 @@
     <string name="lw_saturation">संतृप्ति</string>
     <string name="extraction_failed">निष्कर्षण विफल: %1$s</string>
     <string name="tweak_c2d_title">C2D रेंडरिंग मोड और अधिकतम GPU प्रदर्शन</string>
-    <string name="youki_dex_its_free_and_open_">Youki DEX मुफ़्त और ओपन सोर्स है। GitHub पर योगदान दें</string>
+    <string name="youki_dex_its_free_and_open_">PLate.Launcher मुफ़्त और ओपन सोर्स है। GitHub पर योगदान दें</string>
     <string name="completed_successfully">सफलतापूर्वक पूर्ण हुआ</string>
     <string name="enable_nav_back_title">वापस</string>
     <string name="fps_reset">फ्रेम दर रीसेट कर दी गई है</string>
@@ -350,7 +350,7 @@
     <string name="navigation">नेविगेशन</string>
     <string name="app_hiding_category">ऐप छिपाना</string>
     <string name="material_u">Material U (गहरा)</string>
-    <string name="tap_to_see_the_list_of_great_p">Youki DEX में योगदान देने वाले महान लोगों की सूची देखने के लिए टैप करें</string>
+    <string name="tap_to_see_the_list_of_great_p">PLate.Launcher में योगदान देने वाले महान लोगों की सूची देखने के लिए टैप करें</string>
     <string name="tweak_hardcore_title">HardCoreGT – थर्मल और FPS अनलॉकर</string>
     <string name="no_other_launcher_found">कोई अन्य लॉन्चर नहीं मिला</string>
     <string name="enable_qs_pin_summary">आप अभी भी डॉक पर नीचे स्वाइप करके या कीबोर्ड शॉर्टकट का उपयोग करके इसे पिन/अनपिन कर सकते हैं</string>
@@ -384,7 +384,7 @@
     <string name="join_telegram_title">Telegram समूह</string>
     <string name="enable_qs_wifi_title">वाई-फाई</string>
     <string name="choose_dock_layout">एक डॉक लेआउट चुनें</string>
-    <string name="start_message">Youki DEX शुरू हो गया</string>
+    <string name="start_message">PLate.Launcher शुरू हो गया</string>
     <string name="developer_mode_already">डेवलपर मोड पहले से सक्षम है</string>
     <string name="activation_method">सक्रियण विधि</string>
     <string name="menu_icon_uri_title">मेनू आइकन</string>
@@ -420,7 +420,7 @@
     <string name="center_app_menu">केंद्रित ऐप मेनू</string>
     <string name="confirm">पुष्टि करें</string>
     <string name="tweak_section_root">Root आवश्यक</string>
-    <string name="accessibility_service_message">YoukiDex को काम करने के लिए एक्सेसिबिलिटी सेवा की आवश्यकता है। आपको सेटिंग्स पर पुनर्निर्देशित किया जाएगा।</string>
+    <string name="accessibility_service_message">PLate.Launcher को काम करने के लिए एक्सेसिबिलिटी सेवा की आवश्यकता है। आपको सेटिंग्स पर पुनर्निर्देशित किया जाएगा।</string>
     <string name="copy_path">पथ कॉपी करें</string>
     <string name="pm_list_users_no_valid_data">अनुमति सक्षम है (Shizuku/Root) लेकिन "pm list users"\nने मान्य डेटा नहीं लौटाया। कारण जानने के लिए "निदान करें" पर टैप करें।</string>
     <string name="tweak_hardcore_desc">सुचारू गेमिंग अनुभव के लिए थर्मल और FPS सीमाएं हटाता है</string>
@@ -467,7 +467,7 @@
     <string name="enable_corner_top_right_title">ऊपरी दायां कोना</string>
     <string name="long_press_action">लंबे प्रेस की क्रिया</string>
     <string name="toggle_split_screen">स्प्लिट स्क्रीन टॉगल करें</string>
-    <string name="youki_sounds">YoukiDex ध्वनियाँ</string>
+    <string name="youki_sounds">PLate.Launcher ध्वनियाँ</string>
     <string name="icon_blacklist_summary">स्टेटस बार से छिपाने के लिए आइकन</string>
     <string name="backup_restore">बैकअप और पुनर्स्थापना</string>
     <string name="grant">अनुमति दें</string>
@@ -501,7 +501,7 @@
     <string name="no_files_found">कोई फ़ाइल नहीं मिली</string>
     <string name="tweak_connectivity_title">तेज़ कनेक्टिविटी मोड</string>
     <string name="compressed_prefix">संपीड़ित</string>
-    <string name="shell_terminal">Youki शेल टर्मिनल</string>
+    <string name="shell_terminal">PLate शेल टर्मिनल</string>
     <string name="hot_corners_delay_title">सक्रियण विलंब (मिलीसेकंड में)</string>
     <string name="enable_soft_reboot_summary">सिस्टम थोड़े समय के लिए अनुत्तरदायी हो सकता है</string>
     <string name="all_contents_will_be_deleted">सारी सामग्री हटा दी जाएगी!</string>
@@ -572,7 +572,7 @@
     <string name="launch_new_instance_secondary_summary">यदि ऐप समर्थन करता है, तो द्वितीयक स्क्रीन पर लॉन्च होने पर एक नई विंडो बनाएं</string>
     <string name="charging_sound_enabled">चार्जिंग ध्वनि</string>
     <string name="hot_corners_help">उनकी क्रियाओं को ट्रिगर करने के लिए माउस पॉइंटर को कोनों पर होवर करें</string>
-    <string name="write_secure_desc">उन्नत सेटिंग्स के लिए आवश्यक। यह एक विशेष अनुमति है जिसे root या adb के साथ चलाकर देना होगा: \npm grant com.youki.dex android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="write_secure_desc">उन्नत सेटिंग्स के लिए आवश्यक। यह एक विशेष अनुमति है जिसे root या adb के साथ चलाकर देना होगा: \npm grant com.plate.launcher android.permission.WRITE_SECURE_SETTINGS</string>
     <string name="select_or_enter_category">एक श्रेणी चुनें या एक नई दर्ज करें</string>
     <string name="charging_sound_enabled_summary">चार्जिंग शुरू होने पर ध्वनि बजाएं</string>
     <string name="enter_user_name">उपयोगकर्ता के लिए एक नाम दर्ज करें</string>
@@ -591,7 +591,7 @@
     <string name="cannot_install">इंस्टॉल नहीं किया जा सकता</string>
     <string name="restart_dex">DEX पुनरारंभ करें</string>
     <string name="sound_wireless_charge">वायरलेस चार्जिंग</string>
-    <string name="enable_access_help">Youki DEX सेवा खोजें और सक्षम करें</string>
+    <string name="enable_access_help">PLate.Launcher सेवा खोजें और सक्षम करें</string>
     <string name="allow_app_freeze_title">ऐप निष्क्रिय करने की अनुमति दें</string>
     <string name="custom_display_resolution_title">डिस्प्ले रिज़ॉल्यूशन</string>
     <string name="gnu_general_public_licence_v3">GNU जनरल पब्लिक लाइसेंस v3.0</string>
@@ -600,7 +600,7 @@
     <string name="plugin_font_active">फ़ॉन्ट सक्रिय</string>
     <string name="completed_with_warnings">चेतावनियों के साथ पूर्ण हुआ</string>
     <string name="restart_accessibility">इस सेटिंग को बदलने के लिए एक्सेसिबिलिटी सेवा को पुनरारंभ करना आवश्यक है</string>
-    <string name="notification_access_message">YoukiDex को सही ढंग से काम करने के लिए सूचना पहुँच की आवश्यकता है। इसे सक्षम करने के लिए आपको पुनर्निर्देशित किया जाएगा।</string>
+    <string name="notification_access_message">PLate.Launcher को सही ढंग से काम करने के लिए सूचना पहुँच की आवश्यकता है। इसे सक्षम करने के लिए आपको पुनर्निर्देशित किया जाएगा।</string>
     <string name="lw_orientation_landscape">लैंडस्केप सेटिंग्स — पोर्ट्रेट से अलग</string>
     <string name="tweak_audio_title">ऑडियो और साउंड संवर्धक प्रो</string>
     <string name="prop_name">नाम</string>
@@ -695,7 +695,7 @@
     <string name="custom_toasts_summary">जब डॉक पिन किया गया हो तो ऐप्स के लिए अंतर्निहित कस्टम टोस्ट का उपयोग करें</string>
     <string name="wallpaper">वॉलपेपर</string>
     <string name="enter_valid_url">एक मान्य URL दर्ज करें</string>
-    <string name="lw_service_label">YoukiDex लाइव वॉलपेपर</string>
+    <string name="lw_service_label">PLate.Launcher लाइव वॉलपेपर</string>
     <string name="bubble_opacity_summary">बबल की पारदर्शिता नियंत्रित करें (100% = ठोस)</string>
     <string name="startup_sound_title">स्टार्टअप ध्वनि</string>
     <string name="apps">ऐप्स</string>
@@ -713,7 +713,7 @@
     <string name="none">कोई नहीं</string>
     <string name="pin_startup">शुरुआत में पिन करें</string>
     <string name="thermal_mode_balanced">संतुलित</string>
-    <string name="default_launcher_desc">डेस्कटॉप को स्वचालित रूप से लोड करने के लिए Youki DEX को अपना डिफ़ॉल्ट होम स्क्रीन लॉन्चर सेट करें।</string>
+    <string name="default_launcher_desc">डेस्कटॉप को स्वचालित रूप से लोड करने के लिए PLate.Launcher को अपना डिफ़ॉल्ट होम स्क्रीन लॉन्चर सेट करें।</string>
     <string name="path_copied">पथ कॉपी किया गया</string>
     <string name="lw_contrast">कंट्रास्ट</string>
     <string name="delete_source_confirm_message">यह स्रोत स्थायी रूप से हटा दिया जाएगा</string>
@@ -783,7 +783,7 @@
     <string name="qa_self_test_title">सेल्फ़-टेस्ट चलाएँ</string>
     <string name="qa_self_test_summary">हर स्क्रीन को एक अलग बैकग्राउंड प्रोसेस में खोलता है और क्रैश या साइलेंट फेलियर की जाँच करता है। यहाँ होने वाला क्रैश आपके द्वारा इस्तेमाल की जा रही ऐप को प्रभावित नहीं कर सकता। कुछ मिनट लगते हैं।</string>
     <string name="qa_self_test_confirm_title">सेल्फ़-टेस्ट चलाएँ?</string>
-    <string name="qa_self_test_confirm_message">यह बग ढूँढने के लिए ऐप की हर स्क्रीन को, एक-एक करके, एक अलग आइसोलेटेड प्रोसेस में खोलता है। इसमें कुछ मिनट लगेंगे और यह आपके द्वारा वर्तमान में इस्तेमाल की जा रही ऐप को क्रैश नहीं कर सकता। एक लॉग Download/YoukiDex/ में सेव किया जाता है।</string>
+    <string name="qa_self_test_confirm_message">यह बग ढूँढने के लिए ऐप की हर स्क्रीन को, एक-एक करके, एक अलग आइसोलेटेड प्रोसेस में खोलता है। इसमें कुछ मिनट लगेंगे और यह आपके द्वारा वर्तमान में इस्तेमाल की जा रही ऐप को क्रैश नहीं कर सकता। एक लॉग Download/PLateLauncher/ में सेव किया जाता है।</string>
     <string name="qa_self_test_confirm_start">शुरू करें</string>
     <string name="qa_please_wait">कृपया प्रतीक्षा करें…</string>
     <string name="qa_checking_target">जाँच हो रही है: %1$s</string>
@@ -804,7 +804,7 @@
     <string name="qa_error_failed_after_restart">ऑटोमैटिक रीस्टार्ट के बाद फिर विफल (%1$s): %2$s</string>
 
     <!-- Onboarding screen (was missing translations entirely) -->
-    <string name="onboarding_welcome_title">Youki DEX में आपका स्वागत है</string>
+    <string name="onboarding_welcome_title">PLate.Launcher में आपका स्वागत है</string>
     <string name="onboarding_welcome_body">चलिए आपका डेस्कटॉप सेट करते हैं। इसमें बस एक मिनट लगेगा।</string>
     <string name="onboarding_permissions_title">एक और बात</string>
     <string name="onboarding_permissions_body">Shizuku एक्सेस देने से डेस्कटॉप बिना किसी अतिरिक्त प्रॉम्प्ट के सीधे शुरू हो सकता है। आप इसे छोड़ सकते हैं और बाद में सेटिंग्स से दे सकते हैं।</string>
@@ -829,7 +829,7 @@
     <string name="onboarding_ui_customization_skip_note">इस चरण को छोड़ने पर डिफ़ॉल्ट सेटिंग्स इस्तेमाल होंगी — आप इसे हमेशा बाद में उन्नत सेटिंग्स से सेट कर सकते हैं।</string>
     <string name="onboarding_done_title">सब कुछ तैयार है</string>
     <string name="onboarding_done_body">आपका डेस्कटॉप उपयोग के लिए तैयार है।</string>
-    <string name="onboarding_support_title">Youki DEX पसंद आ रहा है?</string>
+    <string name="onboarding_support_title">PLate.Launcher पसंद आ रहा है?</string>
     <string name="onboarding_support_star_github">GitHub पर स्टार दें</string>
     <string name="onboarding_support_join_discord">हमारे Discord समुदाय से जुड़ें</string>
     <string name="onboarding_support_report_issue">कोई बग मिला या कोई आइडिया है?</string>

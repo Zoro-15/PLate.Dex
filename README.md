@@ -165,8 +165,8 @@ A few features need `WRITE_SECURE_SETTINGS`-level access. Three ways to get ther
 - **Root** — Magisk or KernelSU, detected automatically, nothing to set up.
 - **ADB**, if you'd rather do it manually and don't have either:
   ```bash
-  adb shell pm grant com.youki.dex android.permission.WRITE_SECURE_SETTINGS
-  adb shell appops set com.youki.dex GET_USAGE_STATS allow
+  adb shell pm grant com.plate.launcher android.permission.WRITE_SECURE_SETTINGS
+  adb shell appops set com.plate.launcher GET_USAGE_STATS allow
   ```
 
 Without any of these, the app still works — you just won't have the handful of features that need system-level access.
@@ -223,7 +223,7 @@ Yes. Contributions and bug reports are always welcome.
 **Accessibility won't turn on for me on Android 13+.**
 That's Android blocking it because the app wasn't installed from the Play Store. One-time fix:
 ```bash
-adb shell appops set com.youki.dex REQUEST_INSTALL_PACKAGES allow
+adb shell appops set com.plate.launcher REQUEST_INSTALL_PACKAGES allow
 ```
 Then go back to Settings → Accessibility and it should work. Installing via `adb install` instead of a regular APK also skips this entirely.
 

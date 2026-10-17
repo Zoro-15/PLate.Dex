@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Youki DEX</string>
+    <string name="app_name">PLate.Launcher</string>
     <string name="ok">Tamam</string>
     <string name="cancel">İptal</string>
     <string name="enable">Etkinleştir</string>
@@ -12,7 +12,7 @@
     <string name="advanced">Gelişmiş</string>
     <string name="about_project">Proje hakkında</string>
     <string name="plugins">Eklentiler</string>
-    <string name="plugins_subtitle">YoukiDEX özelliklerini genişlet</string>
+    <string name="plugins_subtitle">PLate.Launcher özelliklerini genişlet</string>
     <string name="plugin_font">Özel yazı tipi</string>
     <string name="plugin_font_pick">Yazı tipi dosyası seç</string>
     <string name="plugin_font_applied">Yazı tipi uygulandı — değişikliği görmek için DEX\'i yeniden başlatın</string>
@@ -179,7 +179,7 @@
     <string name="tweak_diskio_desc">Disk G/Ç\'yi hızlandır ve ekran render performansını iyileştir</string>
     <string name="app_rec_title">Ekran kaydedici</string>
     <string name="failed_colon">Başarısız: %1$s</string>
-    <string name="default_launcher_desc">Masaüstünün otomatik olarak yüklenmesi için Youki DEX\'i varsayılan ana ekran launcher\'ınız olarak ayarlayın.</string>
+    <string name="default_launcher_desc">Masaüstünün otomatik olarak yüklenmesi için PLate.Launcher\'i varsayılan ana ekran launcher\'ınız olarak ayarlayın.</string>
     <string name="open_as">Farklı aç…</string>
     <string name="material_u_light">Material U (Açık)</string>
     <string name="record">Kayıt</string>
@@ -192,7 +192,7 @@
     <string name="performance_mode_colon">Performans modu: %1$s</string>
     <string name="move_to">Şuraya taşı...</string>
     <string name="transparent">Şeffaf</string>
-    <string name="accessibility_service_message">YoukiDex\'in çalışması için Erişilebilirlik hizmetine ihtiyacı var. Ayarlar\'a yönlendirileceksiniz.</string>
+    <string name="accessibility_service_message">PLate.Launcher\'in çalışması için Erişilebilirlik hizmetine ihtiyacı var. Ayarlar\'a yönlendirileceksiniz.</string>
     <string name="open_with">Birlikte aç…</string>
     <string name="tweak_diskio_title">Disk G/Ç ve SurfaceFlinger hızlandırma</string>
     <string name="pin_startup">Başlangıçta sabitle</string>
@@ -258,7 +258,7 @@
     <string name="app_files_title">Dosyalar</string>
     <string name="tweak_thermalkiller_title">Termal sınırlayıcı yok edici (kısıtlamasız mod)</string>
     <string name="tweak_audio_title">Ses ve seda geliştirici Pro</string>
-    <string name="start_message">Youki DEX başlatıldı</string>
+    <string name="start_message">PLate.Launcher başlatıldı</string>
     <string name="lw_translate_x">X hareketi</string>
     <string name="dock_shortcut_app_title">Dock hızlı başlatma uygulaması</string>
     <string name="app_help">Tüm özelliklerin kilidini açmak için Shizuku\'yu etkinleştirin. Bu olmadan, özelliklerin yarısı kullanılamayacaktır.\n\nHerhangi bir sorunla ilgili yardım için GitHub sayfasını ziyaret edin.\n\nTüm özellikleri kullanmak için Ayarlar\'dan Erişilebilirlik iznini verin.\n\nKaldırmak için önce Cihaz Yöneticisi iznini kaldırın.</string>
@@ -293,7 +293,7 @@
     <string name="manage_external_storage">Tüm dosyalara erişim</string>
     <string name="install">Yükle</string>
     <string name="storage_desc">Menü simgesini ve etkinlik seslerini değiştirmek için kullanılır</string>
-    <string name="shell_terminal">Youki Kabuk Terminali</string>
+    <string name="shell_terminal">PLate Kabuk Terminali</string>
     <string name="copied_to_clipboard">Panoya kopyalandı</string>
     <string name="silence_current_title">Mevcut uygulama için sessize al</string>
     <string name="secure_settings">Güvenli ayarlar</string>
@@ -407,7 +407,7 @@
     <string name="remember_launch_mode_title">Başlatma modunu hatırla</string>
     <string name="allow_app_freeze_title">Uygulama devre dışı bırakmaya izin ver</string>
     <string name="disable_taskbar_summary">Büyük ekranlı cihazlarda Android görev çubuğunu devre dışı bırakır</string>
-    <string name="lw_apply_unsupported">Cihazınız uygulamalardan doğrudan canlı duvar kağıdı ayarlamayı desteklemiyor. Youki DEX\'i manuel olarak seçmek için Ayarlar → Duvar Kağıdı\'na gidin.</string>
+    <string name="lw_apply_unsupported">Cihazınız uygulamalardan doğrudan canlı duvar kağıdı ayarlamayı desteklemiyor. PLate.Launcher\'i manuel olarak seçmek için Ayarlar → Duvar Kağıdı\'na gidin.</string>
     <string name="black">Siyah</string>
     <string name="copy_n_items_to">%1$d öğeyi şuraya kopyala...</string>
     <string name="max_running_apps_portrait">Maks. son uygulamalar (dikey)</string>
@@ -440,7 +440,7 @@
     <string name="creation_failed">Oluşturma başarısız</string>
     <string name="win11_style_center_button_summary">Uygulama menüsü düğmesini çalışan uygulamalarla (maks. 5) ortaya taşır</string>
     <string name="always_floating_summary">Başlatma modunu geçersiz kıl ve uygulamaları her zaman kayan pencere modunda aç</string>
-    <string name="write_secure_desc">Gelişmiş ayarlar için gereklidir. Bu, root veya adb ile şu komut çalıştırılarak verilmesi gereken özel bir izindir: \npm grant com.youki.dex android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="write_secure_desc">Gelişmiş ayarlar için gereklidir. Bu, root veya adb ile şu komut çalıştırılarak verilmesi gereken özel bir izindir: \npm grant com.plate.launcher android.permission.WRITE_SECURE_SETTINGS</string>
     <string name="handle_opacity">Tutamaç şeffaflığı</string>
     <string name="hide_status_bar_summary">Daha temiz bir masaüstü görünümü için üstteki Android durum çubuğunu gizler</string>
     <string name="perf_thermal_current">Mevcut mod</string>
@@ -464,7 +464,7 @@
     <string name="apply">Uygula</string>
     <string name="system">Sistem</string>
     <string name="requires_shizuku_or_root_manage_users">Kullanıcıları yönetmek için Shizuku veya Root gerekli</string>
-    <string name="notification_access_message">YoukiDex\'in düzgün çalışması için bildirim erişimine ihtiyacı var. Etkinleştirmek için yönlendirileceksiniz.</string>
+    <string name="notification_access_message">PLate.Launcher\'in düzgün çalışması için bildirim erişimine ihtiyacı var. Etkinleştirmek için yönlendirileceksiniz.</string>
     <string name="manage_workshop_sources_summary">Atölye için yeni kategoriler ve siteler ekle</string>
     <string name="quick_settings_panel">Hızlı ayarlar</string>
     <string name="app_terminal_title">Terminal</string>
@@ -473,7 +473,7 @@
     <string name="enable_tiling_shortcut">Pencereleri döşemek için Alt+oklar</string>
     <string name="enable_qs_pin_title">Sabitle</string>
     <string name="vp_aspect_4_3">4:3 oranı</string>
-    <string name="lw_service_label">YoukiDex Canlı Duvar Kağıdı</string>
+    <string name="lw_service_label">PLate.Launcher Canlı Duvar Kağıdı</string>
     <string name="tap_to_set">Ayarlamak için dokunun</string>
     <string name="tweak_c2d_title">C2D render modu ve maksimum GPU performansı</string>
     <string name="enable_qs_date_title">Saat</string>
@@ -497,7 +497,7 @@
     <string name="enable_qs_battery_title">Pil</string>
     <string name="workshop_no_results">Sonuç yok 😅\nFarklı bir arama terimi deneyin</string>
     <string name="notifications_already_granted">Bildirimler zaten verildi</string>
-    <string name="youki_dex_its_free_and_open_">Youki DEX ücretsiz ve açık kaynaklıdır. GitHub\'da katkıda bulunun</string>
+    <string name="youki_dex_its_free_and_open_">PLate.Launcher ücretsiz ve açık kaynaklıdır. GitHub\'da katkıda bulunun</string>
     <string name="bubble_opacity_summary">Balonun şeffaflığını kontrol et (%100 = katı)</string>
     <string name="please_note_that_you_must_prov">Kendi seslerinizi sağlamanız gerektiğini unutmayın</string>
     <string name="installed_successfully">Başarıyla yüklendi</string>
@@ -509,7 +509,7 @@
     <string name="launch_games_fullscreen_title">Oyunları tam ekran başlat</string>
     <string name="desktop_density_value_title">Masaüstü yoğunluk değeri</string>
     <string name="app_music_title">Müzik</string>
-    <string name="tap_to_see_the_list_of_great_p">Youki DEX\'e katkıda bulunan harika insanların listesini görmek için dokunun</string>
+    <string name="tap_to_see_the_list_of_great_p">PLate.Launcher\'e katkıda bulunan harika insanların listesini görmek için dokunun</string>
     <string name="device_administrator_desc">Ekranı kilitlemek için kullanılır. Kaldırmadan önce devre dışı bırakın</string>
     <string name="lw_flip_v">Dikey çevir</string>
     <string name="delete_source_confirm_title">%1$s silinsin mi?</string>
@@ -585,7 +585,7 @@
     <string name="add_to">Ekle…</string>
     <string name="choose_apps">Uygulamaları seç</string>
     <string name="enable_new_instance">Yeni bir pencere başlatmak için Alt+Shift+N</string>
-    <string name="youki_sounds">YoukiDex sesleri</string>
+    <string name="youki_sounds">PLate.Launcher sesleri</string>
     <string name="top">Üst</string>
     <string name="always_floating_title">Her zaman kayan pencere olarak aç</string>
     <string name="failed">Başarısız</string>
@@ -735,7 +735,7 @@
     <string name="invalid_color">Geçersiz renk</string>
     <string name="read_media_permission_desc">Duvar kağıtları, küçük resimler ve medya önizlemeleri için depolamadan resim ve video okuyun.</string>
     <string name="launch_mode_title">Varsayılan uygulama başlatma modu</string>
-    <string name="enable_access_help">Youki DEX hizmetini bul ve etkinleştir</string>
+    <string name="enable_access_help">PLate.Launcher hizmetini bul ve etkinleştir</string>
     <string name="vp_copied">Kopyalandı ✅</string>
     <string name="recent_apps">Son kullanılan uygulamalar</string>
     <string name="tablet_mode_off">Tablet modu kapalı</string>
@@ -783,7 +783,7 @@
     <string name="qa_self_test_title">Kendi kendini test etmeyi çalıştır</string>
     <string name="qa_self_test_summary">Her ekranı izole bir arka plan işleminde açar ve çökme veya sessiz hataları kontrol eder. Buradaki bir çökme, kullandığınız uygulamayı etkileyemez. Birkaç dakika sürer.</string>
     <string name="qa_self_test_confirm_title">Kendi kendini test etme çalıştırılsın mı?</string>
-    <string name="qa_self_test_confirm_message">Bu, hataları aramak için uygulamadaki her ekranı, tek tek, ayrı izole bir işlem içinde açar. Birkaç dakika sürecek ve şu anda kullandığınız uygulamayı çökertemez. Bir günlük Download/YoukiDex/ konumuna kaydedilir.</string>
+    <string name="qa_self_test_confirm_message">Bu, hataları aramak için uygulamadaki her ekranı, tek tek, ayrı izole bir işlem içinde açar. Birkaç dakika sürecek ve şu anda kullandığınız uygulamayı çökertemez. Bir günlük Download/PLateLauncher/ konumuna kaydedilir.</string>
     <string name="qa_self_test_confirm_start">Başlat</string>
     <string name="qa_please_wait">Lütfen bekleyin…</string>
     <string name="qa_checking_target">Kontrol ediliyor: %1$s</string>
@@ -804,7 +804,7 @@
     <string name="qa_error_failed_after_restart">Otomatik yeniden başlatmadan sonra tekrar başarısız oldu (%1$s): %2$s</string>
 
     <!-- Onboarding screen (was missing translations entirely) -->
-    <string name="onboarding_welcome_title">Youki DEX\'e Hoş Geldiniz</string>
+    <string name="onboarding_welcome_title">PLate.Launcher\'e Hoş Geldiniz</string>
     <string name="onboarding_welcome_body">Masaüstünüzü kuralım. Bu sadece bir dakika sürecek.</string>
     <string name="onboarding_permissions_title">Bir şey daha</string>
     <string name="onboarding_permissions_body">Shizuku erişimi vermek, masaüstünün ek istemler olmadan doğrudan başlamasını sağlar. Bunu atlayıp daha sonra Ayarlar\'dan verebilirsiniz.</string>
@@ -829,7 +829,7 @@
     <string name="onboarding_ui_customization_skip_note">Bu adımı atlarsanız bunun yerine varsayılan ayarlar kullanılır — bunu her zaman daha sonra Gelişmiş Ayarlar\'dan yapılandırabilirsiniz.</string>
     <string name="onboarding_done_title">Her şey hazır</string>
     <string name="onboarding_done_body">Masaüstünüz kullanıma hazır.</string>
-    <string name="onboarding_support_title">Youki DEX\'i beğendiniz mi?</string>
+    <string name="onboarding_support_title">PLate.Launcher\'i beğendiniz mi?</string>
     <string name="onboarding_support_star_github">GitHub\'da yıldız verin</string>
     <string name="onboarding_support_join_discord">Discord topluluğumuza katılın</string>
     <string name="onboarding_support_report_issue">Bir hata mı buldunuz ya da bir fikriniz mi var?</string>

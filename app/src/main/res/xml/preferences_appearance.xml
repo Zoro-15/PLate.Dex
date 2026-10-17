@@ -1,4 +1,4 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+﻿<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="@string/look_and_feel">
 
@@ -48,7 +48,7 @@
             android:title="@string/override_dock_background_opacity"
             android:defaultValue="false" />
 
-        <com.youki.dex.preferences.SliderPreference
+        <com.plate.launcher.preferences.SliderPreference
             android:key="dock_background_alpha"
             android:title="@string/dock_background_opacity"
             android:defaultValue="255"
@@ -61,14 +61,14 @@
             android:summary="@string/enable_app_dock_bg_summary"
             android:defaultValue="true" />
 
-        <com.youki.dex.preferences.SliderPreference
+        <com.plate.launcher.preferences.SliderPreference
             android:key="app_dock_bg_opacity"
             android:title="@string/app_dock_bg_opacity_title"
             android:defaultValue="115"
             android:dependency="enable_app_dock_bg" />
 
         <!-- App Drawer Background Opacity -->
-        <com.youki.dex.preferences.SliderPreference
+        <com.plate.launcher.preferences.SliderPreference
             android:key="app_menu_opacity"
             android:title="@string/app_menu_opacity_title"
             android:defaultValue="230" />
@@ -100,13 +100,13 @@
             android:title="@string/tint_indicators_title" />
 
         <!-- تكبير/تصغير حجم الأيقونات (Dock + شاشة التطبيقات) -->
-        <com.youki.dex.preferences.SliderPreference
+        <com.plate.launcher.preferences.SliderPreference
             android:key="icon_scale_percent"
             android:title="@string/icon_scale_title"
             android:summary="@string/icon_scale_summary" />
 
         <!-- تكبير/تصغير حجم الخط (أسماء التطبيقات وشارات العداد فقط — الدوك/الشبكة) -->
-        <com.youki.dex.preferences.SliderPreference
+        <com.plate.launcher.preferences.SliderPreference
             android:key="label_font_scale_percent"
             android:title="@string/label_font_scale_title"
             android:summary="@string/label_font_scale_summary" />
@@ -115,7 +115,7 @@
              القوائم...) — مستقل عن label_font_scale_percent أعلاه الذي يخص فقط
              حجم اسم التطبيق تحت الأيقونة. انظر AppFontScaleUtils للتفاصيل
              التقنية الكاملة لكيفية تطبيقه على كل من الشاشات والدوك معاً. -->
-        <com.youki.dex.preferences.SliderPreference
+        <com.plate.launcher.preferences.SliderPreference
             android:key="app_font_scale_percent"
             android:title="@string/app_font_scale_title"
             android:summary="@string/app_font_scale_summary" />

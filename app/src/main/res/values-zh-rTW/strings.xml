@@ -1,7 +1,7 @@
-<resources>
+﻿<resources>
 
     <!-- General -->
-    <string name="app_name">Youki DEX</string>
+    <string name="app_name">PLate.Launcher</string>
     <string name="none">無</string>
     <string name="move">移動</string>
     <string name="ok">確定</string>
@@ -31,7 +31,7 @@
     <string name="overlays_in_settings">允許在設定中疊加</string>
     <string name="overlays_in_settings_desc">允許在設定應用程式開啟時保持 Dock 可見。這允許任何應用程式顯示內容<b>在任何應用程式上</b>，不僅僅是 Dock。必須從開發者選項中啟用</string>
     <string name="write_secure">寫入保護設定</string>
-    <string name="write_secure_desc">需要使用進階設定。這是一個特殊權限，必須使用 root 或 adb 執行：\npm grant com.youki.dex android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="write_secure_desc">需要使用進階設定。這是一個特殊權限，必須使用 root 或 adb 執行：\npm grant com.plate.launcher android.permission.WRITE_SECURE_SETTINGS</string>
     <string name="manage">管理…</string>
     <string name="grant">授予</string>
     <string name="enable">啟用</string>
@@ -269,7 +269,7 @@
     <string name="help_and_about">說明與關於</string>
     <string name="a_launcher_for_android_x86_by_">一個由 Mr Youki 開發的 Android x86 啟動器</string>
     <string name="help">說明</string>
-    <string name="youki_dex_its_free_and_open_">Youki DEX 是免費且開源的。在 GitHub 上貢獻</string>
+    <string name="youki_dex_its_free_and_open_">PLate.Launcher 是免費且開源的。在 GitHub 上貢獻</string>
     <string name="github">GitHub</string>
     <string name="show_help_summary">點擊獲取幫助</string>
     <string name="app_help">啟用Shizuku以解鎖所有功能。沒有它，將有一半的功能無法使用。
@@ -281,7 +281,7 @@
 卸載前請先移除裝置管理員權限。</string>
     <string name="more_help">更多幫助</string>
     <string name="contributors">貢獻者</string>
-    <string name="tap_to_see_the_list_of_great_p">點擊查看對 Youki DEX 有貢獻的偉大人物列表</string>
+    <string name="tap_to_see_the_list_of_great_p">點擊查看對 PLate.Launcher 有貢獻的偉大人物列表</string>
     <string name="accessibility_service_description">允許執行返回等操作</string>
     <string name="join_telegram_title">Telegram 群組</string>
     <string name="join_telegram_summary">有問題嗎？加入 Telegram 支援群組</string>
@@ -321,8 +321,8 @@
     <!-- Toasts -->
     <string name="tablet_mode_on">平板模式已開啟</string>
     <string name="tablet_mode_off">平板模式已關閉</string>
-    <string name="start_message">Youki DEX 已啟動</string>
-    <string name="enable_access_help">請找到並啟用 Youki DEX 服務</string>
+    <string name="start_message">PLate.Launcher 已啟動</string>
+    <string name="enable_access_help">請找到並啟用 PLate.Launcher 服務</string>
 
     <!-- Crash dialog -->
     <string name="something_wrong">發生錯誤</string>
@@ -379,7 +379,7 @@
     <string name="cannot_open_file">無法開啟檔案</string>
     <string name="lw_applied">桌布已應用</string>
     <string name="perf_fps_current">當前幀率</string>
-    <string name="notification_access_message">YoukiDex 需要通知訪問許可權才能正常工作。系統將引導您啟用該許可權。</string>
+    <string name="notification_access_message">PLate.Launcher 需要通知訪問許可權才能正常工作。系統將引導您啟用該許可權。</string>
     <string name="lw_tab_position">位置和效能</string>
     <string name="plugin_deleted">已刪除 %1$s</string>
     <string name="perf_need_privilege">需要 Shizuku 或 Root</string>
@@ -421,7 +421,7 @@
     <string name="plugin_font_pick">選擇字型檔案</string>
     <string name="play_video">播放影片</string>
     <string name="delete_user">刪除使用者</string>
-    <string name="youki_sounds">YoukiDex 聲音</string>
+    <string name="youki_sounds">PLate.Launcher 聲音</string>
     <string name="lw_active_badge">活動中</string>
     <string name="plugin_font_none">無自定義字型 — 使用預設字型</string>
     <string name="bluetooth_permission">藍芽</string>
@@ -527,7 +527,7 @@
     <string name="lw_free_scale_y">高度縮放</string>
     <string name="lock_landscape_title">強制橫屏模式</string>
     <string name="perf_fps_apply">應用</string>
-    <string name="accessibility_service_message">YoukiDex 需要無障礙服務才能工作。系統將引導您前往設定。</string>
+    <string name="accessibility_service_message">PLate.Launcher 需要無障礙服務才能工作。系統將引導您前往設定。</string>
     <string name="lw_bg_black">黑色</string>
     <string name="multi_user">使用者</string>
     <string name="perf_thermal_title">溫度模式</string>
@@ -544,10 +544,10 @@
     <string name="perf_zram_select">選擇 ZRAM 大小</string>
     <string name="saved_file">已儲存：%1$s</string>
     <string name="lw_performance_section">效能</string>
-    <string name="shell_terminal">Youki Shell 終端</string>
+    <string name="shell_terminal">PLate Shell 終端</string>
     <string name="completed_successfully">成功完成</string>
     <string name="shizuku_or_root_required_change_avatar">更改頭像需要 Shizuku 或 Root 許可權</string>
-    <string name="lw_apply_unsupported">您的裝置不支援直接從應用設定動態桌布。請前往 設定 → 桌布 手動選擇 Youki DEX。</string>
+    <string name="lw_apply_unsupported">您的裝置不支援直接從應用設定動態桌布。請前往 設定 → 桌布 手動選擇 PLate.Launcher。</string>
     <string name="lw_muted">靜音</string>
     <string name="sound_lock">鎖定</string>
     <string name="vp_aspect_fit">適應螢幕</string>
@@ -669,7 +669,7 @@
     <string name="shizuku">Shizuku</string>
     <string name="workshop_sources">創意工坊來源</string>
     <string name="a_launcher_for_android_x">適用於 Android X 的啟動器</string>
-    <string name="plugins_subtitle">擴充套件 YoukiDEX 的功能</string>
+    <string name="plugins_subtitle">擴充套件 PLate.Launcher 的功能</string>
     <string name="plugin_font_error">載入字型失敗 — 請確保是有效的 TTF 或 OTF 檔案</string>
     <string name="switch_to_user_confirm">切換到“%1$s”？</string>
     <string name="extract_to">解壓到...</string>
@@ -743,7 +743,7 @@
     <string name="lw_translate_x">X 軸移動</string>
     <string name="lw_flip_v">垂直翻轉</string>
     <string name="sound_car_undock">移除車載 Dock</string>
-    <string name="default_launcher_desc">將 Youki DEX 設為預設主螢幕啟動器，桌面將自動載入。</string>
+    <string name="default_launcher_desc">將 PLate.Launcher 設為預設主螢幕啟動器，桌面將自動載入。</string>
     <string name="vp_speed_dialog_title">選擇速度</string>
     <string name="lw_rotation">旋轉</string>
     <string name="cannot_install">無法安裝</string>
@@ -755,7 +755,7 @@
     <string name="bubble_mode_material_u_light">Material You（淺色）</string>
     <string name="show_running_app_dots_summary">在應用圖示下方顯示圓點，指示正在執行的應用</string>
     <string name="thermal_mode_gaming">遊戲</string>
-    <string name="lw_service_label">YoukiDex 動態桌布</string>
+    <string name="lw_service_label">PLate.Launcher 動態桌布</string>
     <string name="confirm">確認</string>
     <string name="plugin_font_desc">將 TTF 或 OTF 字型應用於整個 DEX 介面</string>
     <string name="extracting_ellipsis">正在解壓...</string>
@@ -836,7 +836,7 @@
     <string name="qa_self_test_title">執行自我測試</string>
     <string name="qa_self_test_summary">在隔離的背景處理程序中開啟每個畫面，檢查當機或靜默故障。此處發生的當機不會影響您正在使用的應用程式。需要幾分鐘時間。</string>
     <string name="qa_self_test_confirm_title">執行自我測試？</string>
-    <string name="qa_self_test_confirm_message">這會在一個獨立的隔離處理程序中逐一開啟應用程式中的每個畫面以尋找錯誤。這需要幾分鐘時間，並且不會讓您目前正在使用的應用程式當機。日誌將儲存到 Download/YoukiDex/。</string>
+    <string name="qa_self_test_confirm_message">這會在一個獨立的隔離處理程序中逐一開啟應用程式中的每個畫面以尋找錯誤。這需要幾分鐘時間，並且不會讓您目前正在使用的應用程式當機。日誌將儲存到 Download/PLateLauncher/。</string>
     <string name="qa_self_test_confirm_start">開始</string>
     <string name="qa_please_wait">請稍候…</string>
     <string name="qa_checking_target">正在檢查：%1$s</string>
@@ -857,7 +857,7 @@
     <string name="qa_error_failed_after_restart">自動重新啟動後再次失敗 (%1$s)：%2$s</string>
 
     <!-- Onboarding screen (was missing translations entirely) -->
-    <string name="onboarding_welcome_title">歡迎使用 Youki DEX</string>
+    <string name="onboarding_welcome_title">歡迎使用 PLate.Launcher</string>
     <string name="onboarding_welcome_body">讓我們來設定你的桌面吧，只需一分鐘。</string>
     <string name="onboarding_permissions_title">還有一件事</string>
     <string name="onboarding_permissions_body">授予 Shizuku 權限可讓桌面直接啟動，無需額外提示。你可以跳過此步驟，稍後在設定中授予權限。</string>
@@ -882,7 +882,7 @@
     <string name="onboarding_ui_customization_skip_note">跳過此步驟將改用預設定——你可以隨時稍後在進階設定中進行設定。</string>
     <string name="onboarding_done_title">一切就緒</string>
     <string name="onboarding_done_body">你的桌面已準備就緒。</string>
-    <string name="onboarding_support_title">喜歡 Youki DEX 嗎？</string>
+    <string name="onboarding_support_title">喜歡 PLate.Launcher 嗎？</string>
     <string name="onboarding_support_star_github">在 GitHub 上點星</string>
     <string name="onboarding_support_join_discord">加入我們的 Discord 社群</string>
     <string name="onboarding_support_report_issue">發現了 bug 或有新想法？</string>

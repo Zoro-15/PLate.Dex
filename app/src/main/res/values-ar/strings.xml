@@ -1,7 +1,7 @@
-<resources>
+﻿<resources>
 
     <!-- General -->
-    <string name="app_name">Youki DEX</string>
+    <string name="app_name">PLate.Launcher</string>
     <string name="none">لا شيء</string>
     <string name="move">نقل</string>
     <string name="ok">موافق</string>
@@ -31,15 +31,15 @@
     <string name="overlays_in_settings">السماح بالتراكب على الإعدادات</string>
     <string name="overlays_in_settings_desc">يُستخدم لإبقاء الشريط مرئياً أثناء فتح تطبيق الإعدادات. يجب تفعيله من خيارات المطوّر</string>
     <string name="write_secure">كتابة الإعدادات الآمنة</string>
-    <string name="write_secure_desc">مطلوب للإعدادات المتقدمة. إذن خاص يجب منحه عبر root أو adb بتنفيذ: \npm grant com.youki.dex android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="write_secure_desc">مطلوب للإعدادات المتقدمة. إذن خاص يجب منحه عبر root أو adb بتنفيذ: \npm grant com.plate.launcher android.permission.WRITE_SECURE_SETTINGS</string>
     <string name="default_launcher">تعيين كمشغّل افتراضي</string>
-    <string name="default_launcher_desc">اجعل Youki DEX مشغّل الشاشة الرئيسية الافتراضي ليُحمَّل سطح المكتب تلقائياً.</string>
+    <string name="default_launcher_desc">اجعل PLate.Launcher مشغّل الشاشة الرئيسية الافتراضي ليُحمَّل سطح المكتب تلقائياً.</string>
     <string name="shizuku">Shizuku</string>
     <string name="shizuku_desc">يمنح Shizuku صلاحيات الشل المتقدمة دون ADB لاسلكي. ثبّت Shizuku من متجر التطبيقات، شغّله مرة عبر ADB أو التصحيح اللاسلكي، ثم امنح الإذن هنا.</string>
     <string name="shizuku_active_app_detection_title">كشف التطبيق النشط عبر Shizuku</string>
     <string name="shizuku_active_app_detection_summary">يستخدم Shizuku (لما يكون متصل) لمعرفة التطبيق النشط بالواجهة والتطبيقات الشغالة بالخلفية بشكل موثوق، بدل الطريقة الافتراضية المقيّدة</string>
     <string name="shizuku_open">فتح Shizuku</string>
-    <string name="shell_terminal">طرفية Youki Shell</string>
+    <string name="shell_terminal">طرفية PLate Shell</string>
     <string name="shell_terminal_desc">طرفية مدمجة لتشغيل أوامر الشل مباشرة داخل التطبيق باستخدام Root أو Shizuku.</string>
     <string name="manage">إدارة…</string>
     <string name="grant">منح</string>
@@ -315,7 +315,7 @@
     <string name="help_and_about">المساعدة وعن التطبيق</string>
     <string name="a_launcher_for_android_x86_by_">مشغّل وضع DeX بواسطة Mr Youki</string>
     <string name="help">مساعدة</string>
-    <string name="youki_dex_its_free_and_open_">Youki DEX مجاني ومفتوح المصدر. ساهم على GitHub</string>
+    <string name="youki_dex_its_free_and_open_">PLate.Launcher مجاني ومفتوح المصدر. ساهم على GitHub</string>
     <string name="github">GitHub</string>
     <string name="discord">Discord</string>
     <string name="about_project_discord_summary">انضم إلى مجتمع Discord</string>
@@ -329,7 +329,7 @@
 لإلغاء التثبيت، أزل صلاحية مسؤول الجهاز أولاً.</string>
     <string name="more_help">مساعدة إضافية</string>
     <string name="contributors">المساهمون</string>
-    <string name="tap_to_see_the_list_of_great_p">اضغط لرؤية قائمة المساهمين العظماء في Youki DEX</string>
+    <string name="tap_to_see_the_list_of_great_p">اضغط لرؤية قائمة المساهمين العظماء في PLate.Launcher</string>
     <string name="accessibility_service_description">يتيح تنفيذ إجراءات مثل الرجوع</string>
     <string name="join_telegram_title">مجموعة Telegram</string>
     <string name="join_telegram_summary">هل لديك أسئلة؟ انضم لمجموعة دعم Telegram</string>
@@ -369,8 +369,8 @@
     <!-- Toasts -->
     <string name="tablet_mode_on">وضع الجهاز اللوحي مفعّل</string>
     <string name="tablet_mode_off">وضع الجهاز اللوحي معطّل</string>
-    <string name="start_message">تم تشغيل Youki DEX</string>
-    <string name="enable_access_help">ابحث وفعّل خدمة Youki DEX</string>
+    <string name="start_message">تم تشغيل PLate.Launcher</string>
+    <string name="enable_access_help">ابحث وفعّل خدمة PLate.Launcher</string>
 
     <!-- Crash dialog -->
     <string name="something_wrong">حدث خطأ ما</string>
@@ -392,7 +392,7 @@
     <string name="bubble_mode_custom">لون مخصص</string>
 
     <string name="system_sounds">أصوات واجهة النظام</string>
-    <string name="youki_sounds">أصوات YoukiDex</string>
+    <string name="youki_sounds">أصوات PLate.Launcher</string>
     <string name="sound_lock">القفل</string>
     <string name="sound_unlock">فتح القفل</string>
     <string name="sound_low_battery">البطارية منخفضة</string>
@@ -414,7 +414,7 @@
 
     <!-- ═══ محرك الخلفية الحية (إعادة البناء) ═══ -->
     <string name="lw_section_title">خلفية متحركة</string>
-    <string name="lw_service_label">خلفية YoukiDex المتحركة</string>
+    <string name="lw_service_label">خلفية PLate.Launcher المتحركة</string>
     <string name="lw_service_description">خلفيات فيديو متحركة بتحكم حر بالموضع وتصحيح الألوان وضبط الأداء.</string>
     <string name="lw_gallery_title">الخلفيات</string>
     <string name="lw_gallery_empty">لا توجد خلفيات بعد — اضغط + لإضافة فيديو</string>
@@ -472,10 +472,10 @@
     <string name="no_other_launcher_found">لا يوجد مشغّل آخر</string>
     <string name="failed_to_open_app">فشل فتح التطبيق</string>
     <string name="notification_access_required">صلاحية الإشعارات مطلوبة</string>
-    <string name="notification_access_message">يحتاج YoukiDex صلاحية الوصول للإشعارات ليعمل بشكل صحيح. سيتم تحويلك لتفعيلها.</string>
+    <string name="notification_access_message">يحتاج PLate.Launcher صلاحية الوصول للإشعارات ليعمل بشكل صحيح. سيتم تحويلك لتفعيلها.</string>
     <string name="skip">تخطي</string>
     <string name="accessibility_service_required">خدمة إمكانية الوصول مطلوبة</string>
-    <string name="accessibility_service_message">يحتاج YoukiDex خدمة إمكانية الوصول ليعمل. سيتم تحويلك للإعدادات.</string>
+    <string name="accessibility_service_message">يحتاج PLate.Launcher خدمة إمكانية الوصول ليعمل. سيتم تحويلك للإعدادات.</string>
     <string name="accessibility_service_auto_failed_message">تعذّر تفعيل الخدمة تلقائيًا. سيتم تحويلك لتفعيلها يدويًا من الإعدادات.</string>
     <string name="all">الكل</string>
     <string name="add_new_source">إضافة موقع جديد</string>
@@ -771,7 +771,7 @@
     <string name="settings">الإعدادات</string>
     <string name="a_launcher_for_android_x">مشغّل لأندرويد X</string>
     <string name="plugins">الإضافات</string>
-    <string name="plugins_subtitle">وسّع قدرات YoukiDEX</string>
+    <string name="plugins_subtitle">وسّع قدرات PLate.Launcher</string>
     <string name="plugin_font">خط مخصص</string>
     <string name="plugin_font_desc">تطبيق خط TTF أو OTF على واجهة DEX بالكامل</string>
     <string name="plugin_font_active">الخط نشط</string>
@@ -835,7 +835,7 @@
     <string name="tweak_battery_desc">تحسين استهلاك الطاقة وتسريع الشحن</string>
     <string name="tweak_section">تحسينات الأداء</string>
     <string name="tweak_section_root">يتطلب Root</string>
-    <string name="lw_apply_unsupported">جهازك لا يدعم ضبط الخلفيات الحية من التطبيقات مباشرة. اذهب إلى الإعدادات ← الخلفية لاختيار Youki DEX يدوياً.</string>
+    <string name="lw_apply_unsupported">جهازك لا يدعم ضبط الخلفيات الحية من التطبيقات مباشرة. اذهب إلى الإعدادات ← الخلفية لاختيار PLate.Launcher يدوياً.</string>
     <string name="lw_performance_section">الأداء</string>
     <string name="workshop_title">الورك شوب</string>
     <string name="workshop_search_hint">ابحث عن خلفيات أو خطوط…</string>
@@ -904,7 +904,7 @@
     <string name="qa_self_test_title">تشغيل الفحص الذاتي</string>
     <string name="qa_self_test_summary">يفتح كل شاشة في عملية خلفية معزولة ويتحقق من الأعطال أو الأخطاء الصامتة. أي عطل هنا لا يمكن أن يؤثر على التطبيق الذي تستخدمه. يستغرق بضع دقائق.</string>
     <string name="qa_self_test_confirm_title">تشغيل الفحص الذاتي؟</string>
-    <string name="qa_self_test_confirm_message">هذا يفتح كل شاشة في التطبيق، واحدة تلو الأخرى، داخل عملية معزولة منفصلة للبحث عن الأخطاء. سيستغرق بضع دقائق ولا يمكنه تعطيل التطبيق الذي تستخدمه حالياً. يُحفظ سجل في Download/YoukiDex/.</string>
+    <string name="qa_self_test_confirm_message">هذا يفتح كل شاشة في التطبيق، واحدة تلو الأخرى، داخل عملية معزولة منفصلة للبحث عن الأخطاء. سيستغرق بضع دقائق ولا يمكنه تعطيل التطبيق الذي تستخدمه حالياً. يُحفظ سجل في Download/PLateLauncher/.</string>
     <string name="qa_self_test_confirm_start">بدء</string>
     <string name="qa_please_wait">يرجى الانتظار…</string>
     <string name="qa_checking_target">جارٍ الفحص: %1$s</string>
@@ -925,7 +925,7 @@
     <string name="qa_error_failed_after_restart">فشل مرة أخرى بعد إعادة التشغيل التلقائية (%1$s): %2$s</string>
 
     <!-- Onboarding screen (was missing translations entirely) -->
-    <string name="onboarding_welcome_title">مرحبًا بك في Youki DEX</string>
+    <string name="onboarding_welcome_title">مرحبًا بك في PLate.Launcher</string>
     <string name="onboarding_welcome_body">لنجهّز سطح مكتبك. لن يستغرق الأمر أكثر من دقيقة.</string>
     <string name="onboarding_permissions_title">شيء أخير</string>
     <string name="onboarding_permissions_body">منح صلاحية Shizuku يتيح لسطح المكتب البدء مباشرة، دون طلبات إضافية أثناء العمل. يمكنك تخطي هذا ومنحه لاحقًا من الإعدادات.</string>
@@ -950,7 +950,7 @@
     <string name="onboarding_ui_customization_skip_note">تخطي هذه الخطوة سيستخدم الإعدادات الافتراضية بدلاً منها — يمكنك دائمًا ضبط هذا لاحقًا من الإعدادات المتقدمة.</string>
     <string name="onboarding_done_title">كل شيء جاهز</string>
     <string name="onboarding_done_body">سطح مكتبك جاهز للانطلاق.</string>
-    <string name="onboarding_support_title">هل يعجبك Youki DEX؟</string>
+    <string name="onboarding_support_title">هل يعجبك PLate.Launcher؟</string>
     <string name="onboarding_support_star_github">أعطه نجمة على GitHub</string>
     <string name="onboarding_support_join_discord">انضم إلى مجتمع Discord</string>
     <string name="onboarding_support_report_issue">وجدت خطأ أو لديك فكرة؟</string>

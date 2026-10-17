@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Youki DEX</string>
+    <string name="app_name">PLate.Launcher</string>
     <string name="ok">OK</string>
     <string name="cancel">キャンセル</string>
     <string name="enable">有効</string>
@@ -12,7 +12,7 @@
     <string name="advanced">詳細設定</string>
     <string name="about_project">プロジェクトについて</string>
     <string name="plugins">プラグイン</string>
-    <string name="plugins_subtitle">YoukiDEXの機能を拡張</string>
+    <string name="plugins_subtitle">PLate.Launcherの機能を拡張</string>
     <string name="plugin_font">カスタムフォント</string>
     <string name="plugin_font_pick">フォントファイルを選択</string>
     <string name="plugin_font_applied">フォントを適用しました — 変更を確認するにはDEXを再起動してください</string>
@@ -84,7 +84,7 @@
     <string name="tablet">タブレット</string>
     <string name="always_floating_title">常にフローティングウィンドウで開く</string>
     <string name="development_tools">開発ツール</string>
-    <string name="enable_access_help">Youki DEXサービスを見つけて有効にする</string>
+    <string name="enable_access_help">PLate.Launcherサービスを見つけて有効にする</string>
     <string name="delete_source_confirm_title">%1$sを削除しますか？</string>
     <string name="beta_features">ベータ機能</string>
     <string name="bytes">バイト</string>
@@ -182,7 +182,7 @@
     <string name="renamed_successfully">正常に名前が変更されました</string>
     <string name="rename_failed">名前の変更に失敗しました</string>
     <string name="reboot_required_title">再起動が必要です</string>
-    <string name="start_message">Youki DEXが起動しました</string>
+    <string name="start_message">PLate.Launcherが起動しました</string>
     <string name="workshop_no_results">結果がありません 😅\n別の検索語を試してください</string>
     <string name="silenced_notifications">このアプリのサイレントにされた通知</string>
     <string name="enable_qs_battery_title">バッテリー</string>
@@ -288,7 +288,7 @@
     <string name="these_settings_are_intended_fo">これらの設定は上級ユーザー向けです。何をしているか理解している場合のみ変更してください</string>
     <string name="lw_flip_v">垂直反転</string>
     <string name="tweak_battery_desc">電力消費を改善し、充電を高速化します</string>
-    <string name="youki_sounds">YoukiDexサウンド</string>
+    <string name="youki_sounds">PLate.Launcherサウンド</string>
     <string name="lw_bg_color">背景色</string>
     <string name="enter_valid_number">有効な数値を入力してください</string>
     <string name="app_assistant_title">アシスタント</string>
@@ -318,7 +318,7 @@
     <string name="lw_scale_stretch">引き伸ばす</string>
     <string name="folder">フォルダ</string>
     <string name="launch_assistant">アシスタントアプリを起動</string>
-    <string name="lw_apply_unsupported">お使いのデバイスは、アプリから直接ライブ壁紙を設定することをサポートしていません。設定 → 壁紙に移動して、Youki DEXを手動で選択してください。</string>
+    <string name="lw_apply_unsupported">お使いのデバイスは、アプリから直接ライブ壁紙を設定することをサポートしていません。設定 → 壁紙に移動して、PLate.Launcherを手動で選択してください。</string>
     <string name="show_hidden_files">隠しファイルを表示</string>
     <string name="enable_open_terminal_title">Alt+Tでターミナルを開く</string>
     <string name="sound_car_undock">カードックから取り外し</string>
@@ -344,7 +344,7 @@
     <string name="app_files_title">ファイル</string>
     <string name="disable_taskbar_summary">大画面デバイスでAndroidのタスクバーを無効にします</string>
     <string name="example_75">例: 75</string>
-    <string name="write_secure_desc">高度な設定に必要です。これは、root権限またはadbで次のコマンドを実行して付与する必要がある特別な権限です：\npm grant com.youki.dex android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="write_secure_desc">高度な設定に必要です。これは、root権限またはadbで次のコマンドを実行して付与する必要がある特別な権限です：\npm grant com.plate.launcher android.permission.WRITE_SECURE_SETTINGS</string>
     <string name="enable_nav_recents_title">最近</string>
     <string name="device_administrator">デバイス管理者</string>
     <string name="properties">プロパティ</string>
@@ -507,7 +507,7 @@
     <string name="root_access_desc">Magisk/KernelSU/su経由で自動的に検出されます。権限の自動付与と高度なシステム制御を可能にします。</string>
     <string name="app_terminal_title">ターミナル</string>
     <string name="app_clock_title">時計</string>
-    <string name="tap_to_see_the_list_of_great_p">Youki DEXに貢献してくれた素晴らしい人々のリストを見るにはタップしてください</string>
+    <string name="tap_to_see_the_list_of_great_p">PLate.Launcherに貢献してくれた素晴らしい人々のリストを見るにはタップしてください</string>
     <string name="theme_title">Dockのテーマ</string>
     <string name="user">ユーザー</string>
     <string name="launch_new_instance_secondary_summary">アプリがサポートしている場合、セカンダリ画面で起動時に新しいウィンドウを作成します</string>
@@ -551,7 +551,7 @@
     <string name="perf_subtitle">FPS、温度、ZRAMメモリを制御します</string>
     <string name="folder_name">フォルダ名</string>
     <string name="enabled">有効</string>
-    <string name="youki_dex_its_free_and_open_">Youki DEXは無料でオープンソースです。GitHubで貢献してください</string>
+    <string name="youki_dex_its_free_and_open_">PLate.Launcherは無料でオープンソースです。GitHubで貢献してください</string>
     <string name="developer_mode_taps_left">開発者モードのロックを解除するには、あと%d回タップしてください</string>
     <string name="accessibility_service_description">戻るなどの操作を実行できるようにします</string>
     <string name="sound_car_dock">カードック</string>
@@ -590,7 +590,7 @@
     <string name="enable_qs_pin_title">ピン留め</string>
     <string name="sd_card">SDカード</string>
     <string name="without_permissions">権限なし</string>
-    <string name="notification_access_message">YoukiDexが正しく機能するには、通知へのアクセスが必要です。有効にするためにリダイレクトされます。</string>
+    <string name="notification_access_message">PLate.Launcherが正しく機能するには、通知へのアクセスが必要です。有効にするためにリダイレクトされます。</string>
     <string name="folder_name_hint">フォルダ名</string>
     <string name="n_users_on_device">このデバイスに%1$d人のユーザー</string>
     <string name="handle_opacity">ハンドルの不透明度</string>
@@ -636,7 +636,7 @@
     <string name="please_note_that_you_must_prov">独自のサウンドを用意する必要があることに注意してください</string>
     <string name="lw_cc_enable">色調整を有効化</string>
     <string name="enable_apps_btn_summary">Dockを上下にスワイプすることで、いつでもアプリメニューを開閉できます</string>
-    <string name="shell_terminal">Youki シェルターミナル</string>
+    <string name="shell_terminal">PLate シェルターミナル</string>
     <string name="enter_valid_url">有効なURLを入力してください</string>
     <string name="wallpaper">壁紙</string>
     <string name="perf_zram_current">現在のサイズ</string>
@@ -699,7 +699,7 @@
     <string name="root_access">Rootアクセス</string>
     <string name="folder_created">フォルダが作成されました</string>
     <string name="change_wallpaper">壁紙を変更</string>
-    <string name="default_launcher_desc">デスクトップが自動的に読み込まれるように、Youki DEXをデフォルトのホーム画面ランチャーに設定します。</string>
+    <string name="default_launcher_desc">デスクトップが自動的に読み込まれるように、PLate.Launcherをデフォルトのホーム画面ランチャーに設定します。</string>
     <string name="lock_landscape_summary">画面を常に横向きに保ちます（デスクトップ使用に推奨）</string>
     <string name="notifications_already_granted">通知はすでに許可されています</string>
     <string name="manage_permissions">権限の管理</string>
@@ -729,8 +729,8 @@
     <string name="tweak_amoled_title">AmoledとHDRディスプレイの強化</string>
     <string name="vp_speed_prefix">速度</string>
     <string name="override_dock_background_opacity">Dockの背景の不透明度を上書き</string>
-    <string name="accessibility_service_message">YoukiDexが機能するには、ユーザー補助サービスが必要です。設定にリダイレクトされます。</string>
-    <string name="lw_service_label">YoukiDexライブ壁紙</string>
+    <string name="accessibility_service_message">PLate.Launcherが機能するには、ユーザー補助サービスが必要です。設定にリダイレクトされます。</string>
+    <string name="lw_service_label">PLate.Launcherライブ壁紙</string>
     <string name="write_secure_settings_already_granted">WRITE_SECURE_SETTINGSはすでに許可されています</string>
     <string name="open_notifications">通知パネルを開く</string>
     <string name="completed_successfully">正常に完了しました</string>
@@ -783,7 +783,7 @@
     <string name="qa_self_test_title">セルフテストを実行</string>
     <string name="qa_self_test_summary">分離されたバックグラウンドプロセスで各画面を開き、クラッシュやサイレントな不具合がないか確認します。ここでのクラッシュが現在使用中のアプリに影響することはありません。数分かかります。</string>
     <string name="qa_self_test_confirm_title">セルフテストを実行しますか？</string>
-    <string name="qa_self_test_confirm_message">これはバグを探すため、アプリの各画面を1つずつ、分離された別プロセス内で開きます。数分かかりますが、現在使用中のアプリをクラッシュさせることはありません。ログは Download/YoukiDex/ に保存されます。</string>
+    <string name="qa_self_test_confirm_message">これはバグを探すため、アプリの各画面を1つずつ、分離された別プロセス内で開きます。数分かかりますが、現在使用中のアプリをクラッシュさせることはありません。ログは Download/PLateLauncher/ に保存されます。</string>
     <string name="qa_self_test_confirm_start">開始</string>
     <string name="qa_please_wait">お待ちください…</string>
     <string name="qa_checking_target">確認中: %1$s</string>
@@ -804,7 +804,7 @@
     <string name="qa_error_failed_after_restart">自動再起動後に再び失敗しました (%1$s): %2$s</string>
 
     <!-- Onboarding screen (was missing translations entirely) -->
-    <string name="onboarding_welcome_title">Youki DEXへようこそ</string>
+    <string name="onboarding_welcome_title">PLate.Launcherへようこそ</string>
     <string name="onboarding_welcome_body">デスクトップを設定しましょう。1分ほどで完了します。</string>
     <string name="onboarding_permissions_title">もう一つだけ</string>
     <string name="onboarding_permissions_body">Shizukuへのアクセスを許可すると、追加のプロンプトなしでデスクトップが直接起動します。この手順はスキップして、後で設定から許可することもできます。</string>
@@ -829,7 +829,7 @@
     <string name="onboarding_ui_customization_skip_note">この手順をスキップすると代わりにデフォルト設定が使われます — 後でいつでも詳細設定から設定できます。</string>
     <string name="onboarding_done_title">準備完了</string>
     <string name="onboarding_done_body">デスクトップの準備ができました。</string>
-    <string name="onboarding_support_title">Youki DEXを気に入っていただけましたか？</string>
+    <string name="onboarding_support_title">PLate.Launcherを気に入っていただけましたか？</string>
     <string name="onboarding_support_star_github">GitHubでスターをつける</string>
     <string name="onboarding_support_join_discord">Discordコミュニティに参加する</string>
     <string name="onboarding_support_report_issue">バグを見つけた、またはアイデアがありますか？</string>

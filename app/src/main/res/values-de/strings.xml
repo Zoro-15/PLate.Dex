@@ -1,7 +1,7 @@
-<resources>
+﻿<resources>
 
     <!-- General -->
-    <string name="app_name">Youki DEX</string>
+    <string name="app_name">PLate.Launcher</string>
     <string name="none">Keine</string>
     <string name="move">Bewegen</string>
     <string name="ok">OK</string>
@@ -31,7 +31,7 @@
     <string name="overlays_in_settings">Overlays auf Einstellungen zulassen</string>
     <string name="overlays_in_settings_desc">Wird verwendet, um das Dock sichtbar zu halten, während die Einstellungen-App geöffnet ist. Dies erlaubt <b>jede App</b>zur Anzeige von Inhalten über der Einstellungs-App und nicht nur im Dock. Muss in den Entwickleroptionen aktiviert werden.</string>
     <string name="write_secure">Sichere Schreibeinstellungen</string>
-    <string name="write_secure_desc">Erforderlich für erweiterte Einstellungen. Dies ist eine spezielle Berechtigung, die mit ROOT oder ADB gewährt werden, indem man folgendes ausführt: \npm grant com.youki.dex android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="write_secure_desc">Erforderlich für erweiterte Einstellungen. Dies ist eine spezielle Berechtigung, die mit ROOT oder ADB gewährt werden, indem man folgendes ausführt: \npm grant com.plate.launcher android.permission.WRITE_SECURE_SETTINGS</string>
     <string name="manage">Verwalte…</string>
     <string name="grant">Genehmigung</string>
     <string name="enable">Aktivieren</string>
@@ -270,7 +270,7 @@
     <string name="help_and_about">Hilfe und Informationen</string>
     <string name="a_launcher_for_android_x86_by_">Ein Launcher für Android x86 von Mr Youki</string>
     <string name="help">Hilfe</string>
-    <string name="youki_dex_its_free_and_open_">Youki DEX ist kostenlos und quelloffen. Beitragen auf GitHub</string>
+    <string name="youki_dex_its_free_and_open_">PLate.Launcher ist kostenlos und quelloffen. Beitragen auf GitHub</string>
     <string name="github">GitHub</string>
     <string name="show_help_summary">Hilfe anfordern</string>
     <string name="app_help">Aktiviere Shizuku, um alle Funktionen freizuschalten. Ohne es sind die Hälfte der Funktionen nicht verfügbar.
@@ -282,7 +282,7 @@ Erteile die Bedienungshilfen-Berechtigung in den Einstellungen.
 Zum Deinstallieren zuerst die Geräteverwaltungsberechtigung entfernen.</string>
     <string name="more_help">Weitere Hilfe</string>
     <string name="contributors">Mitwirkende</string>
-    <string name="tap_to_see_the_list_of_great_p">Tippen Sie, um die Liste der großartigen Menschen zu sehen, die zu Youki DEX beigetragen haben</string>
+    <string name="tap_to_see_the_list_of_great_p">Tippen Sie, um die Liste der großartigen Menschen zu sehen, die zu PLate.Launcher beigetragen haben</string>
     <string name="accessibility_service_description">Ermöglicht die Durchführung von Aktionen wie Zurück</string>
     <string name="join_telegram_title">Telegram Gruppe</string>
     <string name="join_telegram_summary">Haben Sie noch Fragen? Treten Sie der Telegram-Supportgruppe bei</string>
@@ -322,8 +322,8 @@ Zum Deinstallieren zuerst die Geräteverwaltungsberechtigung entfernen.</string>
     <!-- Toasts -->
     <string name="tablet_mode_on">Tablet-Modus an</string>
     <string name="tablet_mode_off">Tablet-Modus aus</string>
-    <string name="start_message">Youki DEX gestartet</string>
-    <string name="enable_access_help">Youki DEX-Dienst suchen und aktivieren</string>
+    <string name="start_message">PLate.Launcher gestartet</string>
+    <string name="enable_access_help">PLate.Launcher-Dienst suchen und aktivieren</string>
 
     <!-- Crash dialog -->
     <string name="something_wrong">Etwas ist schief gelaufen</string>
@@ -394,7 +394,7 @@ Zum Deinstallieren zuerst die Geräteverwaltungsberechtigung entfernen.</string>
     <string name="vp_copied">Kopiert ✅</string>
     <string name="always_floating_title">Immer als schwebendes Fenster öffnen</string>
     <string name="all_contents_will_be_deleted">Der gesamte Inhalt wird gelöscht!</string>
-    <string name="lw_service_label">YoukiDex Live-Hintergrundbild</string>
+    <string name="lw_service_label">PLate.Launcher Live-Hintergrundbild</string>
     <string name="screenshot">Screenshot</string>
     <string name="perf_thermal_gaming">Gaming</string>
     <string name="lw_section_general">Allgemein</string>
@@ -457,7 +457,7 @@ Zum Deinstallieren zuerst die Geräteverwaltungsberechtigung entfernen.</string>
     <string name="workshop_type_fonts">Schriftarten</string>
     <string name="off">Aus</string>
     <string name="path_copied">Pfad kopiert</string>
-    <string name="youki_sounds">YoukiDex-Töne</string>
+    <string name="youki_sounds">PLate.Launcher-Töne</string>
     <string name="desktop_density_summary">Bildschirmdichte automatisch ändern, wenn der Desktop-Modus startet (empfohlen: 200). Wird beim Beenden zurückgesetzt.</string>
     <string name="add_new_source">Neue Quelle hinzufügen</string>
     <string name="perf_failed">Ausführung fehlgeschlagen — Berechtigungen prüfen</string>
@@ -536,7 +536,7 @@ Zum Deinstallieren zuerst die Geräteverwaltungsberechtigung entfernen.</string>
     <string name="desktop_res_value_summary">Benutzerdefinierte Desktop-Auflösung festlegen (z. B. 1920x1080)</string>
     <string name="manage_external_storage_desc">Vollzugriff auf alle Dateien im Speicher. Erforderlich für Dateimanager-Funktionen und Desktop-Verknüpfungen.</string>
     <string name="deleted_successfully">Gelöscht</string>
-    <string name="plugins_subtitle">Erweitern Sie die Fähigkeiten von YoukiDEX</string>
+    <string name="plugins_subtitle">Erweitern Sie die Fähigkeiten von PLate.Launcher</string>
     <string name="properties">Eigenschaften</string>
     <string name="tweak_audio_title">Audio- &amp; Sound-Verbesserer Pro</string>
     <string name="bubble_mode_summary">Wählen Sie zwischen Material You oder einer benutzerdefinierten Farbe</string>
@@ -552,7 +552,7 @@ Zum Deinstallieren zuerst die Geräteverwaltungsberechtigung entfernen.</string>
     <string name="tweak_fpsinjector_title">FPS-Injektor + Bildwiederholrate-Tuner</string>
     <string name="source_already_exists">Seite existiert bereits</string>
     <string name="lw_cc_enable">Farbanpassung aktivieren</string>
-    <string name="notification_access_message">YoukiDex benötigt Benachrichtigungszugriff, um korrekt zu funktionieren. Sie werden weitergeleitet, um ihn zu aktivieren.</string>
+    <string name="notification_access_message">PLate.Launcher benötigt Benachrichtigungszugriff, um korrekt zu funktionieren. Sie werden weitergeleitet, um ihn zu aktivieren.</string>
     <string name="write_system_settings">Systemeinstellungen ändern</string>
     <string name="lw_flip_h">Horizontal spiegeln</string>
     <string name="plugin_font_add">Schriftart hinzufügen</string>
@@ -603,7 +603,7 @@ Zum Deinstallieren zuerst die Geräteverwaltungsberechtigung entfernen.</string>
     <string name="close">Schließen</string>
     <string name="bubble_opacity_summary">Transparenz der Blase steuern (100% = deckend)</string>
     <string name="workshop_no_results">Keine Ergebnisse 😅\nVersuchen Sie einen anderen Suchbegriff</string>
-    <string name="lw_apply_unsupported">Ihr Gerät unterstützt das direkte Festlegen von Live-Hintergrundbildern über Apps nicht. Gehen Sie zu Einstellungen → Hintergrundbild, um Youki DEX manuell auszuwählen.</string>
+    <string name="lw_apply_unsupported">Ihr Gerät unterstützt das direkte Festlegen von Live-Hintergrundbildern über Apps nicht. Gehen Sie zu Einstellungen → Hintergrundbild, um PLate.Launcher manuell auszuwählen.</string>
     <string name="requires_shizuku_or_root_manage_users">Shizuku oder Root ist erforderlich, um Benutzer zu verwalten</string>
     <string name="plugin_font_none">Keine benutzerdefinierte Schriftart — Standardschrift wird verwendet</string>
     <string name="lw_reset">Zurücksetzen</string>
@@ -637,7 +637,7 @@ Zum Deinstallieren zuerst die Geräteverwaltungsberechtigung entfernen.</string>
     <string name="root_access_not_detected">Kein Root erkannt. Root muss von Magisk oder KernelSU außerhalb der App gewährt werden.</string>
     <string name="cannot_fetch_users">Benutzer können nicht abgerufen werden</string>
     <string name="thermal_mode_powersave">Energiesparen</string>
-    <string name="default_launcher_desc">Legen Sie Youki DEX als Ihren Standard-Startbildschirm-Launcher fest, damit der Desktop automatisch geladen wird.</string>
+    <string name="default_launcher_desc">Legen Sie PLate.Launcher als Ihren Standard-Startbildschirm-Launcher fest, damit der Desktop automatisch geladen wird.</string>
     <string name="plugin_font">Benutzerdefinierte Schriftart</string>
     <string name="n_items">%1$d Elemente</string>
     <string name="vp_aspect_fit">Bildschirm anpassen</string>
@@ -709,7 +709,7 @@ Zum Deinstallieren zuerst die Geräteverwaltungsberechtigung entfernen.</string>
     <string name="enter_user_name">Namen für den Benutzer eingeben</string>
     <string name="beta_experimental_ui">Experimentelle Oberfläche</string>
     <string name="write_secure_settings_already_granted">WRITE_SECURE_SETTINGS bereits gewährt</string>
-    <string name="accessibility_service_message">YoukiDex benötigt den Bedienungshilfen-Dienst, um zu funktionieren. Sie werden zu den Einstellungen weitergeleitet.</string>
+    <string name="accessibility_service_message">PLate.Launcher benötigt den Bedienungshilfen-Dienst, um zu funktionieren. Sie werden zu den Einstellungen weitergeleitet.</string>
     <string name="perf_zram_desc">Größe des virtuellen Speichers konfigurieren</string>
     <string name="copied_x_of_y">%1$d von %2$d kopiert</string>
     <string name="cannot_open_file">Datei kann nicht geöffnet werden</string>
@@ -793,7 +793,7 @@ Zum Deinstallieren zuerst die Geräteverwaltungsberechtigung entfernen.</string>
     <string name="lw_orientation_landscape">Querformat-Einstellungen — getrennt vom Hochformat</string>
     <string name="lw_add_video">Video hinzufügen</string>
     <string name="delete_source_confirm_title">%1$s löschen?</string>
-    <string name="shell_terminal">Youki Shell-Terminal</string>
+    <string name="shell_terminal">PLate Shell-Terminal</string>
     <string name="tweak_amoled_desc">Farbqualität verbessern und HDR für das Display aktivieren</string>
 
     <string name="cannot_access_file_path">Zugriff auf Dateipfad nicht möglich</string>
@@ -836,7 +836,7 @@ Zum Deinstallieren zuerst die Geräteverwaltungsberechtigung entfernen.</string>
     <string name="qa_self_test_title">Selbsttest ausführen</string>
     <string name="qa_self_test_summary">Öffnet jeden Bildschirm in einem isolierten Hintergrundprozess und prüft auf Abstürze oder stille Fehler. Ein Absturz hier kann die von dir verwendete App nicht beeinträchtigen. Dauert einige Minuten.</string>
     <string name="qa_self_test_confirm_title">Selbsttest ausführen?</string>
-    <string name="qa_self_test_confirm_message">Dies öffnet nacheinander jeden Bildschirm der App in einem separaten, isolierten Prozess, um nach Fehlern zu suchen. Es dauert einige Minuten und kann die aktuell verwendete App nicht zum Absturz bringen. Ein Protokoll wird unter Download/YoukiDex/ gespeichert.</string>
+    <string name="qa_self_test_confirm_message">Dies öffnet nacheinander jeden Bildschirm der App in einem separaten, isolierten Prozess, um nach Fehlern zu suchen. Es dauert einige Minuten und kann die aktuell verwendete App nicht zum Absturz bringen. Ein Protokoll wird unter Download/PLateLauncher/ gespeichert.</string>
     <string name="qa_self_test_confirm_start">Starten</string>
     <string name="qa_please_wait">Bitte warten…</string>
     <string name="qa_checking_target">Prüfe: %1$s</string>
@@ -857,7 +857,7 @@ Zum Deinstallieren zuerst die Geräteverwaltungsberechtigung entfernen.</string>
     <string name="qa_error_failed_after_restart">Nach automatischem Neustart erneut fehlgeschlagen (%1$s): %2$s</string>
 
     <!-- Onboarding screen (was missing translations entirely) -->
-    <string name="onboarding_welcome_title">Willkommen bei Youki DEX</string>
+    <string name="onboarding_welcome_title">Willkommen bei PLate.Launcher</string>
     <string name="onboarding_welcome_body">Lass uns deinen Desktop einrichten. Das dauert nur eine Minute.</string>
     <string name="onboarding_permissions_title">Noch eine Sache</string>
     <string name="onboarding_permissions_body">Das Gewähren des Shizuku-Zugriffs lässt den Desktop direkt starten, ohne zusätzliche Abfragen. Du kannst dies überspringen und später in den Einstellungen gewähren.</string>
@@ -882,7 +882,7 @@ Zum Deinstallieren zuerst die Geräteverwaltungsberechtigung entfernen.</string>
     <string name="onboarding_ui_customization_skip_note">Wenn du diesen Schritt überspringst, werden stattdessen die Standardeinstellungen verwendet — du kannst dies jederzeit später in den erweiterten Einstellungen festlegen.</string>
     <string name="onboarding_done_title">Alles bereit</string>
     <string name="onboarding_done_body">Dein Desktop ist einsatzbereit.</string>
-    <string name="onboarding_support_title">Gefällt dir Youki DEX?</string>
+    <string name="onboarding_support_title">Gefällt dir PLate.Launcher?</string>
     <string name="onboarding_support_star_github">Gib ihm einen Stern auf GitHub</string>
     <string name="onboarding_support_join_discord">Tritt unserer Discord-Community bei</string>
     <string name="onboarding_support_report_issue">Einen Fehler gefunden oder eine Idee?</string>

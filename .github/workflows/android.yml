@@ -77,7 +77,7 @@ jobs:
       uses: actions/upload-artifact@v4
       if: success()
       with:
-        name: PLateDex-APK
+        name: PLateLauncher-APK
         path: app/build/outputs/apk/**/*.apk
         retention-days: 14
 

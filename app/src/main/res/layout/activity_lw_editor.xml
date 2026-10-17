@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
     activity_lw_editor.xml — نسخة واحدة تحتوي التصميمين الأصليين المستقرين
     **كاملين وبدون أي تعديل على بنيتهما الداخلية**، والتبديل بينهما يصير حياً
@@ -66,7 +66,7 @@
 
         <!-- شفافة تماماً، تلتقط Pan/Pinch/Rotate فقط أثناء وضع Free 🆓
              تغطي الشاشة كاملة (match_parent حقيقي) -->
-        <com.youki.dex.livewallpaper.ui.editor.FreeGestureOverlay
+        <com.plate.launcher.livewallpaper.ui.editor.FreeGestureOverlay
             android:id="@+id/ed_free_gesture_overlay_portrait"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -192,7 +192,7 @@
                      حقيقي، بدون أي نسبة مئوية تقصّه وبدون حواف فارغة)،
                      وارتفاعها يُحسب تلقائياً = العرض × 9/16 عبر
                      AspectRatioFrameLayout.onMeasure. -->
-                <com.youki.dex.livewallpaper.ui.editor.AspectRatioFrameLayout
+                <com.plate.launcher.livewallpaper.ui.editor.AspectRatioFrameLayout
                     android:id="@+id/ed_preview_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -205,7 +205,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
 
-                    <com.youki.dex.livewallpaper.ui.editor.FreeGestureOverlay
+                    <com.plate.launcher.livewallpaper.ui.editor.FreeGestureOverlay
                         android:id="@+id/ed_free_gesture_overlay_landscape"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -224,7 +224,7 @@
                         android:text="@string/lw_free_hint"
                         android:visibility="gone" />
 
-                </com.youki.dex.livewallpaper.ui.editor.AspectRatioFrameLayout>
+                </com.plate.launcher.livewallpaper.ui.editor.AspectRatioFrameLayout>
 
                 <!-- ═══ قائمة الإعدادات — تملأ ما تبقى أسفل المعاينة،
                      تمرير عمودي حر، ثابتة بلا سحب (المساحة كافية) ═══ -->

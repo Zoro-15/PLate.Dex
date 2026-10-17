@@ -6,6 +6,8 @@
     android:background="@drawable/pill_status_bg"
     android:orientation="horizontal"
     android:gravity="center"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     android:paddingStart="12dp"
     android:paddingEnd="12dp"
     android:paddingTop="3dp"

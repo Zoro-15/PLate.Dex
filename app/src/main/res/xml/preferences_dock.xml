@@ -235,6 +235,11 @@
             android:defaultValue="90" />
 
         <com.plate.launcher.preferences.SliderPreference
+            android:key="pill_battery_icon_size"
+            android:title="@string/pill_battery_icon_size_title"
+            android:defaultValue="60" />
+
+        <com.plate.launcher.preferences.SliderPreference
             android:key="pill_text_size"
             android:title="@string/pill_text_size_title"
             android:defaultValue="12" />

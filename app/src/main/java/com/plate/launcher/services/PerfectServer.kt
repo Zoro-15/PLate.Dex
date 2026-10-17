@@ -3709,6 +3709,8 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             .coerceIn(40, 300)
         val batteryLengthDp = (sharedPreferences.getString("pill_battery_length", "90")?.toIntOrNull() ?: 90)
             .coerceIn(40, 240)
+        val batteryIconSizePct = (sharedPreferences.getString("pill_battery_icon_size", "60")?.toIntOrNull() ?: 60)
+            .coerceIn(35, 100)
 
         val sideMarginDp = (sharedPreferences.getString("pill_side_margin", "4")?.toIntOrNull() ?: 4)
             .coerceIn(0, 50)
@@ -3817,18 +3819,26 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             batteryContainer?.minimumWidth = batteryMinWidthPx
             batteryContainer?.minimumHeight = heightPx
 
-            // Bold & spaceful scaling matching Android 16 QPR2 design language (Image 2)
-            val iconH = (heightDp * 0.50f).coerceIn(12f, 26f).toInt()
-            val signalWidthDp = (iconH * 1.33f).toInt()
-            val wifiWidthDp = (iconH * 1.25f).toInt()
-            val batteryWidthDp = (iconH * 1.86f).toInt()
-            val iconGapDp = (heightDp * 0.33f).coerceIn(8f, 16f).toInt()
+            val iconScale = batteryIconSizePct / 100f
+            // Dynamic icon scaling with user customization slider (max goes till the outer boundary of whole black area)
+            val iconH = (heightDp * iconScale).toInt().coerceIn(10, heightDp)
+            val signalWidthDp = (iconH * 1.333f).toInt()
+            val wifiWidthDp = (iconH * 1.35f).toInt()
+            val batteryWidthDp = (iconH * 1.867f).toInt()
+            val iconGapDp = (iconH * 0.40f).coerceIn(6f, 18f).toInt()
 
             val iconHeightPx = Utils.dpToPx(context, iconH)
             val signalWidthPx = Utils.dpToPx(context, signalWidthDp)
             val wifiWidthPx = Utils.dpToPx(context, wifiWidthDp)
             val batteryWidthPx = Utils.dpToPx(context, batteryWidthDp)
             val iconGapPx = Utils.dpToPx(context, iconGapDp)
+
+            // Dynamic padding: at max scale (100%), icons reach the outer boundary of the black pill
+            val vertPaddingDp = ((heightDp - iconH) / 2).coerceAtLeast(0)
+            val vertPaddingPx = Utils.dpToPx(context, vertPaddingDp)
+            val horizPaddingDp = (heightDp * 0.35f).coerceIn(8f, 16f).toInt()
+            val horizPaddingPx = Utils.dpToPx(context, horizPaddingDp)
+            batteryContainer?.setPadding(horizPaddingPx, vertPaddingPx, horizPaddingPx, vertPaddingPx)
 
             (pillSignalIv?.layoutParams as? LinearLayout.LayoutParams)?.let { lp ->
                 lp.width = signalWidthPx
@@ -3848,8 +3858,12 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
                 pillBatteryIv?.layoutParams = lp
             }
 
-            val batteryTextSizeSp = (iconH * 0.58f).coerceIn(7.5f, 13f)
+            val batteryTextSizeSp = (iconH * 0.58f).coerceIn(7.5f, 20f)
             batteryPillTv?.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, batteryTextSizeSp)
+            (batteryPillTv?.layoutParams as? FrameLayout.LayoutParams)?.let { lp ->
+                lp.marginEnd = Utils.dpToPx(context, (iconH * 0.08f).coerceIn(1f, 4f).toInt())
+                batteryPillTv?.layoutParams = lp
+            }
             val pillTypeface = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 android.graphics.Typeface.create(android.graphics.Typeface.SANS_SERIF, 900, false)
             } else {

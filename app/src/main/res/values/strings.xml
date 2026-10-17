@@ -1093,6 +1093,7 @@ To uninstall, remove Device Administrator permission first.</string>
     <string name="pill_height_title">Pill Height</string>
     <string name="pill_time_length_title">Time Pill Width</string>
     <string name="pill_battery_length_title">Status Pill Width</string>
+    <string name="pill_battery_icon_size_title">Status Pill Icon Size</string>
     <string name="pill_text_size_title">Pill Text Size</string>
     <string name="pill_text_weight_title">Pill Text Boldness</string>
     <string name="pill_side_margin_title">Pills Edge Margin (Side)</string>

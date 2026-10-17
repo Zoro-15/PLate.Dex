@@ -165,6 +165,25 @@ class DockPreferences : PreferenceFragmentCompat() {
             }
         })
 
+        // Pill battery icon size slider (percentage of pill height, up to outer boundary 100%)
+        val pillBatteryIconSize = findPreference<SliderPreference>("pill_battery_icon_size")
+        pillBatteryIconSize?.setOnDialogShownListener(object : SliderPreference.OnDialogShownListener {
+            override fun onDialogShown() {
+                val slider = pillBatteryIconSize.slider ?: return
+                slider.isTickVisible = false
+                slider.labelBehavior = LabelFormatter.LABEL_GONE
+                slider.stepSize = 5f
+                slider.valueFrom = 35f
+                slider.valueTo = 100f
+                slider.value =
+                    (pillBatteryIconSize.sharedPreferences?.getString("pill_battery_icon_size", "60")?.toFloatOrNull() ?: 60f)
+                        .coerceIn(slider.valueFrom, slider.valueTo)
+                slider.addOnChangeListener { _, value, _ ->
+                    pillBatteryIconSize.sharedPreferences?.edit { putString("pill_battery_icon_size", value.toInt().toString()) }
+                }
+            }
+        })
+
         // Pill text size slider
         val pillTextSize = findPreference<SliderPreference>("pill_text_size")
         pillTextSize?.setOnDialogShownListener(object : SliderPreference.OnDialogShownListener {

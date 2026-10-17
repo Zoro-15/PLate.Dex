@@ -5057,19 +5057,7 @@ class NotificationService : NotificationListenerService(), OnNotificationClickLi
             IntentFilter(DOCK_SERVICE_ACTION),
             ContextCompat.RECEIVER_NOT_EXPORTED
         )
-        // If DockService already started before us, activate immediately.
-        // Guard with canDrawOverlays — permission may not be granted yet.
-        if (sharedPreferences.getBoolean("dex_mode_active", false)
-            && Settings.canDrawOverlays(this)
-        ) {
-            try {
-                if (notificationLayout.windowToken == null)
-                    windowManager.addView(notificationLayout, notificationLayoutParams)
-                notificationLayout.visibility = View.VISIBLE
-            } catch (e: Exception) {
-                notificationLayout.visibility = View.GONE
-            }
-        }
+
     }
 
     override fun onListenerConnected() {
@@ -6415,17 +6403,8 @@ class NotificationService : NotificationListenerService(), OnNotificationClickLi
                     }
                 }
                 ACTION_SHOW_NOTIFICATION_BAR -> {
-                    // Mark desktop mode as active so popups are allowed
+                    // Mark desktop mode as active so popups are allowed when posted
                     sharedPreferences.edit { putBoolean("dex_mode_active", true) }
-                    // FIX: guard addView — overlay permission may be revoked at runtime
-                    if (!Settings.canDrawOverlays(p1)) return
-                    try {
-                        if (notificationLayout.windowToken == null)
-                            windowManager.addView(notificationLayout, notificationLayoutParams)
-                        notificationLayout.visibility = View.VISIBLE
-                    } catch (e: Exception) {
-                        notificationLayout.visibility = View.GONE
-                    }
                 }
                 ACTION_STOP_NOTIFICATION_SERVICE -> {
                     // DockService is shutting down — disconnect the notification listener too

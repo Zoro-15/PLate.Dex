@@ -1,14 +1,14 @@
-<!-- res/drawable/stat_sys_battery_charge.xml (Heavily Rounded Capsule Charging - Android 16 QPR2) -->
+<!-- res/drawable/stat_sys_battery_charge.xml (Squircle Battery Charging - Android 16 QPR2) -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="28dp"
     android:height="15dp"
     android:viewportWidth="28"
     android:viewportHeight="15">
 
-    <!-- Heavily Rounded Capsule Track (R=5.5) -->
+    <!-- Squircle Body Track (Smooth Superellipse Corners) -->
     <path
         android:fillColor="#FFFFFFFF"
-        android:pathData="M 6.5,1.0 H 17.0 A 5.5,5.5 0 0,1 22.5,6.5 V 8.5 A 5.5,5.5 0 0,1 17.0,14.0 H 6.5 A 5.5,5.5 0 0,1 1.0,8.5 V 6.5 A 5.5,5.5 0 0,1 6.5,1.0 Z" />
+        android:pathData="M 5.2,1.0 H 18.3 C 20.9,1.0 22.5,2.6 22.5,5.2 V 9.8 C 22.5,12.4 20.9,14.0 18.3,14.0 H 5.2 C 2.6,14.0 1.0,12.4 1.0,9.8 V 5.2 C 1.0,2.6 2.6,1.0 5.2,1.0 Z" />
 
     <!-- Terminal Cap (Fully Rounded Nipple) -->
     <path
@@ -23,4 +23,5 @@
         android:strokeLineJoin="round"
         android:pathData="M 20.5,12.5 L 21.0,9.0 H 18.5 L 23.0,2.5 H 24.0 L 23.5,6.5 H 26.5 L 21.5,12.5 H 20.5 Z" />
 </vector>
+
 

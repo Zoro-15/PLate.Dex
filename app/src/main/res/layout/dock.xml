@@ -67,6 +67,16 @@
                     android:background="@null"
                     android:padding="6dp"
                     android:src="@drawable/ic_unpin" />
+
+                <ImageView
+                    android:id="@+id/hide_pills_btn"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_margin="3dp"
+                    android:background="@null"
+                    android:padding="6dp"
+                    android:tint="#FFFFFFFF"
+                    android:src="@drawable/ic_visibility" />
             </LinearLayout>
 
             <!-- Status area bubble: notifications + volume + bt + wifi + battery -->

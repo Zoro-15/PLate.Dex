@@ -251,6 +251,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
     private lateinit var batteryBtn: TextView
     private lateinit var volumeBtn: ImageView
     private lateinit var pinBtn: ImageView
+    private lateinit var hidePillsBtn: ImageView
     private lateinit var wallpaperBtn: ImageView
     private lateinit var userBtn: ImageView
     private lateinit var castBtn: android.widget.ImageView
@@ -276,6 +277,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
     private var timePillParams: WindowManager.LayoutParams? = null
     private var batteryPillParams: WindowManager.LayoutParams? = null
     private var timeTickReceiver: BroadcastReceiver? = null
+    private var arePillsHidden = false
 
     private lateinit var notificationBtn: TextView
     private lateinit var searchTv: TextView
@@ -427,6 +429,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         assistBtn = dock.findViewById(R.id.assist_btn)
         notificationBtn = dock.findViewById(R.id.notifications_btn)
         pinBtn   = dock.findViewById(R.id.pin_btn)
+        hidePillsBtn = dock.findViewById(R.id.hide_pills_btn)
         pinPill  = dock.findViewById(R.id.pin_pill)
         wallpaperBtn = dock.findViewById(R.id.wallpaper_btn)
         userBtn = dock.findViewById(R.id.user_btn)
@@ -568,6 +571,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             }
         }
         pinBtn.setOnClickListener { animateBtn(it) { togglePin() } }
+        hidePillsBtn.setOnClickListener { animateBtn(it) { togglePillsVisibility() } }
 
         // ── Wallpaper button ──────────────────────────────────────────────────
         // Opens the app chosen by the user in settings
@@ -1687,6 +1691,22 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
 
     private fun togglePin() {
         if (isPinned) unpinDock() else pinDock()
+    }
+
+    private fun togglePillsVisibility() {
+        arePillsHidden = !arePillsHidden
+        updatePillsVisibility()
+    }
+
+    private fun updatePillsVisibility() {
+        if (::hidePillsBtn.isInitialized) {
+            hidePillsBtn.setImageResource(
+                if (arePillsHidden) R.drawable.ic_visibility_off else R.drawable.ic_visibility
+            )
+        }
+        val vis = if (arePillsHidden) View.GONE else View.VISIBLE
+        timePillView?.visibility = vis
+        batteryPillView?.visibility = vis
     }
 
     private fun showDock() {
@@ -3560,8 +3580,15 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             if (sharedPreferences.getBoolean("enable_qs_wifi", true)) View.VISIBLE else View.GONE
         val pinVisible = sharedPreferences.getBoolean("enable_qs_pin", true)
         pinBtn.visibility = if (pinVisible) View.VISIBLE else View.GONE
+        if (::hidePillsBtn.isInitialized) {
+            val pillsEnabled = sharedPreferences.getBoolean("enable_pill_time", false) ||
+                               sharedPreferences.getBoolean("enable_pill_battery", false)
+            hidePillsBtn.visibility = if (pillsEnabled) View.VISIBLE else View.GONE
+        }
         if (::pinPill.isInitialized) {
-            pinPill.visibility = if (pinVisible) View.VISIBLE else View.GONE
+            val pillAnyVisible = (pinBtn.visibility == View.VISIBLE) ||
+                                 (::hidePillsBtn.isInitialized && hidePillsBtn.visibility == View.VISIBLE)
+            pinPill.visibility = if (pillAnyVisible) View.VISIBLE else View.GONE
         }
         volumeBtn.visibility =
             if (sharedPreferences.getBoolean("enable_qs_vol", true)) View.VISIBLE else View.GONE
@@ -3756,6 +3783,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             } else {
                 safeUpdateViewLayout(timePillView!!, timePillParams!!)
             }
+            timePillView?.visibility = if (arePillsHidden) View.GONE else View.VISIBLE
         } else {
             timePillView?.let { v ->
                 if (v.windowToken != null) {
@@ -3817,6 +3845,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             } else {
                 safeUpdateViewLayout(batteryPillView!!, batteryPillParams!!)
             }
+            batteryPillView?.visibility = if (arePillsHidden) View.GONE else View.VISIBLE
         } else {
             batteryPillView?.let { v ->
                 if (v.windowToken != null) {

@@ -32,6 +32,10 @@
             android:hint="5"
             android:defaultValue="5"
             android:title="@string/num_columns_title"/>
+        <com.youki.dex.preferences.SliderPreference
+            android:key="app_menu_opacity"
+            android:title="@string/app_menu_opacity_title"
+            android:defaultValue="230"/>
 			
     </PreferenceCategory>
     <PreferenceCategory

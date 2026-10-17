@@ -176,6 +176,30 @@ class AppearancePreferences : PreferenceFragmentCompat() {
             }
         })
 
+        // App Drawer Opacity slider (independent from dock/bubble opacity)
+        val appMenuAlphaPref = findPreference<SliderPreference>("app_menu_opacity")
+        val curAppMenuVal = (appMenuAlphaPref?.sharedPreferences?.getString("app_menu_opacity", "230")?.toFloatOrNull() ?: 230f).toInt()
+        val initMenuPct = (curAppMenuVal / 255f * 100).toInt()
+        appMenuAlphaPref?.summary = "$initMenuPct%"
+        appMenuAlphaPref?.setOnDialogShownListener(object : SliderPreference.OnDialogShownListener {
+            override fun onDialogShown() {
+                val slider = appMenuAlphaPref.slider ?: return
+                slider.isTickVisible = false
+                slider.labelBehavior = LabelFormatter.LABEL_GONE
+                slider.stepSize = 1f
+                slider.valueFrom = 0f
+                slider.valueTo = 255f
+                slider.value =
+                    (appMenuAlphaPref.sharedPreferences?.getString("app_menu_opacity", "230")?.toFloatOrNull() ?: 230f)
+                        .coerceIn(slider.valueFrom, slider.valueTo)
+                slider.addOnChangeListener { _, value, _ ->
+                    val pct = (value / 255f * 100).toInt()
+                    appMenuAlphaPref.summary = "$pct%"
+                    appMenuAlphaPref.sharedPreferences?.edit { putString("app_menu_opacity", value.toInt().toString()) }
+                }
+            }
+        })
+
         // Icon padding slider (Appearance section)
         val iconPaddingPref = findPreference<SliderPreference>("icon_padding")
         iconPaddingPref?.setOnDialogShownListener(object : SliderPreference.OnDialogShownListener {

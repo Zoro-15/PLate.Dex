@@ -10,6 +10,8 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.youki.dex.R
 import com.youki.dex.preferences.FileChooserPreference
+import com.youki.dex.preferences.SliderPreference
+import com.google.android.material.slider.LabelFormatter
 import com.youki.dex.utils.DeviceUtils
 
 private const val MENU_REQUEST_CODE = 4
@@ -126,6 +128,29 @@ class AppMenuPreferences : PreferenceFragmentCompat() {
             editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_WORDS
             editText.imeOptions = EditorInfo.IME_ACTION_GO
         }
+
+        val appMenuAlphaPref = findPreference<SliderPreference>("app_menu_opacity")
+        val curAppMenuVal = (appMenuAlphaPref?.sharedPreferences?.getString("app_menu_opacity", "230")?.toFloatOrNull() ?: 230f).toInt()
+        val initMenuPct = (curAppMenuVal / 255f * 100).toInt()
+        appMenuAlphaPref?.summary = "$initMenuPct%"
+        appMenuAlphaPref?.setOnDialogShownListener(object : SliderPreference.OnDialogShownListener {
+            override fun onDialogShown() {
+                val slider = appMenuAlphaPref.slider ?: return
+                slider.isTickVisible = false
+                slider.labelBehavior = LabelFormatter.LABEL_GONE
+                slider.stepSize = 1f
+                slider.valueFrom = 0f
+                slider.valueTo = 255f
+                slider.value =
+                    (appMenuAlphaPref.sharedPreferences?.getString("app_menu_opacity", "230")?.toFloatOrNull() ?: 230f)
+                        .coerceIn(slider.valueFrom, slider.valueTo)
+                slider.addOnChangeListener { _, value, _ ->
+                    val pct = (value / 255f * 100).toInt()
+                    appMenuAlphaPref.summary = "$pct%"
+                    appMenuAlphaPref.sharedPreferences?.edit()?.putString("app_menu_opacity", value.toInt().toString())?.apply()
+                }
+            }
+        })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

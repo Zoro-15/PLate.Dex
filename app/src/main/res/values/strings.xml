@@ -1101,5 +1101,6 @@ To uninstall, remove Device Administrator permission first.</string>
     <string name="enable_app_dock_bg_title">App Dock Background</string>
     <string name="enable_app_dock_bg_summary">Show a background pill behind app icons in the dock</string>
     <string name="app_dock_bg_opacity_title">App Dock Background Opacity</string>
+    <string name="app_menu_opacity_title">App Drawer Opacity</string>
 
 </resources>

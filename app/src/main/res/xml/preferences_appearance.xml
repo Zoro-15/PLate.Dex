@@ -67,6 +67,12 @@
             android:defaultValue="115"
             android:dependency="enable_app_dock_bg" />
 
+        <!-- App Drawer Background Opacity -->
+        <com.youki.dex.preferences.SliderPreference
+            android:key="app_menu_opacity"
+            android:title="@string/app_menu_opacity_title"
+            android:defaultValue="230" />
+
         <Preference
             android:key="dock_layout"
             android:title="@string/dock_layout" />

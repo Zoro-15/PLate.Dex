@@ -959,5 +959,6 @@
     <string name="copy_log">نسخ</string>
     <string name="open_github_issue">فتح Issue</string>
     <string name="log_copied_toast">تم نسخ الخطأ إلى الحافظة</string>
+    <string name="app_menu_opacity_title">شفافية قائمة التطبيقات</string>
 
 </resources>

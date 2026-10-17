@@ -3652,10 +3652,10 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         val level = if (::batteryReceiver.isInitialized) batteryReceiver.level else 100
         val isCharging = ::batteryReceiver.isInitialized && batteryReceiver.isCharging
 
-        // 1. Battery percentage text
-        batteryPillTv?.text = "$level%"
+        // 1. Battery percentage text (embedded inside capsule)
+        batteryPillTv?.text = "$level"
 
-        // 2. Battery icon: charging mode (green with border thunderbolt) vs low battery (<20% red) vs discharging capsule
+        // 2. Battery icon: charging mode (boundary thunderbolt) vs low battery (<20% red) vs solid white capsule
         val batteryRes = when {
             isCharging -> R.drawable.stat_sys_battery_charge
             level < 20 -> R.drawable.stat_sys_battery_low
@@ -3664,8 +3664,8 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         pillBatteryIv?.setImageResource(batteryRes)
 
         val textColor = when {
-            level < 20 -> Color.parseColor("#E50914")
-            else -> Color.parseColor("#FFC9C9C9")
+            level < 20 -> Color.WHITE
+            else -> Color.BLACK
         }
         batteryPillTv?.setTextColor(textColor)
 
@@ -3811,43 +3811,50 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
                 pillSignalIv = batteryPillView!!.findViewById(R.id.pill_signal_iv)
                 pillBatteryIv = batteryPillView!!.findViewById(R.id.pill_battery_iv)
             }
-            applyPillTextStyling(batteryPillTv)
             batteryPillView?.alpha = opacity
             val batteryContainer = batteryPillView?.findViewById<View>(R.id.pill_battery_container)
             batteryContainer?.minimumWidth = batteryMinWidthPx
             batteryContainer?.minimumHeight = heightPx
 
-            // Dynamically scale status icons (Wi-Fi, Signal, Battery) with respect to pill height
-            val iconH = (heightDp * 0.52f).coerceIn(11f, 26f).toInt()
-            val wifiWidthDp = (iconH * 1.2f).toInt()
-            val signalWidthDp = (iconH * 1.25f).toInt()
-            val batteryWidthDp = (iconH * 1.65f).toInt()
-            val iconMarginEndDp = (heightDp * 0.12f).coerceIn(2f, 5f).toInt()
+            // Bold & spaceful scaling matching Android 16 QPR2 design language (Image 2)
+            val iconH = (heightDp * 0.50f).coerceIn(12f, 26f).toInt()
+            val signalWidthDp = (iconH * 1.33f).toInt()
+            val wifiWidthDp = (iconH * 1.25f).toInt()
+            val batteryWidthDp = (iconH * 1.86f).toInt()
+            val iconGapDp = (heightDp * 0.33f).coerceIn(8f, 16f).toInt()
 
             val iconHeightPx = Utils.dpToPx(context, iconH)
-            val wifiWidthPx = Utils.dpToPx(context, wifiWidthDp)
             val signalWidthPx = Utils.dpToPx(context, signalWidthDp)
+            val wifiWidthPx = Utils.dpToPx(context, wifiWidthDp)
             val batteryWidthPx = Utils.dpToPx(context, batteryWidthDp)
-            val iconMarginEndPx = Utils.dpToPx(context, iconMarginEndDp)
+            val iconGapPx = Utils.dpToPx(context, iconGapDp)
 
-            (pillWifiIv?.layoutParams as? LinearLayout.LayoutParams)?.let { lp ->
-                lp.width = wifiWidthPx
-                lp.height = iconHeightPx
-                lp.marginEnd = iconMarginEndPx
-                pillWifiIv?.layoutParams = lp
-            }
             (pillSignalIv?.layoutParams as? LinearLayout.LayoutParams)?.let { lp ->
                 lp.width = signalWidthPx
                 lp.height = iconHeightPx
-                lp.marginEnd = iconMarginEndPx
+                lp.marginEnd = iconGapPx
                 pillSignalIv?.layoutParams = lp
             }
-            (pillBatteryIv?.layoutParams as? LinearLayout.LayoutParams)?.let { lp ->
+            (pillWifiIv?.layoutParams as? LinearLayout.LayoutParams)?.let { lp ->
+                lp.width = wifiWidthPx
+                lp.height = iconHeightPx
+                lp.marginEnd = iconGapPx
+                pillWifiIv?.layoutParams = lp
+            }
+            (pillBatteryIv?.layoutParams as? FrameLayout.LayoutParams)?.let { lp ->
                 lp.width = batteryWidthPx
                 lp.height = iconHeightPx
-                lp.marginEnd = iconMarginEndPx
                 pillBatteryIv?.layoutParams = lp
             }
+
+            val batteryTextSizeSp = (iconH * 0.58f).coerceIn(7.5f, 13f)
+            batteryPillTv?.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, batteryTextSizeSp)
+            val pillTypeface = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                android.graphics.Typeface.create(android.graphics.Typeface.SANS_SERIF, 900, false)
+            } else {
+                android.graphics.Typeface.create("sans-serif-black", android.graphics.Typeface.BOLD)
+            }
+            batteryPillTv?.typeface = pillTypeface
 
             val bgBattery = GradientDrawable().apply {
                 shape = GradientDrawable.RECTANGLE

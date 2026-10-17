@@ -1,25 +1,22 @@
-<!-- res/drawable/stat_sys_battery_charge.xml (Android 16 QPR2 Charging - Green & Thunderbolt on Boundary) -->
+<!-- res/drawable/stat_sys_battery_charge.xml (Clean Vector Capsule Battery Charging - No Green) -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="19dp"
-    android:height="11dp"
+    android:width="28dp"
+    android:height="15dp"
     android:viewportWidth="28"
     android:viewportHeight="15">
 
-    <!-- Capsule Track (Frosted Background) -->
-    <path
-        android:fillColor="#59FFFFFF"
-        android:pathData="M 4.5,1.0 H 19.0 A 3.5,3.5 0 0,1 22.5,4.5 V 10.5 A 3.5,3.5 0 0,1 19.0,14.0 H 4.5 A 3.5,3.5 0 0,1 1.0,10.5 V 4.5 A 3.5,3.5 0 0,1 4.5,1.0 Z" />
-
-    <!-- Green Level Fill (#00E676) -->
-    <path
-        android:fillColor="#FF00E676"
-        android:pathData="M 4.5,1.0 H 19.0 A 3.5,3.5 0 0,1 22.5,4.5 V 10.5 A 3.5,3.5 0 0,1 19.0,14.0 H 4.5 A 3.5,3.5 0 0,1 1.0,10.5 V 4.5 A 3.5,3.5 0 0,1 4.5,1.0 Z" />
-
-    <!-- Authentic Android 16 QPR2 Charging Bolt on Border/Boundary -->
+    <!-- Capsule Track (White) -->
     <path
         android:fillColor="#FFFFFFFF"
-        android:strokeColor="#FF171F30"
-        android:strokeWidth="1.3"
-        android:strokeLineJoin="round"
-        android:pathData="M 20.5,12.5 L 21.0,9.0 H 18.5 L 23.0,2.5 H 24.0 L 23.5,6.5 H 26.5 L 21.5,12.5 H 20.5 Z" />
+        android:pathData="M 4.5,1.0 H 19.0 A 3.5,3.5 0 0,1 22.5,4.5 V 10.5 A 3.5,3.5 0 0,1 19.0,14.0 H 4.5 A 3.5,3.5 0 0,1 1.0,10.5 V 4.5 A 3.5,3.5 0 0,1 4.5,1.0 Z" />
+
+    <!-- Terminal Cap (1.4dp Distance Gap) -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M 24.8,4.9 H 24.8 A 0.9,0.9 0 0,1 25.7,5.8 V 9.2 A 0.9,0.9 0 0,1 24.8,10.1 H 24.8 A 0.9,0.9 0 0,1 23.9,9.2 V 5.8 A 0.9,0.9 0 0,1 24.8,4.9 Z" />
+
+    <!-- High-Contrast Centered Charging Bolt (Dark Cutout) -->
+    <path
+        android:fillColor="#FF171F30"
+        android:pathData="M 11.5,12.0 L 12.0,8.5 H 9.5 L 14.0,2.5 H 15.0 L 14.5,6.5 H 17.5 L 12.5,12.0 H 11.5 Z" />
 </vector>

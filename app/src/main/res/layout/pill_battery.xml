@@ -14,8 +14,8 @@
     <!-- Wi-Fi Icon -->
     <ImageView
         android:id="@+id/pill_wifi_iv"
-        android:layout_width="13dp"
-        android:layout_height="11dp"
+        android:layout_width="18dp"
+        android:layout_height="15dp"
         android:layout_marginEnd="3dp"
         android:layout_gravity="center_vertical"
         android:scaleType="fitCenter"
@@ -24,8 +24,8 @@
     <!-- Signal Strength Icon -->
     <ImageView
         android:id="@+id/pill_signal_iv"
-        android:layout_width="13dp"
-        android:layout_height="11dp"
+        android:layout_width="19dp"
+        android:layout_height="15dp"
         android:layout_marginEnd="3dp"
         android:layout_gravity="center_vertical"
         android:scaleType="fitCenter"
@@ -34,8 +34,8 @@
     <!-- Battery Capsule Icon -->
     <ImageView
         android:id="@+id/pill_battery_iv"
-        android:layout_width="19dp"
-        android:layout_height="11dp"
+        android:layout_width="25dp"
+        android:layout_height="15dp"
         android:layout_marginEnd="3dp"
         android:layout_gravity="center_vertical"
         android:scaleType="fitCenter"

@@ -3664,7 +3664,6 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         pillBatteryIv?.setImageResource(batteryRes)
 
         val textColor = when {
-            isCharging -> Color.parseColor("#00E676")
             level < 20 -> Color.parseColor("#E50914")
             else -> Color.parseColor("#FFC9C9C9")
         }
@@ -3817,6 +3816,39 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             val batteryContainer = batteryPillView?.findViewById<View>(R.id.pill_battery_container)
             batteryContainer?.minimumWidth = batteryMinWidthPx
             batteryContainer?.minimumHeight = heightPx
+
+            // Dynamically scale status icons (Wi-Fi, Signal, Battery) with respect to pill height
+            val iconH = (heightDp * 0.52f).coerceIn(11f, 26f).toInt()
+            val wifiWidthDp = (iconH * 1.2f).toInt()
+            val signalWidthDp = (iconH * 1.25f).toInt()
+            val batteryWidthDp = (iconH * 1.65f).toInt()
+            val iconMarginEndDp = (heightDp * 0.12f).coerceIn(2f, 5f).toInt()
+
+            val iconHeightPx = Utils.dpToPx(context, iconH)
+            val wifiWidthPx = Utils.dpToPx(context, wifiWidthDp)
+            val signalWidthPx = Utils.dpToPx(context, signalWidthDp)
+            val batteryWidthPx = Utils.dpToPx(context, batteryWidthDp)
+            val iconMarginEndPx = Utils.dpToPx(context, iconMarginEndDp)
+
+            (pillWifiIv?.layoutParams as? LinearLayout.LayoutParams)?.let { lp ->
+                lp.width = wifiWidthPx
+                lp.height = iconHeightPx
+                lp.marginEnd = iconMarginEndPx
+                pillWifiIv?.layoutParams = lp
+            }
+            (pillSignalIv?.layoutParams as? LinearLayout.LayoutParams)?.let { lp ->
+                lp.width = signalWidthPx
+                lp.height = iconHeightPx
+                lp.marginEnd = iconMarginEndPx
+                pillSignalIv?.layoutParams = lp
+            }
+            (pillBatteryIv?.layoutParams as? LinearLayout.LayoutParams)?.let { lp ->
+                lp.width = batteryWidthPx
+                lp.height = iconHeightPx
+                lp.marginEnd = iconMarginEndPx
+                pillBatteryIv?.layoutParams = lp
+            }
+
             val bgBattery = GradientDrawable().apply {
                 shape = GradientDrawable.RECTANGLE
                 this.cornerRadius = cornerRadius

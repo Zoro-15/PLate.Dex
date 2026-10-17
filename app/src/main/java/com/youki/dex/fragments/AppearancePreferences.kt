@@ -176,25 +176,6 @@ class AppearancePreferences : PreferenceFragmentCompat() {
             }
         })
 
-        // Dock blur radius slider
-        val dockBlurPref = findPreference<SliderPreference>("dock_blur_radius")
-        dockBlurPref?.setOnDialogShownListener(object : SliderPreference.OnDialogShownListener {
-            override fun onDialogShown() {
-                val slider = dockBlurPref.slider ?: return
-                slider.isTickVisible = false
-                slider.labelBehavior = com.google.android.material.slider.LabelFormatter.LABEL_GONE
-                slider.stepSize = 2f
-                slider.valueFrom = 0f
-                slider.valueTo = 60f
-                slider.value =
-                    (dockBlurPref.sharedPreferences?.getString("dock_blur_radius", "20")?.toFloatOrNull() ?: 20f)
-                        .coerceIn(slider.valueFrom, slider.valueTo)
-                slider.addOnChangeListener { _, value, _ ->
-                    dockBlurPref.sharedPreferences?.edit { putString("dock_blur_radius", value.toInt().toString()) }
-                }
-            }
-        })
-
         // Icon padding slider (Appearance section)
         val iconPaddingPref = findPreference<SliderPreference>("icon_padding")
         iconPaddingPref?.setOnDialogShownListener(object : SliderPreference.OnDialogShownListener {

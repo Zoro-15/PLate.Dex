@@ -695,13 +695,8 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             DeviceUtils.getSecondaryDisplay(context)?.displayId ?: Display.DEFAULT_DISPLAY
         else
             Display.DEFAULT_DISPLAY
-        val dmStartup = DeviceUtils.getDisplayMetrics(context, displayIdStartup)
-        val displayWidthStartup = dmStartup.widthPixels
+        val displayWidthStartup = DeviceUtils.getDisplayMetrics(context, displayIdStartup).widthPixels
         dockMargin = Utils.dpToPx(context, 8)
-
-        // Initialize wallpaper sampling blur dimensions & background cache (Android 10+)
-        com.youki.dex.utils.WallpaperBlurManager.updateDimensions(dmStartup.widthPixels, dmStartup.heightPixels)
-        com.youki.dex.utils.WallpaperBlurManager.updateWallpaperBlur(this) { applyBubbleColors() }
 
         dockLayoutParams = Utils.makeWindowParams(
             if (isRoundOnStartup) displayWidthStartup - 2 * dockMargin else -1,
@@ -742,7 +737,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         }
         // Prevent dock from moving/resizing when keyboard appears
         dockLayoutParams.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING
-        applyDockBlur()
+        // blur requires TRANSLUCENT format — already set in makeWindowParams
         // Dock appears immediately when service starts
         safeAddView(dock, dockLayoutParams)
 
@@ -1062,16 +1057,13 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
                 dockHandler.postDelayed({
                     // Invalidate the DynamicColors cache so applyTheme() picks up the new palette
                     com.youki.dex.utils.ColorUtils.invalidateDynamicColorCache()
-                    com.youki.dex.utils.WallpaperBlurManager.updateWallpaperBlur(this@DockService) {
-                        applyTheme()
-                        applyBubbleColors()
-                    }
+                    applyTheme()
+                    applyBubbleColors()
                 }, 800)
             }
         }
         val wallpaperFilter = IntentFilter().apply {
             addAction(Intent.ACTION_WALLPAPER_CHANGED)
-            addAction(com.youki.dex.livewallpaper.data.WallpaperPreferences.ACTION_WALLPAPER_CHANGED)
             // Material You regenerates palette on these events
             addAction("android.intent.action.OVERLAY_CHANGED")
             addAction("com.android.server.wm.theme.THEME_CHANGED")
@@ -2785,8 +2777,6 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
             || preference == "dock_background_alpha"
             || preference == "enable_app_dock_bg"
             || preference == "app_dock_bg_opacity"
-            || preference == "enable_dock_blur"
-            || preference == "dock_blur_radius"
         )
             applyTheme()
         // FIX (user report — "the dock doesn't update live, you have to
@@ -3519,24 +3509,8 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         }
     }
 
-    private fun applyDockBlur() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && ::dockLayoutParams.isInitialized) {
-            val enableBlur = sharedPreferences.getBoolean("enable_dock_blur", true)
-            val blurRadiusDp = (sharedPreferences.getString("dock_blur_radius", "20")?.toIntOrNull() ?: 20)
-                .coerceIn(0, 100)
-            if (enableBlur && blurRadiusDp > 0) {
-                dockLayoutParams.flags = dockLayoutParams.flags or WindowManager.LayoutParams.FLAG_BLUR_BEHIND
-                dockLayoutParams.setBlurBehindRadius(Utils.dpToPx(context, blurRadiusDp))
-            } else {
-                dockLayoutParams.flags = dockLayoutParams.flags and WindowManager.LayoutParams.FLAG_BLUR_BEHIND.inv()
-                dockLayoutParams.setBlurBehindRadius(0)
-            }
-        }
-    }
-
     private fun updateDockShape() {
         recomputeDockShape()
-        applyDockBlur()
         safeUpdateViewLayout(dock, dockLayoutParams)
     }
 
@@ -4342,26 +4316,12 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         dateTv.background?.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_ATOP)
         dateTv.background?.alpha = alpha
 
-        val enableBlur = sharedPreferences.getBoolean("enable_dock_blur", true)
-        val isDark = try { androidx.core.graphics.ColorUtils.calculateLuminance(color) < 0.5 } catch (e: Throwable) { true }
-        val strokeColor = if (isDark) android.graphics.Color.argb(45, 255, 255, 255) else android.graphics.Color.argb(35, 0, 0, 0)
-        val strokeWidth = Utils.dpToPx(context, 1).toFloat()
-        val cornerRadius = Utils.dpToPx(context, 14).toFloat()
-
-        fun applyPillBackground(v: View, radius: Float = cornerRadius) {
-            val existing = v.background as? com.youki.dex.utils.FrostedPillDrawable
-            if (existing != null) {
-                existing.updateStyle(color, strokeColor, strokeWidth, radius, enableBlur)
-            } else {
-                v.background = com.youki.dex.utils.FrostedPillDrawable(v, radius, color, strokeColor, enableBlur)
-            }
-        }
-
-        // Blur & bubble styling for dock components: pin icon, navigation panel, action buttons, status area
+        // FIX: Color the merged pill groups (btn_bubble_rect) instead of individual buttons
         val pillGroups = mutableListOf<View>(actionBtnsGroup, navBtnsGroup, statusArea)
         if (::pinPill.isInitialized) pillGroups.add(pinPill)
         for (group in pillGroups) {
-            applyPillBackground(group)
+            group.background?.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_ATOP)
+            group.background?.alpha = alpha
         }
 
         // FIX: Color user chip pill in apps menu — same bubble color as dock
@@ -4374,14 +4334,19 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         appMenu.background?.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_ATOP)
         appMenu.background?.alpha = alpha
 
-        // App dock background (icons island) — with blur & frosted styling
+        // App dock background (icons island) — standardized to unified bubble color & master opacity
         if (::centerGroup.isInitialized) {
             val enableAppDockBg = sharedPreferences.getBoolean("enable_app_dock_bg", true)
             if (enableAppDockBg) {
+                if (centerGroup.background == null) {
+                    centerGroup.background = ContextCompat.getDrawable(context, R.drawable.btn_bubble_rect)?.mutate()
+                }
                 val padH = Utils.dpToPx(context, 6)
                 val padV = Utils.dpToPx(context, 2)
                 centerGroup.setPadding(padH, padV, padH, padV)
-                applyPillBackground(centerGroup, Utils.dpToPx(context, 16).toFloat())
+
+                centerGroup.background?.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_ATOP)
+                centerGroup.background?.alpha = alpha
             } else {
                 centerGroup.background = null
                 centerGroup.setPadding(0, 0, 0, 0)

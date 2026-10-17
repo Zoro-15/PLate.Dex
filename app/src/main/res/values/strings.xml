@@ -1101,8 +1101,5 @@ To uninstall, remove Device Administrator permission first.</string>
     <string name="enable_app_dock_bg_title">App Dock Background</string>
     <string name="enable_app_dock_bg_summary">Show a background pill behind app icons in the dock</string>
     <string name="app_dock_bg_opacity_title">App Dock Background Opacity</string>
-    <string name="enable_dock_blur_title">Dock Background Blur</string>
-    <string name="enable_dock_blur_summary">Apply blur effect behind the dock and floating pills</string>
-    <string name="dock_blur_radius_title">Dock Blur Radius</string>
 
 </resources>

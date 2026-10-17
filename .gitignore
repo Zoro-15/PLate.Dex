@@ -17,3 +17,16 @@ build_error_summary.txt
 # Security & Keystore Secrets
 password.md
 *.jks
+
+# Internal documentation & skills
+SKILL.md
+fullmigration.md
+restructurewalls.md
+prototype_pill.html
+
+# IDE & Editor metadata
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db

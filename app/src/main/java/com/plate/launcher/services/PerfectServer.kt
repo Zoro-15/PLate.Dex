@@ -62,6 +62,7 @@ import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -3841,7 +3842,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
                 lp.marginEnd = iconGapPx
                 pillWifiIv?.layoutParams = lp
             }
-            (pillBatteryIv?.layoutParams as? FrameLayout.LayoutParams)?.let { lp ->
+            pillBatteryIv?.layoutParams?.let { lp ->
                 lp.width = batteryWidthPx
                 lp.height = iconHeightPx
                 pillBatteryIv?.layoutParams = lp

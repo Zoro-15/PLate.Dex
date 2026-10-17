@@ -265,36 +265,6 @@
             android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
             android:value="com.youki.dex.cast.CastOptionsProvider" />
 
-        <!-- ✅ Youki Live Wallpaper Engine — GL + ExoPlayer wallpaper service -->
-        <!-- FIX ("اصطدت مشكله عند اغلاق الديكس اريد منه ان لا يقتل الخلفيه
-             المتحركه" — closing DEX from the power menu killed the live
-             wallpaper too): PerfectServer's "Close DEX" button calls
-             Process.killProcess(Process.myPid()) as the only reliable way
-             to guarantee every DEX-related component actually stops (see
-             the detailed comment at that call site) — but killProcess()
-             kills the entire OS process, and this wallpaper service was
-             running in that same default app process, so it died right
-             along with everything else. A live wallpaper is a system-bound
-             surface the user explicitly set as their wallpaper (via
-             WallpaperManager), completely independent of whether the DEX
-             desktop itself is open — closing DEX shouldn't blank out the
-             home screen wallpaper underneath it. android:process=":wallpaper"
-             puts this Service in its own separate OS process, so it's the
-             one component genuinely unaffected by killProcess() targeting
-             the main app process's PID. -->
-        <service
-            android:name=".livewallpaper.service.YoukiGLWallpaperService"
-            android:label="@string/lw_service_label"
-            android:permission="android.permission.BIND_WALLPAPER"
-            android:process=":wallpaper"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.service.wallpaper.WallpaperService" />
-            </intent-filter>
-            <meta-data
-                android:name="android.service.wallpaper"
-                android:resource="@xml/live_wallpaper_info" />
-        </service>
 
         <!-- شاشة المعرض الرئيسية (Gallery Grid) -->
         <activity

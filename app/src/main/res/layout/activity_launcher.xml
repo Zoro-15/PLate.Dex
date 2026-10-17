@@ -4,6 +4,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- In-Desktop Wallpaper Background Canvas -->
+    <ImageView
+        android:id="@+id/desktop_wallpaper_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:visibility="gone" />
+
+    <TextureView
+        android:id="@+id/desktop_wallpaper_video"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
     <!-- The free icons container (Drag & Drop) -->
     <FrameLayout
         android:id="@+id/desktop_icons_container"

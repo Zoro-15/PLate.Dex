@@ -19,13 +19,23 @@ import android.view.ViewTreeObserver
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.view.WindowManager
+import android.view.TextureView
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.preference.PreferenceManager
+import coil.load
+import com.youki.dex.livewallpaper.data.WallpaperPreferences
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.io.File
 import com.google.android.material.button.MaterialButton
 import com.youki.dex.R
 import com.youki.dex.models.App
@@ -68,6 +78,11 @@ open class LauncherActivity : BaseFontScaleActivity(), SharedPreferences.OnShare
     private lateinit var backgroundLayout: FrameLayout
     private lateinit var desktopContainer: FrameLayout
     private lateinit var serviceBtn: MaterialButton
+    private lateinit var wallpaperImageView: ImageView
+    private lateinit var wallpaperVideoView: TextureView
+    private var wallpaperPlayer: ExoPlayer? = null
+    private var currentAttachedWallpaper: String? = null
+    private var wallpaperChangeReceiver: BroadcastReceiver? = null
     private lateinit var prefs: SharedPreferences
     private var dockServiceReceiver: BroadcastReceiver? = null
     private var bgTouchX = 0f
@@ -134,6 +149,8 @@ open class LauncherActivity : BaseFontScaleActivity(), SharedPreferences.OnShare
         backgroundLayout = findViewById(R.id.ll_background)
         desktopContainer  = findViewById(R.id.desktop_icons_container)
         serviceBtn        = findViewById(R.id.service_btn)
+        wallpaperImageView = findViewById(R.id.desktop_wallpaper_image)
+        wallpaperVideoView = findViewById(R.id.desktop_wallpaper_video)
 
         // GitHub issue #21: hiding the status/nav bar was unconditional —
         // no way to opt out. "hide_system_bars" defaults to true so
@@ -169,6 +186,7 @@ open class LauncherActivity : BaseFontScaleActivity(), SharedPreferences.OnShare
     override fun onStart() {
         super.onStart()
         if (WIDGETS_ENABLED) widgetManager?.start()
+        attachDesktopWallpaper()
     }
 
     override fun onStop() {
@@ -207,11 +225,13 @@ open class LauncherActivity : BaseFontScaleActivity(), SharedPreferences.OnShare
             // Also ask the dock to re-show itself in case it hid on pause
             sendBroadcast(Intent(DOCK_SERVICE_ACTION).setPackage(packageName).putExtra("action", "enable_dock"))
         }
+        attachDesktopWallpaper()
         sendBroadcast(Intent(LAUNCHER_ACTION).setPackage(packageName).putExtra("action", LAUNCHER_RESUMED))
     }
 
     override fun onPause() {
         super.onPause()
+        wallpaperPlayer?.pause()
         sendBroadcast(Intent(LAUNCHER_ACTION).setPackage(packageName).putExtra("action", LAUNCHER_PAUSED))
     }
 
@@ -219,12 +239,18 @@ open class LauncherActivity : BaseFontScaleActivity(), SharedPreferences.OnShare
         super.onDestroy()
         prefs.unregisterOnSharedPreferenceChangeListener(this)
         try { dockServiceReceiver?.let { unregisterReceiver(it) } } catch (e: Exception) {}
+        try { wallpaperChangeReceiver?.let { unregisterReceiver(it) } } catch (e: Exception) {}
+        wallpaperPlayer?.release()
+        wallpaperPlayer = null
         if (WIDGETS_ENABLED) widgetManager?.release()
     }
 
     override fun onSharedPreferenceChanged(sp: SharedPreferences, key: String?) {
         if (key == "dock_height") applyDockPadding()
         if (key == "single_line_labels") loadDesktopApps()
+        if (key == WallpaperPreferences.PREF_WALLPAPER_PATH || key == WallpaperPreferences.PREF_WALLPAPER_TYPE) {
+            attachDesktopWallpaper()
+        }
     }
 
     // ── Widget picker result ─────────────────────────────────────────────────
@@ -655,7 +681,77 @@ open class LauncherActivity : BaseFontScaleActivity(), SharedPreferences.OnShare
         }
         ContextCompat.registerReceiver(this, dockServiceReceiver, IntentFilter(DOCK_SERVICE_ACTION), ContextCompat.RECEIVER_NOT_EXPORTED)
         ContextCompat.registerReceiver(this, dockServiceReceiver, IntentFilter(LAUNCHER_ACTION), ContextCompat.RECEIVER_NOT_EXPORTED)
+        wallpaperChangeReceiver = object : BroadcastReceiver() {
+            override fun onReceive(ctx: Context, intent: Intent) {
+                attachDesktopWallpaper()
+            }
+        }
+        ContextCompat.registerReceiver(
+            this,
+            wallpaperChangeReceiver,
+            IntentFilter(WallpaperPreferences.ACTION_WALLPAPER_CHANGED),
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
         applyOrientationLock()
+    }
+
+    private fun attachDesktopWallpaper() {
+        val (path, type) = WallpaperPreferences.getActiveWallpaper(this)
+        if (path.isNullOrBlank()) {
+            wallpaperImageView.visibility = View.GONE
+            wallpaperVideoView.visibility = View.GONE
+            wallpaperPlayer?.stop()
+            currentAttachedWallpaper = null
+
+            // Initial fallback: migrate any existing active wallpaper from repository
+            lifecycleScope.launch(Dispatchers.IO) {
+                val repo = com.youki.dex.livewallpaper.data.WallpaperConfigRepository.get(this@LauncherActivity)
+                val active = repo.getActiveOrFallback()
+                if (active != null) {
+                    val isImg = com.youki.dex.livewallpaper.data.VideoFileStore.isImage(this@LauncherActivity, active.videoUri)
+                    WallpaperPreferences.setWallpaper(this@LauncherActivity, active.videoUri, isImg)
+                }
+            }
+            return
+        }
+
+        if (type == WallpaperPreferences.TYPE_IMAGE) {
+            wallpaperPlayer?.stop()
+            wallpaperVideoView.visibility = View.GONE
+            wallpaperImageView.visibility = View.VISIBLE
+            if (currentAttachedWallpaper != path) {
+                currentAttachedWallpaper = path
+                val uri = android.net.Uri.parse(path)
+                if (uri.scheme == "file" || uri.scheme == null) {
+                    val file = File(uri.path ?: path)
+                    if (file.exists()) {
+                        wallpaperImageView.load(file)
+                    } else {
+                        wallpaperImageView.load(uri)
+                    }
+                } else {
+                    wallpaperImageView.load(uri)
+                }
+            }
+        } else {
+            wallpaperImageView.visibility = View.GONE
+            wallpaperVideoView.visibility = View.VISIBLE
+            if (currentAttachedWallpaper != path) {
+                currentAttachedWallpaper = path
+                val player = wallpaperPlayer ?: ExoPlayer.Builder(this).build().also { p ->
+                    wallpaperPlayer = p
+                    p.repeatMode = Player.REPEAT_MODE_ONE
+                    p.volume = 0f
+                    p.setVideoTextureView(wallpaperVideoView)
+                }
+                val uri = android.net.Uri.parse(path)
+                player.setMediaItem(MediaItem.fromUri(uri))
+                player.prepare()
+                player.playWhenReady = true
+            } else {
+                wallpaperPlayer?.play()
+            }
+        }
     }
 
     /** Reads "lock_landscape" from prefs and actually applies it to this window. */

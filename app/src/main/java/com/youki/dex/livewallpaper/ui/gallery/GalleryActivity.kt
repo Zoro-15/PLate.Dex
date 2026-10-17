@@ -17,6 +17,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.youki.dex.R
 import com.youki.dex.livewallpaper.data.VideoFile
+import com.youki.dex.livewallpaper.data.WallpaperPreferences
 import com.youki.dex.livewallpaper.ui.editor.EditorActivity
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -148,7 +149,11 @@ class GalleryActivity : com.youki.dex.activities.BaseFontScaleActivity() {
                 getString(R.string.lw_delete)
             )) { _, which ->
                 when (which) {
-                    0 -> { viewModel.applyWallpaper(video); Snackbar.make(findViewById(R.id.lw_grid), R.string.lw_applied, Snackbar.LENGTH_SHORT).show() }
+                    0 -> {
+                        WallpaperPreferences.setWallpaper(this@GalleryActivity, video.uri, video.isImage)
+                        viewModel.applyWallpaper(video)
+                        Snackbar.make(findViewById(R.id.lw_grid), R.string.lw_applied, Snackbar.LENGTH_SHORT).show()
+                    }
                     1 -> openEditor(video)
                     2 -> confirmDelete(video)
                 }

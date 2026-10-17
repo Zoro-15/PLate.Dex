@@ -1,7 +1,5 @@
 package com.youki.dex.livewallpaper.ui.editor
 
-import android.app.WallpaperManager
-import android.content.ComponentName
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -16,8 +14,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.youki.dex.R
 import com.youki.dex.livewallpaper.data.WallpaperConfig
+import com.youki.dex.livewallpaper.data.WallpaperPreferences
 import com.youki.dex.livewallpaper.engine.VideoEngine
-import com.youki.dex.livewallpaper.service.YoukiGLWallpaperService
 import com.youki.dex.livewallpaper.ui.gallery.GalleryAdapter
 import com.youki.dex.livewallpaper.ui.gallery.GalleryViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -241,7 +239,7 @@ class EditorActivity : com.youki.dex.activities.BaseFontScaleActivity(), ColorPi
         setupFreeGestures()
 
         findViewById<android.view.View>(R.id.ed_fab_apply_portrait).setOnClickListener {
-            viewModel.applyWallpaper { requestSetLiveWallpaper(R.id.ed_fab_apply_portrait) }
+            applyWallpaperDirectly(R.id.ed_fab_apply_portrait)
         }
     }
 
@@ -269,7 +267,7 @@ class EditorActivity : com.youki.dex.activities.BaseFontScaleActivity(), ColorPi
         setupFreeGestures()
 
         findViewById<android.view.View>(R.id.ed_fab_apply_landscape).setOnClickListener {
-            viewModel.applyWallpaper { requestSetLiveWallpaper(R.id.ed_fab_apply_landscape) }
+            applyWallpaperDirectly(R.id.ed_fab_apply_landscape)
         }
     }
 
@@ -351,12 +349,9 @@ class EditorActivity : com.youki.dex.activities.BaseFontScaleActivity(), ColorPi
         val isImage = com.youki.dex.livewallpaper.data.VideoFileStore.isImage(this, videoUri)
         if (isImage) {
             videoEngine.release()
-            previewView.renderer.clearCurrentFrame()
-            previewView.renderer.setImageUri(this, android.net.Uri.parse(videoUri)) { w, h ->
-                previewView.requestRender()
-            }
+            previewView.showImage(videoUri)
         } else {
-            previewView.renderer.clearImage()
+            previewView.showVideo()
             val targetSurface = surface ?: activePreviewSurface ?: videoEngine.currentSurface
             if (targetSurface != null) {
                 val audio = viewModel.config.value.audioPlaybackFor(currentOrientation)
@@ -366,10 +361,7 @@ class EditorActivity : com.youki.dex.activities.BaseFontScaleActivity(), ColorPi
                     muted = true,
                     playbackSpeed = audio.speed,
                     audioPitch = audio.pitch,
-                    onSizeChanged = { w, h ->
-                        previewView.renderer.updateVideoSize(w, h)
-                        previewView.requestRender()
-                    }
+                    onSizeChanged = { _, _ -> }
                 )
             }
         }
@@ -444,90 +436,14 @@ class EditorActivity : com.youki.dex.activities.BaseFontScaleActivity(), ColorPi
         applyCurrentMedia()
     }
 
-    /**
-     * Formally asks Android to activate [YoukiGLWallpaperService] as the
-     * current live wallpaper.
-     *
-     * Not always called anymore: Android (a security decision from Google
-     * itself, with no official API to bypass it) forces the system
-     * confirmation screen every time ACTION_CHANGE_LIVE_WALLPAPER is
-     * explicitly requested — regardless of anything the app does. But this
-     * Intent is really only needed once: to activate
-     * [YoukiGLWallpaperService] as the current live wallpaper for the first
-     * time (or if the user has temporarily switched it to another app). If
-     * it's already the currently active wallpaper (the common case: the user
-     * is tweaking settings/switching videos within the same app and presses
-     * "Apply" repeatedly), then saving to Room alone is enough — the already
-     * running Service watches observeActive() and picks up any change
-     * immediately (a new videoUri or new settings), so there's no need
-     * whatsoever to re-"set" a wallpaper that's already active. See
-     * isYoukiWallpaperCurrentlyActive().
-     *
-     * [anchorViewId] is whichever FAB (portrait or landscape group) triggered
-     * this, used only to anchor the Snackbar to a currently-visible view.
-     */
-    private fun requestSetLiveWallpaper(anchorViewId: Int) {
-        if (isYoukiWallpaperCurrentlyActive()) {
-            // The service is already running and watching the database —
-            // saving to Room (which already happened before this function was
-            // called, see applyWallpaper) is enough on its own for the change
-            // to take effect immediately, with no Intent or system screen needed.
-            // No finish() here on purpose: the user stays inside the editor
-            // and can keep adjusting and pressing "Apply" repeatedly, without
-            // being forced back to the main gallery list after every tap —
-            // this is a deliberate difference from the first-time path below
-            // (which finishes the screen after returning from the system
-            // screen, since that case really is an "initial setup" that
-            // deserves returning to the list).
+    /** Directly persists the wallpaper to SharedPreferences and saves to Room */
+    private fun applyWallpaperDirectly(anchorViewId: Int) {
+        val isImg = com.youki.dex.livewallpaper.data.VideoFileStore.isImage(this, videoUri)
+        WallpaperPreferences.setWallpaper(this, videoUri, isImg)
+        viewModel.applyWallpaper {
             Snackbar.make(findViewById(anchorViewId), R.string.lw_applied, Snackbar.LENGTH_SHORT).show()
-            return
-        }
-
-        val component = ComponentName(this, YoukiGLWallpaperService::class.java)
-        val intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER).apply {
-            putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, component)
-        }
-        if (intent.resolveActivity(packageManager) != null) {
-            setWallpaperLauncher.launch(intent)
-        } else {
-            // Some devices (rarely) don't support this Intent — fallback
-            try {
-                startActivity(Intent(WallpaperManager.ACTION_LIVE_WALLPAPER_CHOOSER))
-            } catch (e: Exception) {
-                Snackbar.make(
-                    findViewById(anchorViewId),
-                    R.string.lw_apply_unsupported,
-                    Snackbar.LENGTH_LONG
-                ).show()
-            }
         }
     }
-
-    /**
-     * Checks whether [YoukiGLWallpaperService] is exactly the live wallpaper
-     * currently active at the system level (not just isActive=1 in our
-     * internal database — this is a real check via
-     * WallpaperManager.getWallpaperInfo(), the only reliable source for
-     * knowing "are we really the wallpaper running right now").
-     * getWallpaperInfo() returns null if the current wallpaper is static (a
-     * regular image) rather than live, so the safe comparison here handles
-     * both cases.
-     */
-    private fun isYoukiWallpaperCurrentlyActive(): Boolean {
-        val info = WallpaperManager.getInstance(this).wallpaperInfo ?: return false
-        return info.packageName == packageName &&
-            info.serviceName == YoukiGLWallpaperService::class.java.name
-    }
-
-    private val setWallpaperLauncher =
-        registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()) {
-            // Returns here whether the user confirmed or canceled from the
-            // Android system screen — the data is already saved to the DB
-            // from applyWallpaper, we're just notifying the user.
-            val anchor = if (isLandscapeGroupActive) R.id.ed_fab_apply_landscape else R.id.ed_fab_apply_portrait
-            Snackbar.make(findViewById(anchor), R.string.lw_applied, Snackbar.LENGTH_SHORT).show()
-            finish()
-        }
 
     /**
      * Builds manual sheet dragging via an [android.view.View.OnTouchListener]
@@ -651,19 +567,12 @@ class EditorActivity : com.youki.dex.activities.BaseFontScaleActivity(), ColorPi
         }
     }
 
-    /** Any settings change (from any tab) updates the Renderer directly + ExoPlayer speed/pitch */
+    /** Any settings change updates ExoPlayer speed/pitch */
     private fun observeConfig() {
         viewModel.config.onEach { config ->
-            previewView.renderer.updateConfig(config)
-            // Fully decoupled from landscape: the preview applies the
-            // speed/pitch for the current orientation only — the same read
-            // source used by the actual service (audioPlaybackFor), so
-            // there's no difference between what the user sees in the
-            // preview and what will actually run on the live wallpaper.
             val audio = config.audioPlaybackFor(currentOrientation)
             videoEngine.setSpeed(audio.speed)
             videoEngine.setPitch(audio.pitch)
-            previewView.requestRender()
             updateFreeOverlayVisibility(config)
         }.launchIn(lifecycleScope)
     }
@@ -733,16 +642,8 @@ class EditorActivity : com.youki.dex.activities.BaseFontScaleActivity(), ColorPi
 
     override fun onDestroy() {
         super.onDestroy()
-        // FIX: the correct teardown order in Editor:
-        //   1. Stop the video first (no new frames reach the Surface)
-        //   2. Stop the GL thread by setting RENDERMODE back to
-        //      WHEN_DIRTY, then one final onPause to stop the render
-        //      thread for good
-        //   3. Then release the renderer (safe because the GL thread has stopped)
         activePreviewSurface = null
         videoEngine.release()
-        previewView.renderMode = android.opengl.GLSurfaceView.RENDERMODE_WHEN_DIRTY
-        previewView.renderer.release()
     }
 
     /**

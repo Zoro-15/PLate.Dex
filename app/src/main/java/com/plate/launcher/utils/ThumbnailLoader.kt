@@ -1,4 +1,4 @@
-﻿package com.plate.launcher.utils
+package com.plate.launcher.utils
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -90,7 +90,7 @@ object ThumbnailLoader {
         }
     }
 
-    /** A public interface to call from WorkshopFragment and others */
+    /** Public helper to synchronously extract a video frame thumbnail */
     fun loadVideoFrameSync(file: File): Bitmap? = extractVideoThumbnailSafely(file.absolutePath)
 
     /**

@@ -1,4 +1,4 @@
-﻿package com.plate.launcher.activities
+package com.plate.launcher.activities
 
 import android.annotation.SuppressLint
 import android.appwidget.AppWidgetHostView
@@ -44,7 +44,6 @@ import com.plate.launcher.services.DESKTOP_APP_PINNED
 import com.plate.launcher.services.DOCK_SERVICE_ACTION
 import com.plate.launcher.services.DOCK_SERVICE_CONNECTED
 import com.plate.launcher.utils.AppUtils
-import com.plate.launcher.livewallpaper.DesktopWidgetManager
 import com.plate.launcher.utils.Utils
 import kotlin.math.abs
 
@@ -66,15 +65,6 @@ const val LAUNCHER_PAUSED  = "launcher_paused"
  */
 open class LauncherActivity : BaseFontScaleActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
 
-    companion object {
-        /**
-         * Kill switch for desktop widgets. Flip to true once the AppWidgetHost
-         * crashes (duplicate restored view IDs, NPE on stopListening, and the
-         * "only the first widget added actually works" bug) are fixed and verified.
-         */
-        const val WIDGETS_ENABLED = false
-    }
-
     private lateinit var backgroundLayout: FrameLayout
     private lateinit var desktopContainer: FrameLayout
     private lateinit var serviceBtn: MaterialButton
@@ -87,16 +77,6 @@ open class LauncherActivity : BaseFontScaleActivity(), SharedPreferences.OnShare
     private var dockServiceReceiver: BroadcastReceiver? = null
     private var bgTouchX = 0f
     private var bgTouchY = 0f
-
-    // ── Widget support ────────────────────────────────────────────────────────
-    // TEMPORARILY DISABLED: widgets caused repeated crashes (duplicate view IDs on
-    // restore + NPE in AppWidgetHost.stopListening, plus only-first-widget-works
-    // bug). Set WIDGETS_ENABLED = true to restore the feature once the underlying
-    // AppWidgetHost lifecycle/id issues are fixed. All call sites are guarded by
-    // this flag so re-enabling is a one-line change.
-    private var widgetManager: DesktopWidgetManager? = null
-    /** Holds the host ID allocated for the widget being picked/configured. */
-    private var pendingWidgetHostId: Int = AppWidgetManager.INVALID_APPWIDGET_ID
 
     // ─────────────────────────────────────────────────────────────────────────
     //  Lifecycle
@@ -143,8 +123,6 @@ open class LauncherActivity : BaseFontScaleActivity(), SharedPreferences.OnShare
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
         prefs.registerOnSharedPreferenceChangeListener(this)
 
-        if (WIDGETS_ENABLED) widgetManager = DesktopWidgetManager(this)
-
         setContentView(R.layout.activity_launcher)
         backgroundLayout = findViewById(R.id.ll_background)
         desktopContainer  = findViewById(R.id.desktop_icons_container)
@@ -185,13 +163,11 @@ open class LauncherActivity : BaseFontScaleActivity(), SharedPreferences.OnShare
 
     override fun onStart() {
         super.onStart()
-        if (WIDGETS_ENABLED) widgetManager?.start()
         attachDesktopWallpaper()
     }
 
     override fun onStop() {
         super.onStop()
-        if (WIDGETS_ENABLED) widgetManager?.stop()
     }
 
     private fun routeToAccessibilitySettings() {
@@ -235,6 +211,13 @@ open class LauncherActivity : BaseFontScaleActivity(), SharedPreferences.OnShare
         sendBroadcast(Intent(LAUNCHER_ACTION).setPackage(packageName).putExtra("action", LAUNCHER_PAUSED))
     }
 
+    override fun onStop() {
+        super.onStop()
+        wallpaperPlayer?.release()
+        wallpaperPlayer = null
+        currentAttachedWallpaper = null
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         prefs.unregisterOnSharedPreferenceChangeListener(this)
@@ -242,7 +225,7 @@ open class LauncherActivity : BaseFontScaleActivity(), SharedPreferences.OnShare
         try { wallpaperChangeReceiver?.let { unregisterReceiver(it) } } catch (e: Exception) {}
         wallpaperPlayer?.release()
         wallpaperPlayer = null
-        if (WIDGETS_ENABLED) widgetManager?.release()
+        currentAttachedWallpaper = null
     }
 
     override fun onSharedPreferenceChanged(sp: SharedPreferences, key: String?) {
@@ -253,52 +236,6 @@ open class LauncherActivity : BaseFontScaleActivity(), SharedPreferences.OnShare
         }
     }
 
-    // ── Widget picker result ─────────────────────────────────────────────────
-
-    @Deprecated("Using deprecated onActivityResult for AppWidget compat")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (!WIDGETS_ENABLED) return
-        val widgetManager = widgetManager ?: return
-        if (resultCode != RESULT_OK) {
-            // User cancelled — free the allocated host ID.
-            if (pendingWidgetHostId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-                widgetManager.deleteWidgetId(pendingWidgetHostId)
-                pendingWidgetHostId = AppWidgetManager.INVALID_APPWIDGET_ID
-            }
-            return
-        }
-
-        when (requestCode) {
-            DesktopWidgetManager.REQUEST_PICK_WIDGET -> {
-                val appWidgetId = data?.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
-                    AppWidgetManager.INVALID_APPWIDGET_ID) ?: AppWidgetManager.INVALID_APPWIDGET_ID
-                if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) return
-
-                pendingWidgetHostId = appWidgetId
-                val info = widgetManager.manager.getAppWidgetInfo(appWidgetId)
-                if (info?.configure != null) {
-                    // Launch the widget's configure activity.
-                    val configIntent = Intent(AppWidgetManager.ACTION_APPWIDGET_CONFIGURE).apply {
-                        component = info.configure
-                        putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-                    }
-                    @Suppress("DEPRECATION")
-                    startActivityForResult(configIntent, DesktopWidgetManager.REQUEST_CREATE_WIDGET)
-                } else {
-                    // No configuration needed — add directly.
-                    addWidgetToDesktop(appWidgetId)
-                    pendingWidgetHostId = AppWidgetManager.INVALID_APPWIDGET_ID
-                }
-            }
-            DesktopWidgetManager.REQUEST_CREATE_WIDGET -> {
-                if (pendingWidgetHostId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-                    addWidgetToDesktop(pendingWidgetHostId)
-                    pendingWidgetHostId = AppWidgetManager.INVALID_APPWIDGET_ID
-                }
-            }
-        }
-    }
 
     // ─────────────────────────────────────────────────────────────────────────
     //  Positioning (free pixel placement, snapped to a visual grid — not
@@ -380,25 +317,6 @@ open class LauncherActivity : BaseFontScaleActivity(), SharedPreferences.OnShare
             addAppIcon(app, pos.first, pos.second)
         }
 
-        // 2. Widgets (temporarily disabled — see WIDGETS_ENABLED)
-        if (WIDGETS_ENABLED) {
-            val widgetManager = widgetManager
-            if (widgetManager != null) {
-                DesktopWidgetManager.getSavedWidgetIds(this).forEach { idStr ->
-                    val hostId = idStr.toIntOrNull() ?: return@forEach
-                    val info   = widgetManager.getInfo(hostId) ?: run {
-                        // Widget was uninstalled — clean up.
-                        widgetManager.deleteWidgetId(hostId)
-                        return@forEach
-                    }
-                    val (colSpan, rowSpan) = DesktopWidgetManager.getSavedSpan(this, hostId)
-                    val (prefX, prefY) = DesktopWidgetManager.getSavedPosition(this, hostId) ?: (0 to 0)
-                    val pos = findFreeCell(prefX, prefY, occupiedPositions, iconSize)
-                    occupiedPositions.add(pos)
-                    addWidgetView(hostId, pos.first, pos.second, colSpan, rowSpan)
-                }
-            }
-        }
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -426,63 +344,6 @@ open class LauncherActivity : BaseFontScaleActivity(), SharedPreferences.OnShare
         desktopContainer.addView(view)
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    //  Widgets
-    // ─────────────────────────────────────────────────────────────────────────
-
-    /**
-     * Called after a widget has been picked (and configured if needed).
-     * Places the widget at the first available grid rect of the appropriate span.
-     */
-    private fun addWidgetToDesktop(hostId: Int) {
-        if (!WIDGETS_ENABLED) return
-        val widgetManager = widgetManager ?: return
-        val info = widgetManager.getInfo(hostId) ?: return
-        val g = getGridSize()
-        val colSpan = (info.minWidth  / g.coerceAtLeast(1)).coerceAtLeast(1)
-        val rowSpan = (info.minHeight / g.coerceAtLeast(1)).coerceAtLeast(1)
-
-        val occupied = (0 until desktopContainer.childCount).mapNotNull { i ->
-            val lp = desktopContainer.getChildAt(i).layoutParams as? FrameLayout.LayoutParams
-            lp?.let { it.leftMargin to it.topMargin }
-        }
-        val pos = findFreeCell(0, 0, occupied, iconSizePx())
-
-        DesktopWidgetManager.saveWidgetPosition(this, hostId, pos.first, pos.second, colSpan, rowSpan)
-        addWidgetView(hostId, pos.first, pos.second, colSpan, rowSpan)
-    }
-
-    /** Inflates the AppWidgetHostView and adds it to the desktop container. */
-    @SuppressLint("ClickableViewAccessibility")
-    private fun addWidgetView(hostId: Int, startX: Int, startY: Int, colSpan: Int, rowSpan: Int) {
-        if (!WIDGETS_ENABLED) return
-        val widgetManager = widgetManager ?: return
-        val g = getGridSize()
-        val widthPx  = g * colSpan
-        val heightPx = g * rowSpan
-        val hostView: AppWidgetHostView = try {
-            widgetManager.createHostView(hostId, g, g, colSpan, rowSpan)
-        } catch (e: Exception) {
-            // Widget host view creation failed (e.g. provider removed) — skip.
-            widgetManager.deleteWidgetId(hostId)
-            return
-        }
-
-        val lp = FrameLayout.LayoutParams(widthPx, heightPx).apply {
-            leftMargin = startX; topMargin = startY
-        }
-        hostView.layoutParams = lp
-
-        wireDrag(hostView) { freeX, freeY ->
-            DesktopWidgetManager.saveWidgetPosition(this, hostId, freeX, freeY, colSpan, rowSpan)
-        }
-        hostView.setOnLongClickListener {
-            showWidgetContextMenu(hostId, hostView)
-            true
-        }
-
-        desktopContainer.addView(hostView)
-    }
 
     // ─────────────────────────────────────────────────────────────────────────
     //  Drag handling (shared between icons and widgets)
@@ -574,32 +435,15 @@ open class LauncherActivity : BaseFontScaleActivity(), SharedPreferences.OnShare
         popup.show()
     }
 
-    private fun showWidgetContextMenu(hostId: Int, anchor: View) {
-        if (!WIDGETS_ENABLED) return
-        val widgetManager = widgetManager ?: return
-        val popup = PopupMenu(this, anchor)
-        popup.menu.add(0, 1, 0, getString(R.string.remove_from_desktop))
-        popup.setOnMenuItemClickListener { item ->
-            if (item.itemId == 1) {
-                widgetManager.deleteWidgetId(hostId)
-                loadDesktopApps()
-            }
-            true
-        }
-        popup.show()
-    }
-
     private fun showDesktopEmptySpaceMenu(touchX: Float, touchY: Float) {
         val anchor = View(this).apply { layoutParams = FrameLayout.LayoutParams(1, 1) }
         backgroundLayout.addView(anchor)
         anchor.x = touchX; anchor.y = touchY
 
         val popup = PopupMenu(this, anchor)
-        val wallpaperId = 1; val displayId = 2; val addWidgetId = 3
-        popup.menu.add(0, wallpaperId,  0, getString(R.string.change_wallpaper))
-        popup.menu.add(0, displayId,    0, getString(R.string.display_settings))
-        // Widgets temporarily disabled — entry hidden from the menu (see WIDGETS_ENABLED).
-        if (WIDGETS_ENABLED) popup.menu.add(0, addWidgetId, 0, getString(R.string.add_widget))
+        val wallpaperId = 1; val displayId = 2
+        popup.menu.add(0, wallpaperId, 0, getString(R.string.change_wallpaper))
+        popup.menu.add(0, displayId,   0, getString(R.string.display_settings))
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 wallpaperId -> startActivity(
@@ -607,25 +451,11 @@ open class LauncherActivity : BaseFontScaleActivity(), SharedPreferences.OnShare
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 )
                 displayId  -> AppUtils.openSystemSettings(this, Intent(android.provider.Settings.ACTION_DISPLAY_SETTINGS))
-                addWidgetId -> if (WIDGETS_ENABLED) launchWidgetPicker()
             }
             true
         }
         popup.setOnDismissListener { (anchor.parent as? ViewGroup)?.removeView(anchor) }
         popup.show()
-    }
-
-    /** Opens the system widget picker. */
-    @Suppress("DEPRECATION")
-    private fun launchWidgetPicker() {
-        if (!WIDGETS_ENABLED) return
-        val widgetManager = widgetManager ?: return
-        val hostId = widgetManager.allocateWidgetId()
-        pendingWidgetHostId = hostId
-        val pickIntent = Intent(AppWidgetManager.ACTION_APPWIDGET_PICK).apply {
-            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, hostId)
-        }
-        startActivityForResult(pickIntent, DesktopWidgetManager.REQUEST_PICK_WIDGET)
     }
 
     // ─────────────────────────────────────────────────────────────────────────

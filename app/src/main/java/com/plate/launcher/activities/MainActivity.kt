@@ -1,4 +1,4 @@
-﻿package com.plate.launcher.activities
+package com.plate.launcher.activities
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -195,8 +195,7 @@ class MainActivity : BaseFontScaleActivity(),
         val openFrag = intent?.getStringExtra("open_fragment")
         val startFragment = when (openFrag) {
             "multi_user"  -> MultiUserFragment()
-            "plugins"     -> com.plate.launcher.fragments.PluginsFragment()
-            "performance" -> com.plate.launcher.fragments.PerformanceFragment()
+            "plugins", "performance" -> com.plate.launcher.fragments.PluginsFragment()
             else          -> PreferencesFragment()
         }
         supportFragmentManager.beginTransaction()

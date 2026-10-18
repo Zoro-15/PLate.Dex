@@ -1,4 +1,4 @@
-﻿package com.plate.launcher.fragments
+package com.plate.launcher.fragments
 
 import android.Manifest
 import android.app.Activity
@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.InputType
+import android.view.Display
 import android.view.LayoutInflater
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
@@ -16,6 +17,7 @@ import androidx.preference.Preference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -83,26 +85,13 @@ class AdvancedPreferences : PreferenceFragmentCompat() {
         val hideNav = findPreference<SwitchPreferenceCompat>("hide_nav_buttons")
         val prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext())
         hideNav?.isChecked = prefs.getBoolean("hide_nav_buttons", false)
-        val result = DeviceUtils.runAsRoot("cat /system/build.prop")
-        rootAvailable = result != "error"
 
-        findPreference<Preference>("root_category")!!.isEnabled = rootAvailable
-        if (rootAvailable && !hasWriteSettingsPermission) {
-            DeviceUtils.grantPermission(Manifest.permission.WRITE_SECURE_SETTINGS)
-            hasWriteSettingsPermission = DeviceUtils.hasWriteSettingsPermission(requireContext())
+        findPreference<Preference>("status_icon_blacklist")?.setOnPreferenceClickListener {
+            showIBDialog(requireContext())
+            false
         }
-
-        val shizuku = com.plate.launcher.utils.ShizukoManager.getInstance(requireContext())
-        val hasPrivilege = hasWriteSettingsPermission || rootAvailable || shizuku.hasPermission
-        findPreference<Preference>("secure_category")?.isEnabled = hasPrivilege
-        if (hasPrivilege) {
-            findPreference<Preference>("secure_category")!!.isEnabled = true
-
-            findPreference<Preference>("status_icon_blacklist")!!.setOnPreferenceClickListener {
-                showIBDialog(requireContext())
-                false
-            }
-            val disableHeadsUp = findPreference<SwitchPreferenceCompat>("disable_heads_up")!!
+        val disableHeadsUp = findPreference<SwitchPreferenceCompat>("disable_heads_up")
+        if (disableHeadsUp != null) {
             disableHeadsUp.isChecked = DeviceUtils.getGlobalSetting(
                 requireContext(),
                 DeviceUtils.HEADS_UP_ENABLED,
@@ -114,6 +103,23 @@ class AdvancedPreferences : PreferenceFragmentCompat() {
                     DeviceUtils.HEADS_UP_ENABLED,
                     if (isChecked as Boolean) 0 else 1
                 )
+            }
+        }
+
+        androidx.lifecycle.lifecycleScope.launch(Dispatchers.IO) {
+            val root = com.plate.launcher.utils.RootManager.getInstance(requireContext())
+            rootAvailable = root.isAvailable
+            if (rootAvailable && !hasWriteSettingsPermission) {
+                DeviceUtils.grantPermission(Manifest.permission.WRITE_SECURE_SETTINGS)
+                hasWriteSettingsPermission = DeviceUtils.hasWriteSettingsPermission(requireContext())
+            }
+
+            val shizuku = com.plate.launcher.utils.ShizukoManager.getInstance(requireContext())
+            val hasPrivilege = hasWriteSettingsPermission || rootAvailable || shizuku.hasPermission
+
+            withContext(Dispatchers.Main) {
+                findPreference<Preference>("root_category")?.isEnabled = rootAvailable
+                findPreference<Preference>("secure_category")?.isEnabled = hasPrivilege
             }
         }
 
@@ -231,14 +237,6 @@ class AdvancedPreferences : PreferenceFragmentCompat() {
         editorPreviewScale?.setOnPreferenceChangeListener { _, newValue ->
             val v = (newValue as String).toIntOrNull()
             v != null && v in 40..100
-        }
-
-        // ── Workshop Sources ─────────────────────────────────────────────
-        findPreference<Preference>("manage_workshop_sources")?.setOnPreferenceClickListener {
-            startActivity(
-                Intent(requireContext(), com.plate.launcher.activities.WorkshopSourcesActivity::class.java)
-            )
-            true
         }
 
         // ── OTG / UHID mode ───────────────────────────────────────────────
@@ -418,76 +416,139 @@ class AdvancedPreferences : PreferenceFragmentCompat() {
 
     // ── Resolution Dialog (e.g. 1920×1080 / 16:9) ────────────────────
     private fun showDisplayResolutionDialog(context: Context) {
-        val presets = arrayOf(
-            "Default (reset)",
-            "1920 × 1080  (16:9 FHD)",
-            "2560 × 1440  (16:9 QHD)",
-            "1280 × 720   (16:9 HD)",
-            "1600 × 900   (16:9)",
-            "Custom…"
+        val displays = DeviceUtils.getDisplays(context)
+        if (displays.size > 1) {
+            val displayNames = displays.mapIndexed { idx, d ->
+                val label = if (idx == 0) "Display 0: Built-in Screen" else "Display ${d.displayId}: External Display (${d.name ?: "Monitor"})"
+                val metrics = DeviceUtils.getDisplayMetrics(context, d.displayId)
+                "$label (${metrics.widthPixels}×${metrics.heightPixels} @ ${metrics.densityDpi} DPI)"
+            }.toTypedArray()
+
+            MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.custom_display_resolution_title)
+                .setItems(displayNames) { _, which ->
+                    showPresetsForDisplay(context, displays[which].displayId)
+                }
+                .setNegativeButton(R.string.cancel, null)
+                .show()
+        } else {
+            showPresetsForDisplay(context, Display.DEFAULT_DISPLAY)
+        }
+    }
+
+    private fun showPresetsForDisplay(context: Context, displayId: Int) {
+        val displayLabel = if (displayId == Display.DEFAULT_DISPLAY) "Built-in Screen" else "Display $displayId"
+        val presetLabels = arrayOf(
+            "Default (Reset to Native)",
+            "1920 × 1080 @ 160 DPI (FHD Desktop)",
+            "2560 × 1440 @ 200 DPI (QHD Desktop)",
+            "3840 × 2160 @ 280 DPI (4K UHD)",
+            "2560 × 1080 @ 160 DPI (21:9 Ultrawide)",
+            "1280 × 720 @ 140 DPI (Compact HD)",
+            "Custom Resolution & DPI…"
         )
-        val presetValues = arrayOf(
-            null,
-            Pair(1920, 1080),
-            Pair(2560, 1440),
-            Pair(1280, 720),
-            Pair(1600, 900),
-            null  // custom
+        val presetConfigs: Array<Triple<Int?, Int?, Int?>?> = arrayOf(
+            Triple(null, null, null),
+            Triple(1920, 1080, 160),
+            Triple(2560, 1440, 200),
+            Triple(3840, 2160, 280),
+            Triple(2560, 1080, 160),
+            Triple(1280, 720, 140),
+            null
         )
 
         MaterialAlertDialogBuilder(context)
-            .setTitle(R.string.custom_display_resolution_title)
-            .setItems(presets) { _, which ->
-                when {
-                    which == 0 -> {
-                        val ok = clearDisplaySize()
-                        android.widget.Toast.makeText(
-                            context,
-                            if (ok) "Resolution reset to default!" else "Failed to reset resolution",
-                            android.widget.Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                    which == presets.size - 1 -> showCustomResolutionDialog(context)
-                    else -> {
-                        val (w, h) = presetValues[which]!!
-                        val ok = applyDisplaySize(w, h)
-                        android.widget.Toast.makeText(
-                            context,
-                            if (ok) "Resolution set to ${w}×${h}!" else "Failed — check WRITE_SECURE_SETTINGS",
-                            android.widget.Toast.LENGTH_SHORT
-                        ).show()
-                    }
+            .setTitle("$displayLabel — Presets")
+            .setItems(presetLabels) { _, which ->
+                if (which == presetLabels.size - 1) {
+                    showCustomResolutionDialog(context, displayId)
+                } else {
+                    val config = presetConfigs[which]!!
+                    applyPresetToDisplay(context, displayId, config.first, config.second, config.third, presetLabels[which])
                 }
             }
             .setNegativeButton(R.string.cancel, null)
             .show()
     }
 
-    private fun showCustomResolutionDialog(context: Context) {
+    private fun applyPresetToDisplay(
+        context: Context,
+        displayId: Int,
+        width: Int?,
+        height: Int?,
+        dpi: Int?,
+        label: String
+    ) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val dispFlag = if (displayId != Display.DEFAULT_DISPLAY && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                " -d $displayId"
+            } else {
+                ""
+            }
+            val sizeCmd = if (width != null && height != null) {
+                "wm size ${width}x${height}$dispFlag"
+            } else {
+                "wm size reset$dispFlag"
+            }
+            val densityCmd = if (dpi != null && dpi > 0) {
+                "wm density $dpi$dispFlag"
+            } else {
+                "wm density reset$dispFlag"
+            }
+
+            var success = false
+            val shizuku = com.plate.launcher.utils.ShizukoManager.getInstance(context)
+            if (shizuku.hasPermission) {
+                shizuku.runShellSync(sizeCmd)
+                shizuku.runShellSync(densityCmd)
+                success = true
+            } else {
+                val root = com.plate.launcher.utils.RootManager.getInstance(context)
+                if (root.isAvailable) {
+                    DeviceUtils.runAsRoot(sizeCmd)
+                    DeviceUtils.runAsRoot(densityCmd)
+                    success = true
+                } else if (displayId == Display.DEFAULT_DISPLAY) {
+                    val sizeOk = if (width != null && height != null) applyDisplaySize(width, height) else clearDisplaySize()
+                    val densityOk = if (dpi != null && dpi > 0) applyDisplayDensity(dpi) else clearDisplayDensity()
+                    success = sizeOk || densityOk
+                }
+            }
+
+            withContext(Dispatchers.Main) {
+                val targetName = if (displayId == Display.DEFAULT_DISPLAY) "Display 0" else "Display $displayId"
+                val msg = if (success) "Applied $label to $targetName ✓" else "Failed — check WRITE_SECURE_SETTINGS or Shizuku"
+                android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun showCustomResolutionDialog(context: Context, displayId: Int = Display.DEFAULT_DISPLAY) {
         val view    = LayoutInflater.from(context).inflate(R.layout.dialog_display_size, null)
         val inputEt = view.findViewById<EditText>(R.id.display_size_et)
-        inputEt.hint = "e.g. 1920x1080"
+        inputEt.hint = "e.g. 1920x1080@160"
         inputEt.inputType = android.text.InputType.TYPE_CLASS_TEXT
 
         MaterialAlertDialogBuilder(context)
             .setTitle(R.string.custom_display_resolution_title)
+            .setMessage("Format: <width>x<height>@<dpi> (e.g. 1920x1080@160 or 1920x1080)")
             .setView(view)
             .setPositiveButton(R.string.ok) { _, _ ->
                 val text = inputEt.text.toString().trim()
-                val parsed = parseResolutionString(text)
+                val atParts = text.split('@')
+                val resPart = atParts[0].trim()
+                val dpiPart = if (atParts.size > 1) atParts[1].trim().toIntOrNull() else null
+
+                val parsed = parseResolutionString(resPart)
                 if (parsed != null) {
                     val (w, h) = parsed
-                    val ok = applyDisplaySize(w, h)
+                    val label = "${w}×$h" + (if (dpiPart != null) " @ $dpiPart DPI" else "")
+                    applyPresetToDisplay(context, displayId, w, h, dpiPart, label)
+                } else {
                     android.widget.Toast.makeText(
-                        context,
-                        if (ok) "Resolution set to ${w}×${h}!" else "Failed — check WRITE_SECURE_SETTINGS",
-                        android.widget.Toast.LENGTH_SHORT
+                        context, "Invalid format. Use: 1920x1080@160", android.widget.Toast.LENGTH_LONG
                     ).show()
-                    return@setPositiveButton
                 }
-                android.widget.Toast.makeText(
-                    context, "Invalid format. Use: 1920x1080", android.widget.Toast.LENGTH_LONG
-                ).show()
             }
             .setNegativeButton(R.string.cancel, null)
             .show()

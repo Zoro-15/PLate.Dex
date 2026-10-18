@@ -1,4 +1,4 @@
-﻿package com.plate.launcher.livewallpaper.data
+package com.plate.launcher.livewallpaper.data
 
 import android.content.ContentResolver
 import android.content.Context
@@ -12,7 +12,7 @@ import java.io.File
  * VideoFileStore — reads and imports wallpapers (both live video and static images)
  * from the app and user wallpaper folders:
  *   1) YoukiDEX_Wallpapers/   ← wallpapers the user picked manually
- *   2) YoukiDex/Wallpapers/   ← files downloaded from WorkshopFragment
+ *   2) PLateLauncher/Wallpapers/ ← wallpapers downloaded or saved by the user
  *   3) App-specific external / internal storage fallback
  */
 object VideoFileStore {
@@ -51,9 +51,10 @@ object VideoFileStore {
         return cleaned.take(200).ifBlank { "wallpaper_${System.currentTimeMillis()}" }
     }
 
-    // The downloads folder from WorkshopFragment
-    private const val DOWNLOADS_ROOT       = "YoukiDex"
-    private const val DOWNLOADS_WALLPAPERS = "Wallpapers"
+    // The launcher downloads folder
+    private const val DOWNLOADS_ROOT        = "PLateLauncher"
+    private const val LEGACY_DOWNLOADS_ROOT = "YoukiDex"
+    private const val DOWNLOADS_WALLPAPERS  = "Wallpapers"
 
     /** The user's wallpapers folder with storage fallback if public downloads is restricted */
     fun folder(context: Context? = null): File {
@@ -99,18 +100,25 @@ object VideoFileStore {
         }
     }
 
-    /** The WorkshopFragment downloads folder */
+    /** The launcher downloads folder */
     private fun downloadsFolder(): File =
         File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
             "$DOWNLOADS_ROOT/$DOWNLOADS_WALLPAPERS"
         )
 
-    /** Scans wallpapers across public, workshop, and app-specific directories */
+    private fun legacyDownloadsFolder(): File =
+        File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+            "$LEGACY_DOWNLOADS_ROOT/$DOWNLOADS_WALLPAPERS"
+        )
+
+    /** Scans wallpapers across public and app-specific directories */
     fun listVideos(context: Context? = null): List<VideoFile> {
         val searchDirs = mutableListOf<File>()
         context?.let { searchDirs.add(folder(it)) } ?: searchDirs.add(folder())
         searchDirs.add(downloadsFolder())
+        searchDirs.add(legacyDownloadsFolder())
         context?.getExternalFilesDir(FOLDER_NAME)?.let { searchDirs.add(it) }
         context?.let { searchDirs.add(File(it.filesDir, FOLDER_NAME)) }
 

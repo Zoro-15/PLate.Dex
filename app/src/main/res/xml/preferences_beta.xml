@@ -12,17 +12,6 @@
             android:title="@string/strict_debug_mode_title"
             android:summary="@string/strict_debug_mode_summary" />
 
-        <Preference
-            android:key="qa_run_self_test"
-            android:icon="@drawable/ic_info"
-            android:title="@string/qa_self_test_title"
-            android:summary="@string/qa_self_test_summary" />
-
-        <Preference
-            android:key="qa_change_loading_gif"
-            android:title="@string/qa_change_loading_gif_title"
-            android:summary="@string/qa_change_loading_gif_summary" />
-
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -1,4 +1,4 @@
-﻿package com.plate.launcher.fragments
+package com.plate.launcher.fragments
 
 import android.content.Intent
 import android.os.Bundle
@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.plate.launcher.R
-import com.plate.launcher.activities.EasterEggActivity
 import com.plate.launcher.utils.AppUtils
 
 /**
@@ -109,7 +108,7 @@ class HelpAboutPreferences : Fragment(R.layout.fragment_help_about) {
             Contributor("MystiKitsu", getString(R.string.role_developer_assistant), R.drawable.contributor_mystikitsu),
         )
         val yukiUnlocked = PreferenceManager.getDefaultSharedPreferences(requireContext())
-            .getBoolean(EasterEggActivity.PREF_YUKI_UNLOCKED, false)
+            .getBoolean(PREF_YUKI_UNLOCKED, false)
         if (yukiUnlocked) {
             developers.add(
                 Contributor("Yuki", getString(R.string.role_gf_developer), R.drawable.contributor_yuki)
@@ -197,9 +196,7 @@ class HelpAboutPreferences : Fragment(R.layout.fragment_help_about) {
 
         if (!reached) return
 
-        // ── The seventh tap: play the video + enable Developer Mode (if not already enabled) ──
-        launchEasterEgg()
-
+        // ── The seventh tap: enable Developer Mode (if not already enabled) ──
         if (!devUnlocked) {
             devUnlocked = true
             prefs.edit().putBoolean("developer_mode_enabled", true).apply()
@@ -210,28 +207,8 @@ class HelpAboutPreferences : Fragment(R.layout.fragment_help_about) {
         }
     }
 
-    /** Returns (newCount, newFirstTapAtMs, reached). Resets the window if too much time passed since the first tap. */
-    private fun easterEggTapState(
-        nowMs: Long, count: Int, firstTapAtMs: Long, windowMs: Long, tapsRequired: Int
-    ): Triple<Int, Long, Boolean> {
-        var (newCount, newFirstTapAt) = if (count == 0 || nowMs - firstTapAtMs > windowMs) {
-            1 to nowMs
-        } else {
-            (count + 1) to firstTapAtMs
-        }
-        val reached = newCount >= tapsRequired
-        if (reached) newCount = 0
-        return Triple(newCount, newFirstTapAt, reached)
-    }
-
-    // ─────────────────────────────────────────────────────────────
-    //  Open the Easter Egg
-    // ─────────────────────────────────────────────────────────────
-
-    private fun launchEasterEgg() {
-        val intent = Intent(requireContext(), EasterEggActivity::class.java)
-        startActivity(intent)
-        // fade-in transition
-        requireActivity().overridePendingTransition(R.anim.fade_in, 0)
+    companion object {
+        private const val PREF_YUKI_UNLOCKED = "easter_egg_yuki_watch_unlocked"
     }
 }
+

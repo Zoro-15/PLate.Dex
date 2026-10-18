@@ -90,39 +90,6 @@
             android:theme="@style/AppTheme"
             android:configChanges="orientation|screenSize|keyboardHidden|density|colorMode|fontScale" />
 
-        <!--
-            QaSandboxActivity — internal QA self-test host, launched only from
-            Advanced settings → Development tools → "Run self-test" (see
-            AdvancedPreferences.kt). Deliberately runs in its own ":qa" process
-            (android:process below), separate from the app's main process — a
-            crash while probing a screen kills only this isolated process, never
-            the user's live launcher. Not exported: no other app can launch it.
-        -->
-        <activity
-            android:name=".qa.QaSandboxActivity"
-            android:exported="false"
-            android:process=":qa"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:configChanges="orientation|screenSize|keyboardHidden|density|colorMode|fontScale" />
-
-        <!--
-            QaVirtualDisplayHost — the real per-Activity isolation boundary used
-            by QaTestOrchestrator.probeActivity(). Same ":qa" process as
-            QaSandboxActivity above. Requires Root or Shizuku — creates a
-            VirtualDisplay the probed target launches on, so the target
-            never touches the real screen at all (no overlay involved).
-            No fallback: if neither Root nor Shizuku is available, the probe
-            is reported SKIPPED rather than falling back to a visible
-            overlay. See QaVirtualDisplayHost's kdoc for the full
-            isolation/auto-restart model. -->
-        <activity
-            android:name=".qa.QaVirtualDisplayHost"
-            android:exported="false"
-            android:process=":qa"
-            android:excludeFromRecents="true"
-            android:noHistory="true"
-            android:theme="@style/AppTheme.OpaqueCover"
-            android:configChanges="orientation|screenSize|keyboardHidden|density|colorMode|fontScale" />
 
         <activity
             android:name=".activities.MainActivity"
@@ -172,13 +139,6 @@
         <activity android:name=".activities.DebugActivity" android:exported="false" />
         <activity android:name=".activities.TrackpadActivity" android:exported="false" />
 
-        <!-- Easter Egg — مخفية، لا تظهر في الـ recents -->
-        <activity
-            android:name=".activities.EasterEggActivity"
-            android:exported="false"
-            android:excludeFromRecents="true"
-            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
-            android:screenOrientation="unspecified" />
 
         <!-- Shortcut trampoline — replicates DockTileService.onClick() exactly -->
         <activity
@@ -251,19 +211,6 @@
             </intent-filter>
         </receiver>
 
-        <!-- 📺 Cast — Picker Activity (transparent trampoline to show device chooser dialog) -->
-        <activity
-            android:name=".cast.CastPickerActivity"
-            android:exported="false"
-            android:excludeFromRecents="true"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:taskAffinity=""
-            android:launchMode="singleTask" />
-
-        <!-- 📺 Cast SDK — required metadata for CastContext initialization -->
-        <meta-data
-            android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
-            android:value="com.plate.launcher.cast.CastOptionsProvider" />
 
 
         <!-- شاشة المعرض الرئيسية (Gallery Grid) -->
@@ -289,12 +236,6 @@
             android:theme="@style/AppTheme.VideoPlayer"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="unspecified" />
-
-        <!-- شاشة إدارة مصادر الورك شوب -->
-        <activity
-            android:name=".activities.WorkshopSourcesActivity"
-            android:exported="false"
-            android:label="@string/workshop_sources" />
 
         <!-- FileProvider لمشاركة ملفات الفيديو مع المشغّل الخارجي -->
         <provider

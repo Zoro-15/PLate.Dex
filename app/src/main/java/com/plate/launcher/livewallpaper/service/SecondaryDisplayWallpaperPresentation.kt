@@ -1,4 +1,4 @@
-﻿package com.plate.launcher.livewallpaper.service
+package com.plate.launcher.livewallpaper.service
 
 import android.app.Presentation
 import android.content.Context
@@ -118,9 +118,24 @@ class SecondaryDisplayWallpaperPresentation(
         applyWallpaper()
     }
 
+    override fun onStop() {
+        player?.release()
+        player = null
+        currentPath = null
+        super.onStop()
+    }
+
+    override fun onDetachedFromWindow() {
+        player?.release()
+        player = null
+        currentPath = null
+        super.onDetachedFromWindow()
+    }
+
     override fun dismiss() {
         player?.release()
         player = null
+        currentPath = null
         super.dismiss()
     }
 }

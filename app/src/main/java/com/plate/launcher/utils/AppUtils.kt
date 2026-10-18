@@ -1,4 +1,4 @@
-﻿package com.plate.launcher.utils
+package com.plate.launcher.utils
 
 import android.app.ActivityManager
 import android.app.ActivityOptions
@@ -528,6 +528,7 @@ object AppUtils {
      * silently changing either caller's behavior.
      */
     fun stopDexAndLaunchOtherHome(context: Context, launchOther: (Intent) -> Unit) {
+        DeviceUtils.freezeRotation(false)
         context.sendBroadcast(
             Intent(com.plate.launcher.services.DOCK_SERVICE_ACTION)
                 .setPackage(context.packageName)
@@ -720,16 +721,6 @@ object AppUtils {
             if (stderr.isEmpty()) return
         } catch (e: Exception) {}
 
-        // ShellManager socket (no AIDL) → fallback Shizuku → fallback Root
-        try {
-            val shell = com.plate.launcher.server.ShellManager
-            if (shell.isAvailable) {
-                shell.execSync(modeCmd)
-                Thread.sleep(150)
-                shell.execSync(resizeCmd)
-                return
-            }
-        } catch (e: Exception) {}
 
         try {
             val shizuku = ShizukoManager.getInstance(context)
@@ -772,13 +763,6 @@ object AppUtils {
             if (p.exitValue() == 0) return
         } catch (e: Exception) {}
 
-        try {
-            val shell = com.plate.launcher.server.ShellManager
-            if (shell.isAvailable) {
-                shell.execSync(cmd)
-                return
-            }
-        } catch (e: Exception) {}
 
         try {
             val shizuku = ShizukoManager.getInstance(context)
@@ -880,21 +864,11 @@ object AppUtils {
         val selfPkg = context.packageName
         val result = ArrayList<AppTask>()
 
-        try {
             // Try am stack list, or fallback to modern Android 12-15 `cmd activity tasks`
-            val shell = com.plate.launcher.server.ShellManager
-            var output = if (shell.isAvailable) {
-                shell.execSync("am stack list") ?: ""
-            } else {
-                shizuku.runShellSync("am stack list") ?: ""
-            }
+            var output = shizuku.runShellSync("am stack list") ?: ""
 
             if (output.isBlank() || output.contains("Unknown command", ignoreCase = true) || output.contains("Error", ignoreCase = true)) {
-                output = if (shell.isAvailable) {
-                    shell.execSync("cmd activity tasks") ?: ""
-                } else {
-                    shizuku.runShellSync("cmd activity tasks") ?: ""
-                }
+                output = shizuku.runShellSync("cmd activity tasks") ?: ""
             }
 
             // Parse lines across Android 9 to 15:

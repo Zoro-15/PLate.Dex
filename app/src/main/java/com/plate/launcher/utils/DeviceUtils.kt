@@ -193,15 +193,8 @@ object DeviceUtils {
             return
         } catch (e: Exception) {}
 
-        val cmd = "settings put global policy_control $policyValue"
-        try {
-            val shell = com.plate.launcher.server.ShellManager
-            if (shell.isAvailable) {
-                shell.execSync(cmd)
-                return
-            }
-        } catch (e: Exception) {}
 
+        val cmd = "settings put global policy_control $policyValue"
         try {
             val shizuku = ShizukoManager.getInstance(context)
             if (shizuku.hasPermission) {

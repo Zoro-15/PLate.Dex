@@ -1,4 +1,4 @@
-﻿<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <Preference
         android:icon="@drawable/ic_info"
@@ -71,18 +71,6 @@
             android:key="enable_qs_bottom_row"
             android:summary="@string/enable_qs_bottom_row_summary"
             android:title="@string/enable_qs_bottom_row_title" />
-
-    </PreferenceCategory>
-
-    <!-- ══ Workshop Sources ══════════════════════════════════════════════ -->
-    <PreferenceCategory
-        android:key="workshop_sources_category"
-        android:title="@string/workshop_sources">
-
-        <Preference
-            android:key="manage_workshop_sources"
-            android:title="@string/manage_sources"
-            android:summary="@string/manage_workshop_sources_summary" />
 
     </PreferenceCategory>
 

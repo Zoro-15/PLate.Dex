@@ -1,4 +1,4 @@
-﻿<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
 	xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.plate.launcher.preferences.PreferenceHeader
@@ -48,10 +48,6 @@
         android:icon="@drawable/ic_plugin"
         app:fragment="com.plate.launcher.fragments.PluginsFragment"
         android:title="@string/plugins" />
-    <com.plate.launcher.preferences.PreferenceHeader
-        android:icon="@drawable/ic_search"
-        app:fragment="com.plate.launcher.fragments.WorkshopFragment"
-        android:title="@string/workshop_title" />
     <com.plate.launcher.preferences.PreferenceHeader
         android:icon="@drawable/ic_advanced"
         android:fragment="com.plate.launcher.fragments.AdvancedPreferences"

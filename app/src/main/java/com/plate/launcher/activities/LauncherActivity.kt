@@ -166,10 +166,6 @@ open class LauncherActivity : BaseFontScaleActivity(), SharedPreferences.OnShare
         attachDesktopWallpaper()
     }
 
-    override fun onStop() {
-        super.onStop()
-    }
-
     private fun routeToAccessibilitySettings() {
         android.app.AlertDialog.Builder(this)
             .setTitle(getString(R.string.accessibility_service_required))

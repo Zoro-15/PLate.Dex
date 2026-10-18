@@ -1,4 +1,4 @@
-﻿package com.plate.launcher.fragments
+package com.plate.launcher.fragments
 
 import android.graphics.BitmapFactory
 import android.graphics.drawable.GradientDrawable
@@ -23,7 +23,7 @@ import com.plate.launcher.utils.RootManager
 import com.plate.launcher.utils.ShizukoManager
 import kotlinx.coroutines.launch
 
-class PluginStoreFragment : Fragment() {
+open class PluginStoreFragment : Fragment() {
 
     private lateinit var installingSection:        LinearLayout
     private lateinit var installProgressContainer: LinearLayout

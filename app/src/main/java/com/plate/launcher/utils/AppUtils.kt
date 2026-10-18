@@ -864,6 +864,7 @@ object AppUtils {
         val selfPkg = context.packageName
         val result = ArrayList<AppTask>()
 
+        try {
             // Try am stack list, or fallback to modern Android 12-15 `cmd activity tasks`
             var output = shizuku.runShellSync("am stack list") ?: ""
 

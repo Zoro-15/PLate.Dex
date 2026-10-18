@@ -28,6 +28,7 @@ import com.plate.launcher.utils.AppUtils
 import com.plate.launcher.utils.DeviceUtils
 import com.plate.launcher.utils.Utils
 import androidx.core.content.edit
+import androidx.lifecycle.lifecycleScope
 
 private const val SAVE_REQUEST_CODE = 236
 private const val OPEN_REQUEST_CODE = 632
@@ -106,7 +107,7 @@ class AdvancedPreferences : PreferenceFragmentCompat() {
             }
         }
 
-        androidx.lifecycle.lifecycleScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch(Dispatchers.IO) {
             val root = com.plate.launcher.utils.RootManager.getInstance(requireContext())
             rootAvailable = root.isAvailable
             if (rootAvailable && !hasWriteSettingsPermission) {

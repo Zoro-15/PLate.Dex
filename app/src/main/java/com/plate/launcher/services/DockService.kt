@@ -1,4 +1,4 @@
-﻿package com.plate.launcher.services
+package com.plate.launcher.services
 
 import android.accessibilityservice.AccessibilityService
 import android.animation.Animator
@@ -1473,16 +1473,16 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
                  event.keyCode == KeyEvent.KEYCODE_DPAD_DOWN)
 
             if (isWindowSnap) {
-                val targetTask = if (::tasks.isInitialized && tasks.isNotEmpty()) {
-                    tasks[0]
+                val (targetTaskId, targetPkg) = if (::tasks.isInitialized && tasks.isNotEmpty()) {
+                    Pair(tasks[0].id, tasks[0].packageName)
                 } else {
                     try {
                         val top = activityManager.getRunningTasks(1).firstOrNull()
-                        if (top != null) AppTask(top.id, top.baseActivity?.packageName ?: "", "") else null
-                    } catch (e: Exception) { null }
+                        if (top != null) Pair(top.id, top.baseActivity?.packageName ?: "") else Pair(null, null)
+                    } catch (e: Exception) { Pair(null, null) }
                 }
 
-                if (targetTask != null) {
+                if (targetTaskId != null) {
                     val mode = when (event.keyCode) {
                         KeyEvent.KEYCODE_DPAD_LEFT  -> "tiled-left"
                         KeyEvent.KEYCODE_DPAD_RIGHT -> "tiled-right"
@@ -1491,10 +1491,10 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
                         else -> "standard"
                     }
 
-                    if (event.isShiftPressed && targetTask.packageName.isNotEmpty()) {
-                        launchApp(mode, targetTask.packageName, newInstance = true, rememberMode = false)
+                    if (event.isShiftPressed && !targetPkg.isNullOrEmpty()) {
+                        launchApp(mode, targetPkg, newInstance = true, rememberMode = false)
                     } else {
-                        AppUtils.resizeTask(context, mode, targetTask.id, dockHeight)
+                        AppUtils.resizeTask(context, mode, targetTaskId, dockHeight)
                     }
                     return true
                 }

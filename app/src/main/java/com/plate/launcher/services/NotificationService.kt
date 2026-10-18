@@ -1,4 +1,4 @@
-﻿package com.plate.launcher.services
+package com.plate.launcher.services
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -13,6 +13,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.view.HapticFeedbackConstants
+import android.view.MotionEvent
+import android.view.animation.AccelerateDecelerateInterpolator
+import androidx.core.view.isVisible
+import com.plate.launcher.utils.AppUtils.makeActivityOptions
+import com.plate.launcher.utils.RootManager
+import com.plate.launcher.utils.ShizukoManager
 import android.graphics.Color
 import android.graphics.Outline
 import android.graphics.PorterDuff

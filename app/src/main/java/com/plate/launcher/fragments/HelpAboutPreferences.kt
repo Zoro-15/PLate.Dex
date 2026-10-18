@@ -188,13 +188,13 @@ class HelpAboutPreferences : Fragment(R.layout.fragment_help_about) {
 
         // ── A single shared counter: 7 taps within a fixed window from the first tap ──
         val now = System.currentTimeMillis()
-        val (newCount, newFirstTapAt, reached) = easterEggTapState(
-            now, eggTapCount, eggFirstTapAt, EGG_WINDOW_MS, EGG_TAPS
-        )
-        eggTapCount   = newCount
-        eggFirstTapAt = newFirstTapAt
-
-        if (!reached) return
+        if (now - eggFirstTapAt > EGG_WINDOW_MS) {
+            eggTapCount = 0
+            eggFirstTapAt = now
+        }
+        eggTapCount++
+        if (eggTapCount < EGG_TAPS) return
+        eggTapCount = 0
 
         // ── The seventh tap: enable Developer Mode (if not already enabled) ──
         if (!devUnlocked) {

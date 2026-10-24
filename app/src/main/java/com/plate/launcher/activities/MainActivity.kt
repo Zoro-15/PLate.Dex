@@ -430,6 +430,15 @@ class MainActivity : BaseFontScaleActivity(),
 
     // Shizuku Dialog
     private fun showShizukuDialog() {
+        val isPrivileged = com.plate.launcher.utils.AppUtils.isSystemApp(this, packageName) || com.plate.launcher.utils.DeviceUtils.hasWriteSettingsPermission(this)
+        if (isPrivileged) {
+            com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle("System Privileged Mode")
+                .setMessage("PLate.Launcher is integrated into the ROM as a privileged system desktop. All permissions and capabilities are active natively without needing Shizuku or root.")
+                .setPositiveButton(R.string.ok, null)
+                .show()
+            return
+        }
         val shizuko = ShizukoManager.getInstance(this)
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.shizuku)
@@ -549,7 +558,8 @@ class MainActivity : BaseFontScaleActivity(),
         }
         val shizuko = ShizukoManager.getInstance(this)
         if (::shizukuBtn.isInitialized) {
-            if (shizuko.hasPermission) {
+            val isPrivileged = com.plate.launcher.utils.AppUtils.isSystemApp(this, packageName) || com.plate.launcher.utils.DeviceUtils.hasWriteSettingsPermission(this)
+            if (shizuko.hasPermission || isPrivileged) {
                 shizukuBtn.setIconResource(R.drawable.ic_granted); shizukuBtn.iconTint = accent
             } else {
                 shizukuBtn.setIconResource(R.drawable.ic_alert); shizukuBtn.iconTint = warn

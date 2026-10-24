@@ -46,7 +46,17 @@
     <uses-permission android:name="android.permission.BIND_WALLPAPER" />
 
     <!-- ✅ Widget host support — allows LauncherActivity to host AppWidgets -->
-    <uses-permission android:name="android.permission.BIND_APPWIDGET" />
+        <uses-permission android:name="android.permission.BIND_APPWIDGET" />
+
+    <!-- System & ROM Integration Permissions -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.STATUS_BAR" tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.SET_WALLPAPER_COMPONENT" tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.REBOOT" tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.FORCE_STOP_PACKAGES" tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.CREATE_USERS" tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS" tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL" tools:ignore="ProtectedPermissions" />
     <uses-feature android:name="android.software.live_wallpaper" android:required="false" />
 
     <application

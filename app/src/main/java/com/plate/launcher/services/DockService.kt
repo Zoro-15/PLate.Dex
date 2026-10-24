@@ -4035,7 +4035,7 @@ class DockService : AccessibilityService(), OnSharedPreferenceChangeListener, On
         val targetEnabled = !wifiManager.isWifiEnabled
 
         // Android 9 وأقل — setEnabled مباشر لا يزال يشتغل
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || com.plate.launcher.utils.AppUtils.isSystemApp(this, packageName)) {
             wifiManager.isWifiEnabled = targetEnabled
             wifiBtn.setImageResource(
                 if (targetEnabled) R.drawable.ic_wifi_on else R.drawable.ic_wifi_off

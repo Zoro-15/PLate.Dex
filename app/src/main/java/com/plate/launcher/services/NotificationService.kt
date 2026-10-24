@@ -698,7 +698,7 @@ class NotificationService : NotificationListenerService(), OnNotificationClickLi
                         v.subtitle.visibility = android.view.View.GONE
                         root.runShell(cmd) { _ -> handler.postDelayed({ refreshWifiTileState() }, 800) }
                     }
-                    Build.VERSION.SDK_INT < Build.VERSION_CODES.Q -> {
+                    com.plate.launcher.utils.AppUtils.isSystemApp(applicationContext, packageName) || Build.VERSION.SDK_INT < Build.VERSION_CODES.Q -> {
                         @Suppress("DEPRECATION")
                         wm2.isWifiEnabled = !nowEnabled
                         handler.postDelayed({ refreshWifiTileState() }, 800)
